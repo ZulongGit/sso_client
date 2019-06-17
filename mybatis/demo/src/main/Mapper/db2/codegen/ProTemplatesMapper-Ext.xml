@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.ProTemplatesMapper">
+	
+	<!-- 根据ids获取模板-->
+	<select id="getTemplateByIds" resultType="com.krm.web.codegen.model.ProTemplates">
+		select  <include refid="proTemplatesAliasColumns" />
+		from gen_pro_templates  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ids)"> and t.ID in
+				<foreach collection="ids" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+	</select>
+</mapper>

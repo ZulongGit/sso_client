@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysDynamicDictsMapper">
+
+	<!-- 表字段 -->
+	<sql id="tableDictsColumns">
+		 ID, KEY_NAME, VALUE_NAME, SQL_CONTENT, TYPE, REMARKS, DATA_SCOPE, TABLE_NAME, SQL_MODE, USER_ID_FIELD_BIND,
+		 ORGAN_CODE_FIELD_BIND
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="tableDictsAliasColumns">
+         t.ID, t.KEY_NAME, t.VALUE_NAME, t.SQL_CONTENT, t.TYPE, t.REMARKS, t.DATA_SCOPE, t.TABLE_NAME, t.SQL_MODE, t.USER_ID_FIELD_BIND,
+		 t.ORGAN_CODE_FIELD_BIND
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="tableDictsAliasColumns" /> 
+			, F_CHANGE_TO_DICT('sys_data_scope', t.DATA_SCOPE) DATA_SCOPE_TEXT
+		from sys_dynamic_dict  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(keyName)">and t.KEY_NAME = #{keyName} </if>
+			<if test="@Ognl@isNotBlank(valueName)">and t.VALUE_NAME = #{valueName} </if>
+			<if test="@Ognl@isNotBlank(sqlContent)">and t.SQL_CONTENT = #{sqlContent} </if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(dataScope)">and t.DATA_SCOPE = #{dataScope} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(sqlMode)">and t.SQL_MODE = #{sqlMode} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)">and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)">and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.sys.model.SysDynamicDicts">
+        select  <include refid="tableDictsAliasColumns" />
+		from sys_dynamic_dict  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(keyName)">and t.KEY_NAME = #{keyName} </if>
+			<if test="@Ognl@isNotBlank(valueName)">and t.VALUE_NAME = #{valueName} </if>
+			<if test="@Ognl@isNotBlank(sqlContent)">and t.SQL_CONTENT = #{sqlContent} </if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(dataScope)">and t.DATA_SCOPE = #{dataScope} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(sqlMode)">and t.SQL_MODE = #{sqlMode} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)">and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)">and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.sys.model.SysDynamicDicts">
+		select  <include refid="tableDictsAliasColumns" />
+		from sys_dynamic_dict  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(keyName)"> and t.KEY_NAME = #{keyName} </if>
+			<if test="@Ognl@isNotBlank(valueName)"> and t.VALUE_NAME = #{valueName} </if>
+			<if test="@Ognl@isNotBlank(sqlContent)"> and t.SQL_CONTENT = #{sqlContent} </if>
+			<if test="@Ognl@isNotBlank(type)"> and t.TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(dataScope)"> and t.DATA_SCOPE = #{dataScope} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(sqlMode)"> and t.SQL_MODE = #{sqlMode} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)"> and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)"> and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="tableDictsAliasColumns" /> 
+			, F_CHANGE_TO_DICT('sys_data_scope', t.DATA_SCOPE) DATA_SCOPE_TEXT
+		from sys_dynamic_dict  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(keyName)">and t.KEY_NAME = #{keyName} </if>
+			<if test="@Ognl@isNotBlank(valueName)">and t.VALUE_NAME = #{valueName} </if>
+			<if test="@Ognl@isNotBlank(sqlContent)">and t.SQL_CONTENT = #{sqlContent} </if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(dataScope)">and t.DATA_SCOPE = #{dataScope} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(sqlMode)">and t.SQL_MODE = #{sqlMode} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)">and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)">and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into sys_dynamic_dict(<include refid="tableDictsColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.keyName},
+	    	#{item.valueName},
+	    	#{item.sqlContent},
+	    	#{item.type},
+	    	#{item.remarks},
+	    	#{item.dataScope},
+	    	#{item.tableName},
+	    	#{item.sqlMode},
+	    	#{item.userIdFieldBind},
+			#{item.organCodeFieldBind}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from sys_dynamic_dict
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(keyName)"> and KEY_NAME = #{keyName} </if>
+			<if test="@Ognl@isNotBlank(valueName)"> and VALUE_NAME = #{valueName} </if>
+			<if test="@Ognl@isNotBlank(sqlContent)"> and SQL_CONTENT = #{sqlContent} </if>
+			<if test="@Ognl@isNotBlank(type)"> and TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(dataScope)"> and DATA_SCOPE = #{dataScope} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(sqlMode)"> and SQL_MODE = #{sqlMode} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)"> and USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)"> and ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+		</where>
+	</delete>
+</mapper>

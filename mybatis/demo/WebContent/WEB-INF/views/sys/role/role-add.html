@@ -1,0 +1,111 @@
+@var organMap = organ.getAllOrganMap();
+@var userDataScopeList = organ.getUserDataScope(); //用户数据范围
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+	<form name="FormPost" id="table-form" class="FormGrid"  method="post"action="">
+		<div class="form-horizontal" role="form" style="margin-top:20px;">
+          <div class="container-fluid">
+            <div class="row" id="form-row">
+              <div class="col-xs-4">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label red">角色名称：</label>
+                  <div class="col-sm-8">
+                    <input id="name" name="name" type="text" value="${sysrole.name!}" maxlength="200" required/>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-8">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label red">数据范围：</label>
+                  <div class="col-sm-8">
+                    <#selects id="chosenSelectEdit" name="dataScope" width="40%">
+						@for(item in userDataScopeList){
+							<option value="${item.value!}">${item.label!}</option>
+						@}
+					</#selects>
+					<script type="text/javascript">
+						$("#chosenSelectEdit").change(function(){
+							if($(this).val() == 9){
+								$("#treeSelectOrganEdit").show();
+							}else{
+								$("#treeSelectOrganEdit").hide();
+							}
+						})
+						$("#chosenSelectEdit option[value='${sysrole.dataScope!}']").attr("selected",true);
+						$("#chosenSelectEdit option[value='${sysrole.dataScope!}']").trigger('change');
+						$("#chosenSelectEdit").trigger("chosen:updated");
+					</script>
+					
+					<span class="red width-50"> 特殊情况下,设置为"按明细设置",可进行跨机构授权</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12">
+                <div class="form-group">
+                  <label class="col-sm-1 control-label red"  style="width: 11.111111108%;">角色授权：</label>
+                  <div class="col-sm-11" style="width: 88.88888889%;">
+                    <div class="clearfix" style="width: 100%;display: inline-block;vertical-align: top;">
+						<#treeselect url="menu/tree" checked="true" isLayer="false" rootNodeName="权限列表" 
+							class="width-50" treeSelectId="treeSelectResEdit" selectIds="${resIds!}" chkboxType="2">
+							<div id="treeSelectResEdit" style="width: 50%;display: inline-block;vertical-align: top;float: left"></div>
+						</#treeselect>
+						<#organtree url="organ/tree" checked="true" isLayer="false" rootNodeName="机构列表"
+							class="width-50" treeSelectId="treeSelectOrganEdit" selectIds="${organIds!}" idKey="code"
+							chkboxType="1">
+							<div id="treeSelectOrganEdit" style="width: 50%;display: inline-block;vertical-align: top;float: right"></div>
+						</#organtree>
+					</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+	</form>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#chosenSelectEdit").change();
+	//表单校验
+	$("#table-form").validate({
+		messages: {
+			name: {required: "请输入角色名称！"}
+		},
+		submitHandler: function(form){
+			
+			var permission = getCheckbox_treeSelectResEdit(treeSelectResEdit);
+			var organ = getCheckbox_treeSelectOrganEdit(treeSelectOrganEdit);
+			var indexLoad = loading("系统正在提交数据，请稍后......");
+			$("#table-form").ajaxSubmit({
+            	type:'post',
+            	url:'${ctxPath}/role/save',
+            	data:{
+            		organIds:organ.toString(),
+            		menuIds:permission.toString()
+            	},
+            	success:function(data){
+            		layer.close(indexLoad);
+            		if(data.code == 1) {
+            			successMsg(data.msg, function() {
+                   		 	query();
+        					layer.closeAll();
+                   		}); 
+                    }else{
+                    	failMsg(data.msg);
+                    }
+                }
+            });     
+		},
+		errorPlacement: function(error, element) {
+			tip.errorTip(error.html(),element);
+			/* if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+				error.appendTo(element.parent().parent());
+			} else {
+				error.insertAfter(element);
+			} */
+		}
+	});
+
+});
+</script>

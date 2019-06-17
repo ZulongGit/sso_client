@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" class="no-load">
+	<link rel="stylesheet" href="css/main.css" type="text/css" media="screen" class="no-load">
+    <link rel="stylesheet" href="css/sweetalert.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
+    <style type="text/css">
+		#table-list{width:90%;margin:60px auto;text-align: left;vertical-align: middle;}
+		.table,.table th{text-align: center;}
+		.table>tbody>tr>td{vertical-align: middle;}
+    </style>
+</head>
+<body>
+	<div id="table-list">
+		<div><a href="formdesign.html" title="" target="_blank"><button type="button" class="btn btn-default">新 建</button></a></div><br>
+		<table class="table">
+            <thead>
+                <tr>
+                    <th>序 号</th>
+                    <th>名 称</th>
+                    <th>时 间</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+	</div>
+	<div id="mask" style="display:none">
+        <header>
+            <button type="button" class="btn btn-default" onclick="close_mask()">关闭</button>
+        </header>
+        <div class="content"></div>
+    </div>
+	<script src="js/jquery-1.11.1.min.js" class="no-load"></script>
+    <script src="js/bootstrap.js" class="no-load"></script>
+    <!-- 页面组件 -->
+    <script src="js/select2.min.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/echarts.js"></script>
+    <script src="js/toastr.min.js"></script>
+    <!-- 本页面脚本 -->
+    <script src="js/mycharts.js"></script>
+    <script src="js/formdesign.js"></script>
+    <script src="js/chartdata.js"></script>
+    <script src="js/databind.js"></script>
+	<script>
+		//创建列表
+		init_list();
+	</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysMenuMapper">
+
+	<sql id="SysMenuColumns">
+		id,common,description,icon,name,parent_id,sort,status,type,url,parent_ids,
+		update_by,update_date,create_by,create_date,del_flag
+	</sql>
+
+	<sql id="AliasColumns">
+		sr.id,sr.description,sr.icon,sr.name,sr.parent_id,sr.sort,
+		sr.status,sr.type,sr.url,sr.common,sr.parent_ids,sr.del_flag
+	</sql>
+	
+	<!-- 修改父节点字符串 -->
+	<update id="updateParentIds">
+		update sys_menu
+		set parent_ids = REPLACE(parent_ids, #{oldParentIds}, #{parentIds}) 
+		where parent_ids like CONCAT('%', #{id}, '%')
+	</update>
+
+	<!-- 根据节点Id删除底下全部子节点包括孙子节点 -->
+	<delete id="deleteIdsByRootId">
+		delete from sys_menu where parent_ids like CONCAT('%', #{id}, '%') or id = #{id}
+	</delete>
+	
+	<!-- 删除菜单前验证 -->
+	<select id="beforeDeleteMenu" resultType="java.lang.Integer">
+		select count(1) from sys_role_menu where menu_id = #{menuId}
+	</select>
+	
+	<!-- 根据用户id获得持有的菜单 -->
+	<select id="findUserMenuByUserId" resultType="com.krm.web.sys.model.SysMenu">
+		SELECT DISTINCT res.id,res.url,res.type,res.parent_id,
+			   res.parent_ids,res.name,res.icon,res.sort,res.description,res.permission_str 
+		FROM sys_menu res 
+			LEFT JOIN sys_role_menu srr ON res.id=srr.menu_id
+			LEFT JOIN sys_user_role ur ON ur.role_id=srr.role_id
+		WHERE ur.user_id=#{userId} AND res.del_flag=0 AND res.status=0
+		order by res.sort 
+	</select>
+	
+	<!-- 菜单管理分页显示筛选查询 -->
+	<select id="findPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select sr.id,sr.description,sr.icon,sr.name,sr.sort,sr.common,
+		sr.status,sr.type,sr.url,srp.name parent_name,sr.parent_id,sr.permission_str
+		from sys_menu sr
+		left join sys_menu srp ON sr.parent_id=srp.id
+		<where>
+		1=1
+			<if test="name != ''">
+				and	sr.name like CONCAT('%', #{name}, '%')
+			</if>
+		</where>
+		<if test="id != '0'.toString() and @Ognl@isNotBlank(id) "> 
+			and sr.parent_ids like CONCAT('%', #{id}, '%') or sr.id = #{id}
+		</if>
+			
+		ORDER BY sr.update_date desc
+	</select>
+
+</mapper>

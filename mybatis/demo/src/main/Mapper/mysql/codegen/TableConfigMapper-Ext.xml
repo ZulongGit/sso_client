@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.TableConfigMapper">
+	
+	<!-- 根据项目、链接、数据库、表删除配置 -->
+	<delete id="deleteConfig" parameterType="java.util.Map">
+		delete from gen_table_config
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(dbId)"> and DB_ID = #{dbId} </if>
+			<if test="@Ognl@isNotBlank(schemaName)"> and SCHEMA_NAME = #{schemaName} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and TABLE_NAME = #{tableName} </if>
+		</where>
+	</delete>
+</mapper>

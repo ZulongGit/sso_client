@@ -1,0 +1,305 @@
+<link rel="stylesheet" href="${ctxPath!}/static/treeTable/themes/vsStyle/treeTable.min.css" />
+<script src="${ctxPath!}/static/treeTable/jquery.treeTable.js"></script>
+
+
+<form id="table-form" class="FormGrid" method="post" action="">
+	<input name="roleId" type="hidden" value="${roleId}"/>
+	<table id="table-opRights"
+		class="table table-condensed table-striped table-bordered table-hover nomargin-bottom">
+		<thead>
+			<tr>
+				<th>菜单</th>
+				<th>增加</th>
+				<th>删除</th>
+				<th>修改</th>
+				<th>查看/查询</th>
+				<th>导入</th>
+				<th>导出</th>
+				<th>全部</th>
+			</tr>
+		</thead>
+		<tbody id="tbody"></tbody>
+	</table>
+</form>
+
+<script>
+	$(function(){
+		var text = '', indexL = 0;
+		var menus = eval('(${menus})');
+		tr(menus);
+		$("#tbody").html(text)
+		$("#table-opRights").treeTable({
+			expandLevel : 2
+		});
+		function tr(menus) {
+			for (var i = 0; i < menus.length; i++) {
+				text += '<tr id="' + menus[i].menuId + '" pId="' + menus[i].parentId + '"> '
+						+ ' <td> '+ menus[i].name
+						+ ' <input name="list['+ indexL + '].id" type="hidden" value="'+menus[i].id+'"/>'
+						+ ' <input name="list['+ indexL + '].basePermission" type="hidden" value="'+menus[i].basePermission+'"/>'
+						+ ' <input name="list['+ indexL + '].roleId" type="hidden" value="'+menus[i].roleId+'"/>'
+						+ ' <input name="list['+ indexL + '].menuId" type="hidden" value="'+menus[i].menuId+'"/>'
+						+ ' </td> '
+                        
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="add" name="list['+ indexL + '].canAdd" value="'+menus[i].canAdd+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+						
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="delete" name="list['+ indexL + '].canDelete" value="'+menus[i].canDelete+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="update" name="list['+ indexL + '].canUpdate" value="'+menus[i].canUpdate+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="query" name="list['+ indexL + '].canQuery" value="'+menus[i].canQuery+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="import" name="list['+ indexL + '].canImport" value="'+menus[i].canImport+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+
+                      	+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden row_'+indexL+'" for="export" name="list['+ indexL + '].canExport" value="'+menus[i].canExport+'" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+
+						+ '<td><label class="checkbox-label">'
+						+ ' <input class="checkbox-hidden all" for="all" type="checkbox"/>'
+						+ '<span class="checkbox-style1 checkbox-inner"></span></label></td> '
+						+ ' </tr> ';
+				indexL++;
+				if(menus[i].hasChild){
+					tr(menus[i].children);
+				}
+			}
+		}
+		
+		init();
+		
+		//点击事件
+		$("input[type=checkbox]").change(function(){
+			//全选不进入判断
+			var tr = $(this).closest("tr");
+			// debugger
+			if($(this).attr("name") != undefined){
+				if(this.checked){
+					$(this).val(1);
+					//同列向上递归选中/取消
+					coloumnUpListner(this, tr);
+					//同列向下递归选中/取消
+					coloumnDownListner(this, $(tr).attr("id"));
+					//单行“全选”的选中/取消
+					rowAllListner(tr);
+				}else{
+					$(this).val(0);
+					//同列向上递归选中/取消
+					coloumnUpListner(this, tr);
+					//同列向下递归选中/取消
+					coloumnDownListner(this, $(tr).attr("id"));
+					//单行“全选”的选中/取消
+					rowAllListner(tr);
+				}
+			}else{
+				//全选，所有受影响的都被选中
+				selectAll(this, tr);
+			}
+		})
+		
+		//提交表单
+		$("#table-form").validate({
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath!}/role/saveOpRights',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                   			layer.closeAll();
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	})
+	
+	
+		
+	//全选，所有受影响的都被选中
+	//self:当前CheckBox
+	//tr:当前行
+	function selectAll(self, tr) {
+		$(tr).find("input[type='checkbox']").each(function(i, obj) {
+			if($(obj).attr("type") == "checkbox"){
+				if ($(self).is(":checked")) {
+					$(this).prop("checked", true);
+					$(this).val(1);
+					//同列向上递归选中/取消
+					coloumnUpListner(obj, tr);
+					//同列向下递归选中/取消
+					coloumnDownListner(self, $(tr).attr("id"));
+				} else {
+					$(this).prop("checked", false);
+					$(this).val(0);
+					//同列向上递归选中/取消
+					coloumnUpListner(obj, tr);
+					//同列向下递归选中/取消
+					coloumnDownListner(self, $(tr).attr("id"));
+				}
+			}
+		});
+	}
+	
+	//单行全选，只影响一行
+	//self:当前CheckBox
+	//tr:当前行
+	function selectRowAll(self, tr) {
+		$(tr).find("input[type='checkbox']").each(function(i, obj) {
+			if($(obj).attr("type") == "checkbox"){
+				if ($(self).is(":checked")) {
+					$(this).prop("checked", true);
+					$(this).val(1);
+				} else {
+					$(this).prop("checked", false);
+					$(this).val(0);
+				}
+			}
+		});
+	}
+
+	//同列向下递归选中/取消
+	//self:上级checkbox
+	//tid:上级tr的id
+	function coloumnDownListner(self, tid) {
+		//获取所有下级的tr
+		var trs = $("tr[pid=" + tid + "]");
+		if (trs.length != 0) {
+			trs.each(function(i, obj) {
+				$(this).find("input[type='checkbox']").each(function(j, box) {
+					//for相同，即为同列
+					if ($(self).attr("for") == $(box).attr("for")) {
+						if (box.type == "checkbox") {
+							if ($(self).is(":checked")) {
+								$(box).prop("checked", true);
+								$(box).val(1);
+								//单行“全选”的选中/取消
+								rowAllListner(obj);
+							} else {
+								$(box).prop("checked", false);
+								$(box).val(0);
+								//单行“全选”的选中/取消
+								rowAllListner(obj);
+							}
+						}
+						//如果是全选按钮，影响下级的同时，影响同行的所有CheckBox
+						if ($(box).attr("for") == "all") {
+							selectRowAll(self, obj);
+						}
+					}
+				})
+				coloumnDownListner(self, $(obj).attr("id"));
+			})
+		}
+	}
+
+	//同列向上递归选中/取消
+	//self:当前CheckBox
+	//tr:当前行
+	function coloumnUpListner(self, tr) {
+		//flag标记：当所有同级别该列的CheckBox都选中为true，反之FALSE
+		var flag = true;
+		//上级
+		var pid = $(tr).attr("pid");
+		var parent = $("tr[id=" + pid + "]");
+		var pBox;
+		//判断所有同级别该列的CheckBox是否选中
+		$("tr[pid=" + pid + "]").each(function(i, obj) {
+			$(obj).find("input[type='checkbox']").each(function(j, box) {
+				if ($(self).attr("for") == $(box).attr("for")) {
+					if (!box.checked) {
+						flag = false;
+					}
+					return false;
+				}
+			})
+		})
+		//根据下级CheckBox来改变上级的CheckBox状态
+		$(parent).find("input[type='checkbox']").each(function(j, box) {
+			//for相同，即为同列，此时，box就是选中行的上级的CheckBox
+			if ($(self).attr("for") == $(box).attr("for")) {
+				//把查找到的上级的CheckBox赋给pBox，递归向上
+				pBox = box;
+				if (flag) {
+					$(box).prop("checked", true);
+//					$(box).val(1);
+					//单行“全选”的选中/取消
+					rowAllListner(parent);
+					selectRowAll()
+				}else{
+					$(box).prop("checked", false);
+//					$(box).val(0);
+					//单行“全选”的选中/取消
+					rowAllListner(parent);
+				}
+				return false;
+			}
+		})
+		//如果上级还有上级，向上递归处理
+		if(!$(parent).attr("pid") == 0){
+			coloumnUpListner(pBox, parent);
+		}
+	}
+
+	//单行“全选”的选中/取消
+	function rowAllListner(tr) {
+		var flag = true;
+		//判断单行除“全选”外所有的CheckBox是否都选中
+		$(tr).find("input[type=checkbox]").each(function(i, obj) {
+			if ($(this).attr("name") != undefined) {
+				if (!obj.checked) {
+					flag = false;
+				}
+			}
+		})
+		//根据其他CheckBox来改变“全选”的CheckBox状态
+		$(tr).find("input[for=all]").each(function(i, obj) {
+			if(flag){
+				$(obj).prop("checked", true);
+			}else{
+				$(obj).prop("checked", false);
+			}
+		})
+	}
+
+	//初始化
+	function init() {
+		$("input[type=checkbox]").each(function(i, obj) {
+			if ($(this).attr("name") != undefined) {
+				var tr = $(this).closest("tr");
+				if (this.value == 1) {
+					$(this).prop("checked", true);
+					//同列向上递归选中/取消
+					coloumnUpListner(this, tr);
+					//单行“全选”的选中/取消
+					rowAllListner(tr);
+				} else {
+					$(this).attr("checked", false);
+					$(this).val(0);
+					//同列向上递归选中/取消
+					coloumnUpListner(this, tr);
+					//单行“全选”的选中/取消
+					rowAllListner(tr);
+				}
+			}
+		})
+	}
+</script>

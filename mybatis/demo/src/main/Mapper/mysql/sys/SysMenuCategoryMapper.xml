@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysMenuCategoryMapper">
+
+	<!-- 表字段 -->
+	<sql id="sysMenuCategoryColumns">
+		 ID, NAME, CODE, URL, ICON, DESCRIPTION, SORT, CREATE_BY, CREATE_DATE, UPDATE_BY,
+		 UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="sysMenuCategoryAliasColumns">
+         t.ID, '0' PARENT_ID, t.NAME, t.CODE, t.URL, t.ICON, t.DESCRIPTION, t.SORT, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY,
+		 t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="sysMenuCategoryAliasColumns" /> 
+		from sys_menu_category  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(code)">and t.CODE = #{code} </if>
+			<if test="@Ognl@isNotBlank(url)">and t.URL = #{url} </if>
+			<if test="@Ognl@isNotBlank(icon)">and t.ICON = #{icon} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		
+		ORDER BY t.SORT
+	
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.sys.model.SysMenuCategory">
+        select  <include refid="sysMenuCategoryAliasColumns" />
+		from sys_menu_category  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(code)">and t.CODE = #{code} </if>
+			<if test="@Ognl@isNotBlank(url)">and t.URL = #{url} </if>
+			<if test="@Ognl@isNotBlank(icon)">and t.ICON = #{icon} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		
+			ORDER BY t.SORT
+		
+		
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.sys.model.SysMenuCategory">
+		select  <include refid="sysMenuCategoryAliasColumns" />
+		from sys_menu_category  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)"> and t.NAME = #{name} </if>
+			<if test="@Ognl@isNotBlank(code)"> and t.CODE = #{code} </if>
+			<if test="@Ognl@isNotBlank(url)"> and t.URL = #{url} </if>
+			<if test="@Ognl@isNotBlank(icon)"> and t.ICON = #{icon} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="sysMenuCategoryAliasColumns" /> 
+		from sys_menu_category  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(code)">and t.CODE = #{code} </if>
+			<if test="@Ognl@isNotBlank(url)">and t.URL = #{url} </if>
+			<if test="@Ognl@isNotBlank(icon)">and t.ICON = #{icon} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into sys_menu_category(<include refid="sysMenuCategoryColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.name},
+	    	#{item.code},
+	    	#{item.url},
+	    	#{item.icon},
+	    	#{item.description},
+	    	#{item.sort},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from sys_menu_category
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)"> and NAME = #{name} </if>
+			<if test="@Ognl@isNotBlank(code)"> and CODE = #{code} </if>
+			<if test="@Ognl@isNotBlank(url)"> and URL = #{url} </if>
+			<if test="@Ognl@isNotBlank(icon)"> and ICON = #{icon} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

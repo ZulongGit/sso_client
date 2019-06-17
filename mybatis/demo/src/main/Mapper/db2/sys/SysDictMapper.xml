@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysDictMapper">
+
+	<sql id="sysDictColumns">
+		id,create_by,create_date,del_flag,description,label,remarks,sort,type,update_by,update_date,value
+	</sql>
+
+	<select id="list" resultType="com.krm.web.sys.model.SysDict">
+		select <include refid="sysDictColumns"/>
+		from sys_dict
+		<where>
+			del_flag = 0
+			<if test="@Ognl@isNotBlank(type)">
+				and type = #{type} 
+			</if>
+			<if test="@Ognl@isNotBlank(description)">
+				and description = #{description} 
+			</if>
+		</where>
+		order by sort
+	</select>
+</mapper>

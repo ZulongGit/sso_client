@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.demofx.mapper.DemofxdataMapper">
+
+	<!-- 表字段 -->
+	<sql id="demofxdataColumns">
+		 ID, SNAME, STYPE, SMODEL, SDATE, SDES, SCOME, CREATE_BY, CREATE_DATE, UPDATE_BY,
+		 UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demofxdataAliasColumns">
+         t.ID, t.SNAME, t.STYPE, t.SMODEL, t.SDATE, t.SDES, t.SCOME, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY,
+		 t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demofxdataAliasColumns" /> 
+			, table1.lable as STYPE_TEXT
+		from demofxdata  t
+		left join (SELECT t.COLOUM1 LABLE, t.COLOUM1 VALUE FROM STUDENT t ) table1 on t.STYPE = table1.value
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(sname)">and t.SNAME like '%' || #{sname} || '%'</if>
+			<if test="@Ognl@isNotBlank(stype)">and t.STYPE = #{stype} </if>
+			<if test="@Ognl@isNotBlank(smodel)">and t.SMODEL like '%' || #{smodel} || '%'</if>
+			<if test="@Ognl@isNotBlank(sdate)">and t.SDATE = #{sdate} </if>
+			<if test="@Ognl@isNotBlank(sdes)">and t.SDES like '%' || #{sdes} || '%'</if>
+			<if test="@Ognl@isNotBlank(scome)">and t.SCOME like '%' || #{scome} || '%'</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.demofx.model.Demofxdata">
+        select  <include refid="demofxdataAliasColumns" />
+		from demofxdata  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(sname)">and t.SNAME like '%' || #{sname} || '%'</if>
+			<if test="@Ognl@isNotBlank(stype)">and t.STYPE = #{stype} </if>
+			<if test="@Ognl@isNotBlank(smodel)">and t.SMODEL like '%' || #{smodel} || '%'</if>
+			<if test="@Ognl@isNotBlank(sdate)">and t.SDATE = #{sdate} </if>
+			<if test="@Ognl@isNotBlank(sdes)">and t.SDES like '%' || #{sdes} || '%'</if>
+			<if test="@Ognl@isNotBlank(scome)">and t.SCOME like '%' || #{scome} || '%'</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.demofx.model.Demofxdata">
+		select  <include refid="demofxdataAliasColumns" />
+		from demofxdata  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(sname)"> and t.SNAME = #{sname} </if>
+			<if test="@Ognl@isNotBlank(stype)"> and t.STYPE = #{stype} </if>
+			<if test="@Ognl@isNotBlank(smodel)"> and t.SMODEL = #{smodel} </if>
+			<if test="@Ognl@isNotBlank(sdate)"> and t.SDATE = #{sdate} </if>
+			<if test="@Ognl@isNotBlank(sdes)"> and t.SDES = #{sdes} </if>
+			<if test="@Ognl@isNotBlank(scome)"> and t.SCOME = #{scome} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demofxdataAliasColumns" /> 
+			, table1.lable as STYPE_TEXT
+		from demofxdata  t
+		left join (SELECT t.COLOUM1 LABLE, t.COLOUM1 VALUE FROM STUDENT t ) table1 on t.STYPE = table1.value
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(sname)">and t.SNAME like '%' || #{sname} || '%'</if>
+			<if test="@Ognl@isNotBlank(stype)">and t.STYPE = #{stype} </if>
+			<if test="@Ognl@isNotBlank(smodel)">and t.SMODEL like '%' || #{smodel} || '%'</if>
+			<if test="@Ognl@isNotBlank(sdate)">and t.SDATE = #{sdate} </if>
+			<if test="@Ognl@isNotBlank(sdes)">and t.SDES like '%' || #{sdes} || '%'</if>
+			<if test="@Ognl@isNotBlank(scome)">and t.SCOME like '%' || #{scome} || '%'</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demofxdata(<include refid="demofxdataColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.sname},
+	    	#{item.stype},
+	    	#{item.smodel},
+	    	#{item.sdate},
+	    	#{item.sdes},
+	    	#{item.scome},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demofxdata
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(sname)"> and SNAME = #{sname} </if>
+			<if test="@Ognl@isNotBlank(stype)"> and STYPE = #{stype} </if>
+			<if test="@Ognl@isNotBlank(smodel)"> and SMODEL = #{smodel} </if>
+			<if test="@Ognl@isNotBlank(sdate)"> and SDATE = #{sdate} </if>
+			<if test="@Ognl@isNotBlank(sdes)"> and SDES = #{sdes} </if>
+			<if test="@Ognl@isNotBlank(scome)"> and SCOME = #{scome} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

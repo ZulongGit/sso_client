@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.test.mapper.TestMapper">
+
+	<!-- 表字段 -->
+	<sql id="testColumns">
+		 ID, USER_ID, ORGAN_NO, COLOUM1, COLOUM2, COLOUM3, COLOUM4, COLOUM5, COLOUM6, COLOUM7,
+		 COLOUM8, COLOUM9, COLOUM10, RICH_TEXT, CREATE_BY, CREATE_DATE, UPDATE_BY, UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="testAliasColumns">
+         t.ID, t.USER_ID, t.ORGAN_NO, t.COLOUM1, t.COLOUM2, t.COLOUM3, t.COLOUM4, t.COLOUM5, t.COLOUM6, t.COLOUM7,
+		 t.COLOUM8, t.COLOUM9, t.COLOUM10, t.RICH_TEXT, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY, t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="testAliasColumns" /> 
+			, F_CHANGE_TO_DICT('sys_user_select', t.USER_ID) USER_ID_TEXT
+			, F_CHANGE_TO_DICT('organ_select', t.ORGAN_NO) ORGAN_NO_TEXT
+		from test  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(userId)">and t.USER_ID = #{userId} </if>
+			<if test="@Ognl@isNotBlank(organNo)">and t.ORGAN_NO = #{organNo} </if>
+			<if test="@Ognl@isNotBlank(coloum1)">and t.COLOUM1 = #{coloum1} </if>
+			<if test="@Ognl@isNotBlank(coloum2)">and t.COLOUM2 = #{coloum2} </if>
+			<if test="@Ognl@isNotBlank(coloum3)">and t.COLOUM3 = #{coloum3} </if>
+			<if test="@Ognl@isNotBlank(coloum4)">and t.COLOUM4 like CONCAT('%', #{coloum4}, '%')</if>
+			<if test="@Ognl@isNotBlank(coloum5)">and t.COLOUM5 = #{coloum5} </if>
+			<if test="@Ognl@isNotBlank(coloum6)">and t.COLOUM6 = #{coloum6} </if>
+			<if test="@Ognl@isNotBlank(coloum7)">and t.COLOUM7 = #{coloum7} </if>
+			<if test="@Ognl@isNotBlank(coloum8)">and t.COLOUM8 = #{coloum8} </if>
+			<if test="@Ognl@isNotBlank(coloum9)">and t.COLOUM9 = #{coloum9} </if>
+			<if test="@Ognl@isNotBlank(coloum10)">and t.COLOUM10 = #{coloum10} </if>
+			<if test="@Ognl@isNotBlank(richText)">and t.RICH_TEXT = #{richText} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.test.model.Test">
+        select  <include refid="testAliasColumns" />
+		from test  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(userId)">and t.USER_ID = #{userId} </if>
+			<if test="@Ognl@isNotBlank(organNo)">and t.ORGAN_NO = #{organNo} </if>
+			<if test="@Ognl@isNotBlank(coloum1)">and t.COLOUM1 = #{coloum1} </if>
+			<if test="@Ognl@isNotBlank(coloum2)">and t.COLOUM2 = #{coloum2} </if>
+			<if test="@Ognl@isNotBlank(coloum3)">and t.COLOUM3 = #{coloum3} </if>
+			<if test="@Ognl@isNotBlank(coloum4)">and t.COLOUM4 like CONCAT('%', #{coloum4}, '%')</if>
+			<if test="@Ognl@isNotBlank(coloum5)">and t.COLOUM5 = #{coloum5} </if>
+			<if test="@Ognl@isNotBlank(coloum6)">and t.COLOUM6 = #{coloum6} </if>
+			<if test="@Ognl@isNotBlank(coloum7)">and t.COLOUM7 = #{coloum7} </if>
+			<if test="@Ognl@isNotBlank(coloum8)">and t.COLOUM8 = #{coloum8} </if>
+			<if test="@Ognl@isNotBlank(coloum9)">and t.COLOUM9 = #{coloum9} </if>
+			<if test="@Ognl@isNotBlank(coloum10)">and t.COLOUM10 = #{coloum10} </if>
+			<if test="@Ognl@isNotBlank(richText)">and t.RICH_TEXT = #{richText} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.test.model.Test">
+		select  <include refid="testAliasColumns" />
+		from test  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(userId)"> and t.USER_ID = #{userId} </if>
+			<if test="@Ognl@isNotBlank(organNo)"> and t.ORGAN_NO = #{organNo} </if>
+			<if test="@Ognl@isNotBlank(coloum1)"> and t.COLOUM1 = #{coloum1} </if>
+			<if test="@Ognl@isNotBlank(coloum2)"> and t.COLOUM2 = #{coloum2} </if>
+			<if test="@Ognl@isNotBlank(coloum3)"> and t.COLOUM3 = #{coloum3} </if>
+			<if test="@Ognl@isNotBlank(coloum4)"> and t.COLOUM4 = #{coloum4} </if>
+			<if test="@Ognl@isNotBlank(coloum5)"> and t.COLOUM5 = #{coloum5} </if>
+			<if test="@Ognl@isNotBlank(coloum6)"> and t.COLOUM6 = #{coloum6} </if>
+			<if test="@Ognl@isNotBlank(coloum7)"> and t.COLOUM7 = #{coloum7} </if>
+			<if test="@Ognl@isNotBlank(coloum8)"> and t.COLOUM8 = #{coloum8} </if>
+			<if test="@Ognl@isNotBlank(coloum9)"> and t.COLOUM9 = #{coloum9} </if>
+			<if test="@Ognl@isNotBlank(coloum10)"> and t.COLOUM10 = #{coloum10} </if>
+			<if test="@Ognl@isNotBlank(richText)"> and t.RICH_TEXT = #{richText} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="testAliasColumns" /> 
+			, F_CHANGE_TO_DICT('sys_user_select', t.USER_ID) USER_ID_TEXT
+			, F_CHANGE_TO_DICT('organ_select', t.ORGAN_NO) ORGAN_NO_TEXT
+		from test  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(userId)">and t.USER_ID = #{userId} </if>
+			<if test="@Ognl@isNotBlank(organNo)">and t.ORGAN_NO = #{organNo} </if>
+			<if test="@Ognl@isNotBlank(coloum1)">and t.COLOUM1 = #{coloum1} </if>
+			<if test="@Ognl@isNotBlank(coloum2)">and t.COLOUM2 = #{coloum2} </if>
+			<if test="@Ognl@isNotBlank(coloum3)">and t.COLOUM3 = #{coloum3} </if>
+			<if test="@Ognl@isNotBlank(coloum4)">and t.COLOUM4 like CONCAT('%', #{coloum4}, '%')</if>
+			<if test="@Ognl@isNotBlank(coloum5)">and t.COLOUM5 = #{coloum5} </if>
+			<if test="@Ognl@isNotBlank(coloum6)">and t.COLOUM6 = #{coloum6} </if>
+			<if test="@Ognl@isNotBlank(coloum7)">and t.COLOUM7 = #{coloum7} </if>
+			<if test="@Ognl@isNotBlank(coloum8)">and t.COLOUM8 = #{coloum8} </if>
+			<if test="@Ognl@isNotBlank(coloum9)">and t.COLOUM9 = #{coloum9} </if>
+			<if test="@Ognl@isNotBlank(coloum10)">and t.COLOUM10 = #{coloum10} </if>
+			<if test="@Ognl@isNotBlank(richText)">and t.RICH_TEXT = #{richText} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into test(<include refid="testColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.userId},
+	    	#{item.organNo},
+	    	#{item.coloum1},
+	    	#{item.coloum2},
+	    	#{item.coloum3},
+	    	#{item.coloum4},
+	    	#{item.coloum5},
+	    	#{item.coloum6},
+	    	#{item.coloum7},
+	    	#{item.coloum8},
+	    	#{item.coloum9},
+	    	#{item.coloum10},
+	    	#{item.richText},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from test
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(userId)"> and USER_ID = #{userId} </if>
+			<if test="@Ognl@isNotBlank(organNo)"> and ORGAN_NO = #{organNo} </if>
+			<if test="@Ognl@isNotBlank(coloum1)"> and COLOUM1 = #{coloum1} </if>
+			<if test="@Ognl@isNotBlank(coloum2)"> and COLOUM2 = #{coloum2} </if>
+			<if test="@Ognl@isNotBlank(coloum3)"> and COLOUM3 = #{coloum3} </if>
+			<if test="@Ognl@isNotBlank(coloum4)"> and COLOUM4 = #{coloum4} </if>
+			<if test="@Ognl@isNotBlank(coloum5)"> and COLOUM5 = #{coloum5} </if>
+			<if test="@Ognl@isNotBlank(coloum6)"> and COLOUM6 = #{coloum6} </if>
+			<if test="@Ognl@isNotBlank(coloum7)"> and COLOUM7 = #{coloum7} </if>
+			<if test="@Ognl@isNotBlank(coloum8)"> and COLOUM8 = #{coloum8} </if>
+			<if test="@Ognl@isNotBlank(coloum9)"> and COLOUM9 = #{coloum9} </if>
+			<if test="@Ognl@isNotBlank(coloum10)"> and COLOUM10 = #{coloum10} </if>
+			<if test="@Ognl@isNotBlank(richText)"> and RICH_TEXT = #{richText} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

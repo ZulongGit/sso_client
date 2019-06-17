@@ -1,0 +1,123 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <input name="id" type="hidden" value="${entry.id!}">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">页面名称：</label>
+              <div class="col-sm-8">
+                <input id="pageName" name="pageName" type="text" value="${entry.pageName!}" maxlength="200"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">页面描述：</label>
+              <div class="col-sm-8">
+                <input id="pageDesc" name="pageDesc" type="text" value="${entry.pageDesc!}" maxlength="1000"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <div class="form-group">
+              <label class="col-sm-1 control-label " style="width: 11.111111111%;">页面内容：</label>
+              <div class="col-sm-10">
+                <div class="controls">
+                  <script type="text/plain" id="pageContent" name="pageContent" style="width: 100%;"></script>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据绑定：</label>
+              <div class="col-sm-8">
+                <input id="pageData" name="pageData" type="text" value="${entry.pageData!}" maxlength="2000"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">页面地址：</label>
+              <div class="col-sm-8">
+                <input id="pageUrl" name="pageUrl" type="text" value="${entry.pageUrl!}" maxlength="200"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">页面排序：</label>
+              <div class="col-sm-8">
+                <input id="pageStor" name="pageStor" type="text" value="${entry.pageStor!}" maxlength="10"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">逻辑删除标记(0.正常，1.删除)：</label>
+              <div class="col-sm-8">
+                <input id="delFlag" name="delFlag" type="text" value="${entry.delFlag!}" maxlength="1"  />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		var ue_0 = UE.getEditor('pageContent',{});	//初始化富文本
+		ue_0.ready(function() {
+			var content = html('${kbis_page.pageContent!}');
+			ue_0.setContent(content);
+		});
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入编号！"},
+				pageName : {required: "请输入页面名称！"},
+				pageDesc : {required: "请输入页面描述！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/pageset/kbisPage/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

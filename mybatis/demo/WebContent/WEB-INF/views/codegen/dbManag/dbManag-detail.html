@@ -1,0 +1,77 @@
+@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">所属项目：</div>
+      <div class="profile-info-value" id="proId">
+	   <span class="editable editable-click">${entry.proIdText!}</span>
+      </div>
+		</div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">别名：</div>
+      <div class="profile-info-value" id="alias">
+        <span class="editable editable-click">
+			${entry.alias!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据库类型：</div>
+      <div class="profile-info-value" id="dbType">
+	   <span class="editable editable-click">${entry.dbTypeText!}</span>
+      </div>
+		</div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据库驱动：</div>
+      <div class="profile-info-value" id="driver">
+        <span class="editable editable-click">
+			${entry.driver!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据库IP地址：</div>
+      <div class="profile-info-value" id="dbAddress">
+        <span class="editable editable-click">
+			${entry.dbAddress!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据库端口：</div>
+      <div class="profile-info-value" id="dbPort">
+        <span class="editable editable-click">
+			${entry.dbPort!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">实例/数据库：</div>
+      <div class="profile-info-value" id="tbSchema">
+        <span class="editable editable-click">
+			${entry.tbSchema!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">登录用户名：</div>
+      <div class="profile-info-value" id="userName">
+        <span class="editable editable-click">
+			${entry.userName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">登录密码：</div>
+      <div class="profile-info-value" id="password">
+        <span class="editable editable-click">
+			${entry.password!}
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+	})
+</script>

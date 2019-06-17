@@ -1,0 +1,103 @@
+<style>
+    .custom-input-file-container {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        overflow: hidden;
+        width: 52px;
+    }
+    .custom-input-file {
+        position: absolute !important;
+        top: 0px;
+        right: 0px;
+        height: 100%;
+        z-index: 999;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        cursor: pointer;
+    }
+</style>
+<div class="layer">
+        <div id="" class="tab-pane active clearfix">
+        <div class="alert-success"><font style="color:red">提示信息：红色星号为必填选项</font></div>
+		<form cnName="FormPost" id="table-form" class="FormGrid"  method="post" enctype="multipart/form-data" action="">
+            <table class="EditTable" width="100%">
+           		<tbody>
+					<tr class="FormData">
+						<td class="CaptionTD">附件:</td>
+						<td class="DataTD width-100">
+            				<div class="input-append">
+							    <input id="up_Face_0" name="fj" class="input-readonly" fileid="up_0" readonly  type="text" value="" 
+							    	style="width:85%;margin-right: -5px;padding-top: 1px;">
+							    <div class="custom-input-file-container">
+							        <a id="upButton_0" href="javascript:"  class="btn" 
+							        	style="border-radius: 0 14px 14px 0;border: 1px solid #d5d5d5;height: 26px;line-height: 13px;width: 45px;margin-top: 2px;background: #fff;">
+							        	&nbsp;<i class="fa fa-folder-open" style="color: #8f8f8f;"></i>&nbsp;</a>
+							        	<input id="up_0" name="file" type="file" class="custom-input-file valid" required>
+						    	</div>
+							</div>
+               			</td>
+						<script type="text/javascript">
+						    $("#upButton_0").click(function (e) {
+						        $("#up_0").click();
+						    });
+						    function updateFileValue_0() {
+						        if ($('#up_0').val() != "" || $('#up_0').val() != null) {
+						            $('#up_Face_0').val($('#up_0').val());
+						        }
+						    }
+						    $("#up_0").bind('change', function (e) {
+						        updateFileValue_0();
+						    });
+						</script>
+                	</tr>
+                	<tr class="FormData">
+                		<td class="CaptionTD"></td>
+                		<td class="CaptionTD">
+		                	<button type="button" style="margin-top: 20px;margin-right: 12%;" class="btn btn-primary btn-sm" id="downlod_createTableHistory"><i class="ace-icon fa fa-cloud-download middle-120"></i>下载模板</button>
+                		</td>
+                	</tr>
+          		</tbody>
+      	</table>
+       </form>
+      </div>
+  </div>
+  
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#downlod_createTableHistory").click(function(){
+		var url = "${ctxPath}/codegen/createTableHistory/import/template/download";
+		 	$('<form method="get" action="' + url + '"></form>').appendTo('body').submit().remove();
+	})
+	
+	//表单校验
+	$("#table-form").validate({
+		messages:{
+			file : {required: "请先上传文件（Excel格式）"},
+		},
+		submitHandler: function(form){
+			var indexLoad = loading("系统正在提交数据，请稍后......");
+			$("#table-form").ajaxSubmit({
+            	type:'post',
+            	url:'${ctxPath}/codegen/createTableHistory/import',
+            	success:function(data){
+            		layer.close(indexLoad);
+                    if(data.code == 1) {
+                    	successMsg(data.msg, function() {
+                   			layer.closeAll();
+                            query();
+                   		}); 
+                    }else{
+                    	failMsg(data.msg);
+                    }
+                }
+            });     
+		},
+		errorPlacement: function(error, element) {
+			tip.errorTip(error.html(),element);
+		}
+	});
+});
+</script>

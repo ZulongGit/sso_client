@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8" />
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="decorator" content="default" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>视频播放--${fileName}</title>
+    <!--[if !IE]> -->
+	<script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<!-- <![endif]-->
+
+	<!--[if IE]>
+	<script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+	<![endif]-->
+    <script src="${ctxPath!}/static/js/browser.js"></script>
+    <script src="${ctxPath!}/static/media/videojs/video.js"></script>
+    <link href="${ctxPath!}/static/media/videojs/video-js.css" rel="stylesheet" type="text/css">
+    <script src="${ctxPath!}/static/media/dpplayer/DPlayer.min.js"></script>
+    <link href="${ctxPath!}/static/media/dpplayer/DPlayer.min.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="${ctxPath!}/static/media/ckplayer6.8/ckplayer/ckplayer.js" charset="utf-8"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/media/ckplayer6.8/js/offlights.js" charset="utf-8"></script>
+	<script src="${ctxPath!}/static/js/history.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/layer-v3.1.0/layer/layer.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/js/public.js"></script>
+    <style type="text/css">
+    	body{background-color: #191919;overflow: hidden;max-height: 100%;}
+        .main-wrap{margin: -10px auto;max-width: 50%;}
+        .main-wrap video{ width: 100%;height: 4%;margin: 50% 0;}
+        #a1{display:flex;/*Flex布局*/display: -webkit-flex; /* Safari */align-items:center;/*指定垂直居中*/position: relative;top: 50%;transform: translateY(-50%);height:60%;}
+    </style>
+<script>
+	videojs.options.flash.swf = "${ctxPath!}/static/videojs/media/video-js.swf";
+</script>
+</head>
+<body>
+<script>
+	$(function() {
+		var winHeight = 0;
+		function findDimensions(){ //函数：获取尺寸
+			//获取窗口高度
+			if (window.innerHeight)
+				winHeight = window.innerHeight;
+			else if ((document.body) && (document.body.clientHeight))
+				winHeight = document.body.clientHeight;
+			//通过深入Document内部对body进行检测，获取窗口大小
+			if (document.documentElement && document.documentElement.clientHeight) {
+				winHeight = document.documentElement.clientHeight;
+			}
+			//结果输出至两个文本框
+			$(".main-wrap").css("height", winHeight);
+		}
+		findDimensions();
+		//调用函数，获取数值
+		window.onresize = findDimensions;
+		
+		var browserName = window.browser.name;
+		
+		$("#myPlayer").css("display","none");
+		//如果启动了flash，使用ckplayer，没有使用dpplayer，flash下载地址：https://get2.adobe.com/cn/flashplayer/
+		if(CKobject.Flash()['f']){
+			initCkplayer('${ctxPath!}${filePath}${fileName}');
+		}else{
+			$.cuslayer({
+				mode: "confirm",
+				msg: '您的浏览器尚未安装或启用Flash插件，无法播放媒体，请参照以下解决办法：<br>1. 如果您的浏览器没有安装Flash插件，请安装Flash插件'+
+					'<br>2. 如果您的浏览器已经安装Flash插件，请先启用允许Flash运行，并刷新页面<br>【您确定现在安装Flash插件吗？】',
+				yes: function(index){
+					layer.open({
+						type: 2,
+						content: "https://get2.adobe.com/cn/flashplayer/",
+						title: "正在跳转中...",
+						closeBtn : 1,
+						area:['20%', '20%'],
+						maxmin : false,
+					})
+				}
+			});
+		}
+		
+		function initVideojs(url){
+			videojs('myPlayer', {
+				techOrder : [ "html5", "flash" ],
+			}, function() {
+				this.src(url);
+			});
+		}
+		
+		function initCkplayer(url){
+			url = decodeURIComponent(url,true);
+			url = encodeURI(encodeURI(url));
+			var flashvars={
+			    f:url,
+			    c:0,
+				p:1,
+				s:0,
+				v:50,
+			};
+			var video=[url+'->video/mp4'];
+			var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
+			CKobject.embed('${ctxPath!}/static/media/ckplayer6.8/ckplayer/ckplayer.swf','a1','ckplayer_a1','100%','100%',false,flashvars,video,params);
+		}
+		
+		function initDpPlayer(url){
+			$("#dplayer").css("height", "100%");
+			var dp = new DPlayer({
+			    container: document.getElementById('dplayer'),
+			    autoplay: true,
+			    mutex: true,
+			    video: {
+			        url: url,
+			    },
+			});
+		}
+	})
+</script>
+    <div class="main-wrap">
+		 <video id="myPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay preload="auto"
+		      data-setup="{}">
+		  </video>
+	    <div id="dplayer"></div>
+	    <div id="a1"></div>
+    </div>
+</body>
+</html>

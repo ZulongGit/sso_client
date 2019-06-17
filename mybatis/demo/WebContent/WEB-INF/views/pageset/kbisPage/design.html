@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html class=" js canvas no-touch csstransforms csstransforms3d csstransitions video audio localstorage sessionstorage svg inlinesvg no-retina webkit no-ipad no-iphone no-ipod no-ios no-android" lang="zh_CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <title>表单设计器</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/bootstrap.min.css" type="text/css" media="screen" class="no-load">
+	<link rel="stylesheet" href="${ctxPath!}/viewdesign/css/nifty.min.css" type="text/css" media="screen" class="no-load">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/main.css" type="text/css" media="screen" class="no-load">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/font-awesome.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/themify-icons.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/colorpicker.css">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/select2.css">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/sweetalert.css">
+    <link rel="stylesheet" href="${ctxPath!}/viewdesign/css/toastr.min.css">
+</head>
+
+<body>
+    <div class="app">
+        <section class="layout">
+            <!-- 内容主体 -->
+            <section class="main-content bg-white">
+                <div class="headerbox">
+                    <header class="header navbar" style="padding:0px">
+					    
+                        <div class="pull-left">
+						    <div class="pull-left bg-info" style="width:60px;text-align:center">
+							<a style="font-size:18px;font-weight:bold;color:#ffffff;line-height:34px">KB<span style="color:#ADFF2F;font-weight:bold">i</span>S</a>
+							</div>
+                            <button type="button" class="btn btn-default navbar-btn" onclick="fd.design._new('#containers')">
+                                <i class="fa fa-plus-square-o"></i> 新 建
+                            </button>
+                            <button type="button" class="btn btn-default navbar-btn" onclick="fd.design.updata()">
+                                <i class="fa fa-save"></i> 保 存
+                            </button>
+                            <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#formModal" id="save-btn">
+                                <i class="fa fa-save"></i> 另 存 为
+                            </button>
+                            <div class="btn-group navbar-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown">
+                                    更 多 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li onclick="fd.design.load_reset()"><a data-toggle="modal" data-target="#resetModal" style="cursor:pointer;"><i class="fa fa-history"></i> 导 入</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.preview()"><i class="fa fa-eye"></i> 预 览</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.rest()" style="color:red;"><i class="fa fa-rotate-left"></i> 重 做</a></li>
+                                </ul>
+                                <input type="text" value="" id="cur-id">
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <div class="btn-group navbar-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown">
+                                    <i class="fa fa-arrows"></i> 移动布局 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="javascript:;" onclick="fd.design.move(&#39;up&#39;)"><i class="fa fa-arrow-circle-up"></i> 向上(左)移动</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.move(&#39;down&#39;)"><i class="fa fa-arrow-circle-down"></i> 向下(右)移动</a></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn btn-default navbar-btn" onclick="fd.design.remove()">
+                                <i class="fa fa-trash"></i> 删除选中
+                            </button>
+                            <div class="btn-group navbar-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown">
+                                    <i class="fa fa-table"></i> 表格操作 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="javascript:;" onclick="fd.design.table.merge()"><i class="fa fa-columns"></i> 合并单元格</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.table.insertRow(&#39;up&#39;)"><i class="fa fa-th"></i> 上方增加一行</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.table.insertRow(&#39;down&#39;)"><i class="fa fa-th"></i> 下方增加一行</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.table.insertCol(&#39;left&#39;)"><i class="ti-layout-column2"></i> 左侧增加一列</a></li>
+                                    <li><a href="javascript:;" onclick="fd.design.table.insertCol(&#39;right&#39;)"><i class="ti-layout-column2"></i> 右侧增加一列</a></li>
+                                </ul>
+                            </div>
+                            <button id="btnShowProp" type="button" class="btn btn-default navbar-btn hide" onclick="fd.design.showProperties(this, &#39;#btnHideProp&#39;, &#39;#asidePanel&#39;)">
+                                    <i class="fa fa-angle-double-left"></i> 属性面板
+                                </button>
+                            <button id="btnHideProp" type="button" class="btn btn-default navbar-btn" onclick="fd.design.hideProperties(this, &#39;#btnShowProp&#39;, &#39;#asidePanel&#39;)">
+                                    属性面板 <i class="fa fa-angle-double-right"></i>
+                                </button>
+                        </div>
+                    </header>
+                </div>
+                <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="convertModalLabel">请输入标题：</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" value="" id="form_id">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">关闭</button>
+                                <button type="button" class="btn btn-success" onclick="fd.design.save_layout()">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="resetModalLabel">请选择项目</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>序号</th>
+                                                <th>名称</th>
+                                                <th>时间</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="closeResetModal">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-wrap">
+                    <div class="tool-menu" id="tool-menu">
+                        <ul class="tool-list">
+                            <li class="list-li">
+                                <p><i class="fa fa-trello list-ico fz12"></i>布局</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#f1c40f;"><span>等分1列</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col12" id="v_col12">
+                                                    <div class="col-md-12 fd-view-drag-in tag p5-25 fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#e84c3d;"><span>等分2列</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col66" id="v_col66">
+                                                    <div class="col-md-6 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-6 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#2fcc71;"><span>等分3列</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col444" id="v_col444">
+                                                    <div class="col-md-4 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-4 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-4 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#e0117b;"><span>等分4列</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col3333" id="v_col3333">
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#3598dc;"><span>比例1/2</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col48" id="v_col48">
+                                                    <div class="col-md-4 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-8 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#f49a4c;"><span>比例1/3</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col39" id="v_col39">
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-9 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#dbe522;"><span>比例2/1</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col84" id="v_col84">
+                                                    <div class="col-md-8 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-4 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-columns fd-view-drag fa-2x" style="color:#9c59b8;"><span>比例3/1</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col93" id="v_col93">
+                                                    <div class="col-md-9 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+										<li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-square-o fd-view-drag fa-2x" style="color:#FFFFFF;"><span>自由布局</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row col" contenteditable="true" fd-view="col93" id="v_col93">
+                                                    <div class="col-md-9 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                    <div class="col-md-3 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-li">
+                                <p><i class="fa fa-cog list-ico fz12"></i>表单</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-bookmark-o fa-2x" style="color:#00C1DE"><span>标签</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <span contenteditable="true" fd-view="label" id="v_label">标签:</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-edit fa-2x" style="color:#8fc65e"><span>文本框</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <input type="text" class="form-control inline" fd-view="input" id="v_input" style="width:200px" data="{&#39;style&#39;:&#39;width:200px;&#39;}" field="">
+                                            </div>
+                                        </li>
+
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-window-maximize fa-2x" style="color:#7658f8"><span>多行文本</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <textarea class="form-control" fd-view="textarea" id="v_textarea" field=""></textarea>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-lock fa-2x" style="color:red"><span>密码框</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <input type="password" class="form-control inline" fd-view="password" id="v_password" style="width:200px" data="{&#39;style&#39;:&#39;width:200px;&#39;}" field="">
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-angle-down fa-2x" style="color:pink"><span>单选下拉</span></i>
+                                            </a>
+                                            </a>
+                                            <div class="view hide">
+                                                <select class="form-control" fd-view="select" id="v_select" style="width:200px" data="{&#39;style&#39;:&#39;width:200px;&#39;}" field="">
+                                                    <option>选项一</option>
+                                                    <option>选项二</option>
+                                                </select>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-angle-double-down fa-2x" style="color:#ec6180"><span>多选下拉</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <select class="form-control" multiple="multiple" fd-view="mult_select" id="mult_select" style="width:200px" data="{&#39;style&#39;:&#39;width:200px;&#39;}" field="">
+                                                    <option>选项一</option>
+                                                    <option>选项二</option>
+                                                </select>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-dot-circle-o fa-2x" style="color:skyblue"><span>单选按钮</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <label class="radio-inline">
+                                                    <input type="radio" fd-view="radio" id="v_radio" field=""> <span fd-view="label" contenteditable="true">单选按钮</span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-check-square-o fa-2x" style="color:#cb70d7"><span>复选按钮</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" fd-view="checkbox" id="v_checkbox" field=""><span fd-view="label" contenteditable="true">复选按钮</span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-check-square-o fa-2x" style="color:#eac14d"><span>上传文件</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <input type="file" class="form-control inline" fd-view="fileupload" id="v_fileupload">
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-hand-pointer-o fa-2x" style="color:#fee801"><span>普通按钮</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <button type="button" class="btn btn-default" fd-view="button" id="v_button">按 钮</button>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-hand-o-up fa-2x" style="color:#c1392b"><span>提交按钮</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <button type="submit" class="btn btn-default" fd-view="submit" id="v_submit">提 交</button>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-chevron-circle-down fd-view-drag fa-2x" style="color:#d82819;"><span>折叠面板</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row" contenteditable="true" fd-view="collapsePanel" id="v_collapsePanel">
+                                                    <div class="p10">
+                                                        <div class="p10_header">
+                                                            标题
+                                                            <div class="pull-right">
+                                                                <a href="javascript:;" class="collapse_handler"><i class="fa fa-chevron-circle-up"></i></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="bt bl br bb fd-view-drag-in collapse_content"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-server fd-view-drag fa-2x" style="color:#c9b382;"><span>动态面板</span></i></a>
+                                            <div class="view hide">
+                                                <div class="row" contenteditable="true" fd-view="dynamicPanel" id="v_cynamicPanel">
+                                                    <div class="p10">
+                                                        <div id="header" class="">
+                                                            标题
+                                                            <div class="pull-right">
+                                                                <a href="javascript:;" class="dynamic_handler" style="cursor: pointer;"><i class="ti-plus"></i> 添加</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="bt bl br bb p10 dynamic_content">
+                                                            <div class="item mb5">
+                                                                <table style="width:100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td style="width:99%">
+                                                                                <div class="fd-view-drag-in bb"></div>
+                                                                            </td>
+                                                                            <td><a class="dynamic_closer hide" style="cursor: pointer;"><i class="ti-close"></i> </a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-edit fa-2x fd-view-drag" style="color:#1bbc9d;"><span>表格标题</span></i></a>
+                                            <div class="view hide">
+                                                <div id="v_formtitle" fd-view="" class="bb h4">
+                                                    <h4 fd-view="formtitle">表格标题</h4>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-table fd-view-drag fa-2x" style="color:skyblue"><span>表格</span></i>  </a>
+                                            <div class="view hide">
+                                                <table id="v_table" fd-view="table" class="table table-">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th fd-view="table_th" class="fd-view-drag-in" style="width:25%;background-color:#29a0d6;" data="{&#39;style&#39;:&#39;width:25%&#39;}"></th>
+                                                            <th fd-view="table_th" class="fd-view-drag-in" style="width:25%;background-color:#29a0d6;" data="{&#39;style&#39;:&#39;width:25%&#39;}"></th>
+                                                            <th fd-view="table_th" class="fd-view-drag-in" style="width:25%;background-color:#29a0d6;" data="{&#39;style&#39;:&#39;width:25%&#39;}"></th>
+                                                            <th fd-view="table_th" class="fd-view-drag-in" style="width:25%;background-color:#29a0d6;" data="{&#39;style&#39;:&#39;width:25%&#39;}"></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                            <td fd-view="table_td" class="fd-view-drag-in" style="width:25%;" data="{&#39;style&#39;:&#39;width:25%&#39;}">
+                                                                <br>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-image fa-2x" style="color:#fee801"><span>图片</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <img src="" alt="" fd-view="image" id="v_image">
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-level-down fd-view-drag fa-2x" style="color:#ccc;"><span>换行符</span></i></a>
+                                            <div class="view hide">
+                                                <br fd-view="br">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+							 <li class="list-li">
+                                <p><i class="fa fa-cog list-ico fz12"></i>卡片</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-bookmark-o fa-2x" style="color:#00C1DE"><span>基础卡片</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                              <div class="panel panel-info" id="v_cardva" fd-view="cardva">
+											  <div class="pad-all text-center">
+												<span class="text-5x text-thin">53</span>
+												<p>Sales</p>
+												<i class="fa fa-shopping-cart"></i>
+											</div>
+											  </div>
+												
+											</div>
+
+                                           
+                                        </li>
+                                        
+
+                                        
+                                       
+                                       
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-li">
+                                <p><i class="fa fa-plus-square-o list-ico fz12"></i>组合</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-bookmark-o fa-2x" style="color:#00c1de"><span style="white-space:normal;line-height:1.5;">标签+文本框</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <table fd-move="" fd-view="label_input" id="v_label_input" style="width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td fd-view="table_td" style="min-width:5%;width:8%"><span contenteditable="true" fd-view="label" fd-label="" style="white-space: nowrap;">标签:</span></td>
+                                                            <td fd-view="table_td">
+                                                                <input type="text" class="form-control" fd-view="input" field="">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-lock fa-2x" style="color:red"><span style="white-space:normal;line-height:1.5;">标签+密码框</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <table fd-move="" fd-view="label_password" id="v_label_password" style="width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td fd-view="table_td" style="min-width:5%;width:8%"><span contenteditable="true" fd-view="label" fd-label="" style="white-space: nowrap;">标签:</span></td>
+                                                            <td fd-view="table_td">
+                                                                <input type="text" class="form-control" fd-view="password" field="">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-window-maximize fa-2x" style="color:#81d741"><span style="white-space:normal;line-height:1.5;">标签+多行文本</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <table fd-move="" fd-view="label_textarea" id="v_label_textarea" style="width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td fd-view="table_td" style="min-width:5%;width:8%"><span contenteditable="true" fd-view="label" fd-label="" style="white-space: nowrap;">标签:</span></td>
+                                                            <td fd-view="table_td">
+                                                                <textarea class="form-control" fd-view="textarea" field=""></textarea>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-angle-down fa-2x" style="color:pink"><span style="white-space:normal;line-height:1.5;">标签+单选下拉</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <table fd-move="" fd-view="label_textarea" id="v_label_textarea" style="width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td fd-view="table_td" style="min-width:5%;width:8%"><span contenteditable="true" fd-view="label" fd-label="" style="white-space: nowrap;">标签:</span></td>
+                                                            <td fd-view="table_td">
+                                                                <select class="form-control" fd-view="select" field="">
+                                                                    <option>选项一</option>
+                                                                    <option>选项二</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-dot-circle-o fa-2x" style="color:#fff"><span style="white-space:normal;line-height:1.5;">单选按钮组</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div fd-move="" fd-view="radio_group" id="v_label_input">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="radio1" fd-view="radio" id="v_radio" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="radio1" fd-view="radio" id="v_radio" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="radio1" fd-view="radio" id="v_radio" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-check-square-o fa-2x" style="color:#cb70d7"><span style="white-space:normal;line-height:1.5;">复选按钮组</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div fd-move="" fd-view="checkbox_group" id="v_checkbox_input">
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" name="checkbox1" fd-view="checkbox" id="v_checkbox" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" name="checkbox1" fd-view="checkbox" id="v_checkbox" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" name="checkbox1" fd-view="checkbox" id="v_checkbox" field="">
+                                                        <span fd-view="label" contenteditable="true">名称</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-cny fa-2x" style="color:#e0505c"><span style="white-space:normal;line-height:1.5;">金额区间</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div fd-view="moneyrange" id="v_moneyrange">
+                                                    <input id="start" type="text" fd-view="input" class="form-control inline" style="width:40%;text-align:right;" placeholder="￥" rules="money" data="{&#39;rules&#39;:[&#39;money&#39;],&#39;css_align&#39;:&#39;right&#39;}" field="">                                                    -
+                                                    <input id="end" type="text" fd-view="input" class="form-control inline" style="width:40%;text-align:right;" placeholder="￥" rules="money" data="{&#39;rules&#39;:[&#39;money&#39;],&#39;css_align&#39;:&#39;right&#39;}" field="">
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-navicon fa-2x" style="color:#fee801"><span style="white-space:normal;line-height:1.5;">动态下拉表格</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div fd-view="dynamictable" id="v_dynamictable" class="input-group inline">
+                                                    <input type="text" class="form-control inline" readonly="readonly">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default" type="button">选择</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-li">
+                                <p><i class="fa fa-area-chart list-ico fz12"></i>图表</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-bar-chart fa-2x" style="color:#f1c40f"><span>柱形图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="bar" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-pie-chart fa-2x" style="color:pink"><span>饼图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="pie" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-line-chart fa-2x" style="color:#e84c3d"><span>折线图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="line" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-spinner fa-2x" style="color:skyblue"><span>散点图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="scatter" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-connectdevelop fd-view-drag fa-2x" style="color:#16a05d"><span>雷达图</span></i> 
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="radar" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fa-tachometer fd-view-drag fa-2x" style="color:orange"><span>仪表盘</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="gauge" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-thermometer-empty fa-2x fd-view-drag" style="color:#c2162c;"><span>热力图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="heatmap" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-hourglass-start fa-2x" style="color:#cab580;"><span>漏斗图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="funnel" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-align-left fa-2x" style="color:#3598dc;"><span>条形图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="bar_x" style="min-width:400px;min-height:300px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+							<li class="list-li">
+                                <p><i class="fa fa-bullseye list-ico fz12"></i>地图</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-file-image-o fa-2x" style="color:#f1c40f"><span>全国</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="bar" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-pie-chart fa-2x" style="color:pink"><span>城市</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="pie" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-line-chart fa-2x" style="color:#e84c3d"><span>热力地图</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="line" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-spinner fa-2x" style="color:skyblue"><span>位置</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="scatter" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            </li>
+						
+							<li class="list-li">
+                                <p><i class="fa fa-space-shuttle list-ico fz12"></i>组件</p>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-bar-chart fa-2x" style="color:#f1c40f"><span>视频</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class=" " name="video" style="min-width:400px;min-height:400px;width:100%;height:100%;">
+												<video  width="100%" height="100%" controls="controls">
+													<source src="img/video.mp4" type="video/mp4">
+												</video>
+																								
+												</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-pie-chart fa-2x" style="color:pink"><span>页面</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div  name="page" style="min-width:400px;min-height:400px;width:100%;height:100%;">
+												<iframe src="" style="min-height:400px;width:100%;height:100%"></iframe>
+												
+												</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"> <i class="fa fd-view-drag fa-line-chart fa-2x" style="color:#e84c3d"><span>时钟</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="line" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fd-view-drag fa-spinner fa-2x" style="color:skyblue"><span>组态</span></i>
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="" name="page-z"  fd-view="cardva" style="min-width:400px;min-height:400px;width:100%;height:100%;">
+												<img src="img/page-z.png"  width="100%">
+												
+												</div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-connectdevelop fd-view-drag fa-2x" style="color:#16a05d"><span>消息</span></i> 
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="radar" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+										<li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-connectdevelop fd-view-drag fa-2x" style="color:#16a05d"><span>警告灯</span></i> 
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="radar" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+										<li class="list-group-item">
+                                            <a href="javascript:;"><i class="fa fa-connectdevelop fd-view-drag fa-2x" style="color:#16a05d"><span>用户</span></i> 
+                                            </a>
+                                            <div class="view hide">
+                                                <div class="charts mbc " name="radar" style="min-width:400px;min-height:400px;width:100%;height:100%;"></div>
+                                            </div>
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            </li>
+							
+                        </ul>
+                    </div>
+                    <div class="wrapper" style="height:100%;">
+                        <div class="row" style="height:100%;">
+                            <div class="panel col-md-10" id="content-box">
+                                <div class="panel-body" id="maincontent">
+                                    <div class="containers fd-view-drag-in" id="containers">
+                                        <div class="row col" contenteditable="true" fd-view="col66" id="v_col66">
+                                            <div class="col-md-6 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                            <div class="col-md-6 fd-view-drag-in p5-25 tag fd-view-"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="asidePanel col-md-2" id="asidePanel">
+                                <div class="">
+                                    <div class="panel-heading" style="height:30px;line-height:30px;padding-left:10px"><i class="fa fa-sliders"></i> 属性面板</div>
+                                    <div class="panel-body" style="min-height: 630px;">
+                                        <div class="nav-tabs-custom no-shadow">
+                                            <ul class="nav nav-tabs nav-tabs nav-justified" role="tablist" id="propertyTab">
+                                                <li class="active"><a href="design#pro_content1" data-toggle="tab">表单属性</a></li>
+                                                <li class=""><a href="design#pro_content3" data-toggle="tab">图表属性</a></li>
+                                                <li class=""><a id="databind" href="design#pro_content4" data-toggle="tab">数据绑定</a></li>
+                                                <li class=""><a href="design#pro_content2" data-toggle="tab">控件属性</a></li>
+                                            </ul>
+                                            <div class="tab-content no-p">
+                                                <div class="tab-pane fade p5" id="pro_content1">
+                                                    <div class="properties">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-puzzle-piece"></i> 样式</label>
+                                                            <select class="form-control" name="formClass" onchange="$(fd.config.containerPanel).attr(&#39;class&#39;, &#39;containers fd-view-drag-in &#39;+this.value)">
+                                                                <option value="">无</option>
+                                                                <optgroup label="背景">
+                                                                    <option value="bg-default">bg-default</option>
+                                                                    <option value="bg-primary">bg-primary</option>
+                                                                    <option value="bg-info">bg-info</option>
+                                                                    <option value="bg-warning">bg-warning</option>
+                                                                    <option value="bg-success">bg-success</option>
+                                                                    <option value="bg-danger">bg-danger</option>
+                                                                </optgroup>
+                                                                <optgroup label="文字">
+                                                                    <option value="text-muted">text-muted</option>
+                                                                    <option value="text-primary">text-primary</option>
+                                                                    <option value="text-info">text-info</option>
+                                                                    <option value="text-warning">text-warning</option>
+                                                                    <option value="text-success">text-success</option>
+                                                                    <option value="text-danger">text-danger</option>
+                                                                </optgroup>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-dashboard"></i> 背景颜色</label>
+                                                            <input type="text" name="formBgColor" class="form-control colorPicker" placeholder="#FFFFF" onblur="$(fd.config.containerPanel).css(&#39;backgroundColor&#39;, this.value);">
+                                                        </div>
+                                                        <!--<div class="form-group">
+                                                            <label>表单完成提示</label>
+                                                            <textarea name="formTip" class="form-control" onchange="$(fd.config.containerPanel).attr(&#39;tip&#39;, this.value)"></textarea>
+                                                        </div>-->
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade p5" id="pro_content2">
+                                                    <div class="properties">
+                                                        <div class="panel-group" id="accordionProperty">
+                                                            <div class="panel hide">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="#c1" class="collapsed"><i class="ti-menu-alt"></i> 常规</a>
+                                                                </div>
+                                                                <div id="c1" class="panel-collapse collapse">
+                                                                    <div class="panel-body p5">
+                                                                        <div class="form-group hide" fd-property="field">
+                                                                            <label>数据字段</label>
+                                                                            <input type="text" name="field" id="p_field" class="form-control" placeholder="数据字段名称">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="id">
+                                                                            <label>标识</label>
+                                                                            <input type="text" name="id" class="form-control" placeholder="控件ID">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="name">
+                                                                            <label>控件名称</label>
+                                                                            <input type="text" name="name" class="form-control" placeholder="控件名称">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="value">
+                                                                            <label>默认值</label>
+                                                                            <input type="text" name="value" class="form-control" placeholder="控件值">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="text">
+                                                                            <label>显示文本</label>
+                                                                            <input type="text" name="text" class="form-control" placeholder="显示文本">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="label_text">
+                                                                            <label>显示文本</label>
+                                                                            <input type="text" name="label_text" class="form-control" placeholder="显示文本">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="placeholder">
+                                                                            <label>提示文本</label>
+                                                                            <input type="text" name="placeholder" class="form-control" placeholder="提示">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="url">
+                                                                            <label>URL地址</label>
+                                                                            <input type="text" name="url" class="form-control" placeholder="URL地址">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="type">
+                                                                            <label>控件类型</label>
+                                                                            <select class="form-control" name="type">
+                                                                                <optgroup label="文本框类型">
+                                                                                    <option value="text">text</option>
+                                                                                    <option value="password">password</option>
+                                                                                    <option value="number">number</option>
+                                                                                    <option value="email">email</option>
+                                                                                    <option value="hidden">hidden</option>
+                                                                                </optgroup>
+                                                                                <optgroup label="按钮类型">
+                                                                                    <option value="button">button</option>
+                                                                                    <option value="submit">submit</option>
+                                                                                </optgroup>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="dateFormat">
+                                                                            <label>日期格式</label>
+                                                                            <select class="form-control" name="dateFormat">
+                                                                                <option value="yyyy年mm月dd日">yyyy年mm月dd日</option>
+                                                                                <option value="yyyy/mm/dd">yyyy/mm/dd</option>
+                                                                                <option value="yyyy-mm-dd">yyyy-mm-dd</option>
+                                                                                <option value="yyyy年mm月">yyyy年mm月</option>
+                                                                                <option value="yyyy/mm">yyyy/mm</option>
+                                                                                <option value="yyyy-mm">yyyy-mm</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel hide">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="#c2" class="collapsed"><i class="ti-layout-slider"></i> 文本/密码</a>
+                                                                </div>
+                                                                <div id="c2" class="panel-collapse collapse">
+                                                                    <div class="panel-body">
+                                                                        <div class="form-group hide" fd-property="maxlength">
+                                                                            <label>最大长度maxlength</label>
+                                                                            <input type="text" name="maxlength" class="form-control" placeholder="最大长度">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="readonly">
+                                                                            <label>只读</label>
+                                                                            <select class="form-control" name="readonly">
+                                                                                <option value="false">否</option>
+                                                                                <option value="true">是</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel hide">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#c3" class="collapsed"><i class="ti-check-box"></i> 单选/复选框</a>
+                                                                </div>
+                                                                <div id="c3" class="panel-collapse collapse">
+                                                                    <div class="panel-body">
+                                                                        <div class="form-group hide" fd-property="checked">
+                                                                            <label>选中</label>
+                                                                            <select class="form-control" name="checked">
+                                                                                <option value="false">否</option>
+                                                                                <option value="true">是</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="number">
+                                                                            <label>数量</label>
+                                                                            <input type="text" name="number" class="form-control" placeholder="数量">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="n#c4" class="collapsed"><i class="fa fa-puzzle-piece"></i> 样式</a>
+                                                                </div>
+                                                                <div id="c4" class="panel-collapse collapse p5">
+                                                                    <div class="panel-body ">
+																		 <div class="form-group" fd-property="css_bgstyle">
+																			<label><i class="fa fa-puzzle-piece"></i> 样式</label>
+																			<select class="form-control" name="css_bgstyle"">
+																				<option value="">无</option>
+																				<optgroup label="背景">
+																					<option value="bg-default">bg-default</option>
+																					<option value="bg-primary">bg-primary</option>
+																					<option value="bg-info">bg-info</option>
+																					<option value="bg-warning">bg-warning</option>
+																					<option value="bg-success">bg-success</option>
+																					<option value="bg-danger">bg-danger</option>
+																				</optgroup>
+																				<optgroup label="文字">
+																					<option value="text-muted">text-muted</option>
+																					<option value="text-primary">text-primary</option>
+																					<option value="text-info">text-info</option>
+																					<option value="text-warning">text-warning</option>
+																					<option value="text-success">text-success</option>
+																					<option value="text-danger">text-danger</option>
+																				</optgroup>
+																			</select>
+																		</div>
+	
+                                                                        <div class="form-group" fd-property="css_align">
+                                                                            <label>对齐方式</label>
+                                                                            <select class="form-control" name="css_align">
+                                                                                <option value="left">左对齐</option>
+                                                                                <option value="center">居中对齐</option>
+                                                                                <option value="right">右对齐</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="css_fontColor">
+                                                                            <label>文字颜色</label>
+                                                                            <input type="text" name="css_fontColor" class="form-control colorPicker" placeholder="#FFFFFF">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="css_backgroundColor">
+                                                                            <label>背景颜色</label>
+                                                                            <input type="text" name="css_backgroundColor" class="form-control colorPicker" placeholder="#FFFFFF">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="css_width">
+                                                                            <label>宽度</label>
+                                                                            <input type="text" name="css_width" class="form-control" placeholder="px">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="css_height">
+                                                                            <label>高度</label>
+                                                                            <input type="text" name="css_height" class="form-control" placeholder="px">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="css_padding">
+                                                                            <label>内填充</label>
+                                                                            <input type="text" name="css_padding" class="form-control" placeholder="上  右  下  左">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="css_margin">
+                                                                            <label>外填充</label>
+                                                                            <input type="text" name="css_margin" class="form-control" placeholder="上  右  下  左">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#c5"><i class="ti-info-alt"></i> CSS/辅助功能</a>
+                                                                </div>
+                                                                <div id="c5" class="panel-collapse collapse in p5">
+                                                                    <div class="panel-body ">
+                                                                        <div class="form-group" fd-property="$class">
+                                                                            <label>Class</label>
+                                                                            <input type="text" name="$class" class="form-control" placeholder="样式">
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="style">
+                                                                            <label>Style</label>
+                                                                            <textarea class="form-control" name="style"></textarea>
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="title">
+                                                                            <label>Title</label>
+                                                                            <input type="text" name="title" class="form-control" placeholder="鼠标悬浮时显示的文本">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="panel">
+                                                                <div class="panel-heading head-sub">
+                                                                    <a data-toggle="collapse" data-parent="#accordionProperty" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#c7" class="collapsed"><i class="ti-more"></i> 其他</a>
+                                                                </div>
+                                                                <div id="c7" class="panel-collapse collapse p5">
+                                                                    <div class="panel-body ">
+                                                                        <div class="form-group hide" fd-property="table_rows">
+                                                                            <label>行数</label>
+                                                                            <input type="number" name="controlTableRows" class="form-control" placeholder="数字">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="table_cols">
+                                                                            <label>列数</label>
+                                                                            <input type="number" name="controlTableCols" class="form-control" placeholder="数字">
+                                                                        </div>
+                                                                        <div class="form-group hide" fd-property="table_header_show">
+                                                                            <label>表头显示</label>
+                                                                            <select class="form-control" name="controlRequired">
+                                                                                <option value="true">是</option>
+                                                                                <option value="false">否</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group" fd-property="editable">
+                                                                            <label>可编辑</label>
+                                                                            <select class="form-control" name="controlRequired">
+                                                                                <option value="true">是</option>
+                                                                                <option value="false">否</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade p5" id="pro_content3">
+                                                    <div class="panel-group" id="accordionCharts">
+                                                        <div class="panel">
+                                                            <div class="panel-heading head-sub">
+                                                                <a data-toggle="collapse" data-parent="#accordionCharts" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#ec1" class="collapsed"><i class="fa fa-puzzle-piece"></i> 样式</a>
+                                                            </div>
+                                                            <div id="ec1" class="panel-collapse collapse in p5">
+                                                                <div class="panel-body ">
+                                                                    <div class="form-group">
+                                                                        <label>标题</label>
+                                                                        <input type="text" name="title|text" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>标题字号</label>
+                                                                        <input type="text" name="title|textStyle|fontSize" class="c-edit" placeholder="18">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>标题颜色</label>
+                                                                        <input type="text" name="title|textStyle|color" class="charts-color c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>副标题</label>
+                                                                        <input type="text" name="title|subtext" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>副标题字号</label>
+                                                                        <input type="text" name="title|subtextStyle|fontSize" class="c-edit" placeholder="18">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>副标题颜色</label>
+                                                                        <input type="text" name="title|subtextStyle|color" class="charts-color c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>整体字号</label>
+                                                                        <input type="text" name="textStyle|fontSize" class="c-edit" placeholder="12">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>内边距左</label>
+                                                                        <input type="text" name="grid|left" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>右</label>
+                                                                        <input type="text" name="grid|right" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>上</label>
+                                                                        <input type="text" name="grid|top" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>下</label>
+                                                                        <input type="text" name="grid|bottom" class="c-edit">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel">
+                                                            <div class="panel-heading head-sub">
+                                                                <a data-toggle="collapse" data-parent="#accordionCharts" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#xz" class="collapsed"><i class="fa fa-arrows-h"></i> X轴</a>
+                                                            </div>
+                                                            <div id="xz" class="panel-collapse collapse p5">
+                                                                <div class="panel-body ">
+                                                                    <div class="form-group">
+                                                                        <label>坐标名称</label>
+                                                                        <input type="text" name="xAxis|name" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>名称字号</label>
+                                                                        <input type="text" name="xAxis|nameTextStyle|fontSize" class="c-edit" placeholder="12">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>坐标字号</label>
+                                                                        <input type="text" name="xAxis|axisLabel|textStyle|fontSize" class="c-edit" placeholder="12">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>倾斜角度</label>
+                                                                        <input type="text" name="xAxis|axisLabel|rotate" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>线型</label>
+                                                                        <select name="xAxis|splitLine|lineStyle|type" class="c-edit">
+                                                                                <option value=""></option>
+                                                                                <option value="solid">实线</option>
+                                                                                <option value="dotted">点线</option>
+                                                                                <option value="dashed">虚线</option>
+                                                                            </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel">
+                                                            <div class="panel-heading head-sub">
+                                                                <a data-toggle="collapse" data-parent="#accordionCharts" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#yz" class="collapsed"> &nbsp;<i class="fa fa-arrows-v"></i> &nbsp;Y轴</a>
+                                                            </div>
+                                                            <div id="yz" class="panel-collapse collapse p5">
+                                                                <div class="panel-body ">
+                                                                    <div class="form-group">
+                                                                        <label>坐标名称</label>
+                                                                        <input type="text" name="yAxis|name" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>名称字号</label>
+                                                                        <input type="text" name="yAxis|nameTextStyle|fontSize" class="c-edit" placeholder="12">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>坐标字号</label>
+                                                                        <input type="text" name="yAxis|axisLabel|textStyle|fontSize" class="c-edit">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>线型</label>
+                                                                        <select name="yAxis|splitLine|lineStyle|type" class="c-edit">
+                                                                                <option value=""></option>
+                                                                                <option value="solid">实线</option>
+                                                                                <option value="dotted">点线</option>
+                                                                                <option value="dashed">虚线</option>
+                                                                            </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>倾斜角度</label>
+                                                                        <input type="text" name="yAxis|axisLabel|rotate" class="c-edit">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel">
+                                                            <div class="panel-heading head-sub">
+                                                                <a data-toggle="collapse" data-parent="#accordionCharts" href="http://127.0.0.1:8880/jrelax-bi/bi/form/design#cc1" class="collapsed"><i class="fa fa-dashboard"></i> 颜色系列</a>
+                                                            </div>
+                                                            <div id="cc1" class="panel-collapse collapse  p5">
+                                                                <div class="panel-body">
+                                                                    <div class="form-group">
+                                                                        <label>颜色1</label>
+                                                                        <input type="text" name="color|0" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色2</label>
+                                                                        <input type="text" name="color|1" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色3</label>
+                                                                        <input type="text" name="color|2" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色4</label>
+                                                                        <input type="text" name="color|3" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色5</label>
+                                                                        <input type="text" name="color|4" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色6</label>
+                                                                        <input type="text" name="color|5" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色7</label>
+                                                                        <input type="text" name="color|6" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色8</label>
+                                                                        <input type="text" name="color|7" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色9</label>
+                                                                        <input type="text" name="color|8" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色10</label>
+                                                                        <input type="text" name="color|9" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>颜色11</label>
+                                                                        <input type="text" name="color|10" class="charts-color c-edit" value="">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade p5" id="pro_content4">
+                                                    <div id="databindProperties" class="properties">
+                                                    </div>
+                                                </div>                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 hide">
+                            <div class="alert alert-warning m5">
+                                按住Ctrl键可多选，按住Alt键选择整个控件
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="exit-offscreen"></a>
+    </div>
+    </section>
+    </section>
+    </div>
+    <div id="mask" style="display:none">
+        <header>
+            <button type="button" class="btn btn-default btn-xs" onclick="close_mask()">关闭</button>
+        </header>
+        <div class="content"></div>
+    </div>
+    <div id="layout-cache" style="display:none"></div>
+    
+    <!-- 必需脚本 -->
+    <!-- load modernizer -->
+    <script src="${ctxPath!}/viewdesign/js/jquery-1.11.1.min.js" class="no-load"></script>
+    <script src="${ctxPath!}/viewdesign/js/bootstrap.js" class="no-load"></script>
+    <!-- 页面组件 -->
+    <script src="${ctxPath!}/viewdesign/js/jquery.dragg.min.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/bootstrap-colorpicker.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/select2.min.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/sweetalert.min.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/echarts.js"></script>
+	<script src="${ctxPath!}/viewdesign/js/macarons.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/toastr.min.js"></script>
+    <!-- 本页面脚本 -->
+    <script src="${ctxPath!}/viewdesign/js/mycharts.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/formdesign.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/formdesign.config.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/formdesign.design.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/chartdata.js"></script>
+    <script src="${ctxPath!}/viewdesign/js/databind.js"></script>
+    <script>
+        var pageId="${id}";
+        
+        
+        $(document).ready(function() {
+           
+            if(pageId&&pageId!="")
+            	{
+            	alert("加载页面："+pageId);
+            	
+            	loadPage(pageId);
+            	toastr.success('页面加载完成');
+            	$('#cur-id').val(pageId);
+            	}
+            
+            fd.design.init();
+            toastr.success('页面 初始化完成');
+        });
+    </script>
+</body>
+
+</html>
+</body>
+
+</html>

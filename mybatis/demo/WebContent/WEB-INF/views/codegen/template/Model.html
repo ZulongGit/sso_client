@@ -1,0 +1,82 @@
+package ${p.packageName}.model;
+
+import java.util.*;
+
+import com.krm.common.base.BaseEntity;
+import com.krm.common.base.BaseFile;
+
+import javax.persistence.Transient;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import com.krm.common.utils.excel.annotation.ExcelField;
+
+/**
+ * 
+ * \@author ${p.author}
+ * ${t.remarks}javaBean
+ * ${p.date}
+ */
+\@Table(name="${t.tableName}")
+public class ${p.entityNameU} extends BaseEntity<${p.entityNameU}>{
+	
+	private static final long serialVersionUID = 1L;
+	
+@for(item in f){
+	@if(t.isImport == 'Y' || t.isExport == 'Y'){
+		@if(item.isUse == 'Y' && item.isListShow == 'Y'){
+			@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") == -1){
+	\@ExcelField(filedTitle="${item.remarks}", filedAlign=1, sorts=${itemLP.index}, dictionType="${item.dictType!}")
+			@}else{
+	\@ExcelField(filedTitle="${item.remarks}", filedAlign=1, sorts=${itemLP.index})
+			@}
+		@}
+	@}
+@if(item.isPrimary == 'Y'){
+	\@Id
+@}
+    private ${item.javaType}  ${item.fieldName};      //${item.remarks}
+@}
+	\@Transient
+	private List<BaseFile>	upfileList;			//批量上传文件list
+	
+	public ${p.entityNameU}() {
+    	super.setModuleName("${t.remarks}");
+	}
+@for(item in f){
+	/**
+	 * ${item.remarks}
+	 * \@param ${item.fieldName}
+	 */
+	public void set${stringutil.getMaxName(item.fieldName)}(${item.javaType} ${item.fieldName}) {
+		this.${item.fieldName} = ${item.fieldName};
+	}
+	public ${item.javaType} get${stringutil.getMaxName(item.fieldName)}() {
+		return ${item.fieldName};
+	}
+@}
+
+	/**
+	 * 批量上传文件list
+	 * \@param upfileList
+	 */
+	public List<BaseFile> getUpfileList() {
+		return upfileList;
+	}
+	public void setUpfileList(List<BaseFile> upfileList) {
+		this.upfileList = upfileList;
+	}
+
+	\@Override
+	public String toString() {
+  @var str = t.remarks + '： {';
+  @for(item in f){
+    @if(itemLP.last){
+      @str = str + '\\"'+item.fieldName + '\\": \\""+'+item.fieldName + '+"\\"';
+    @}else{
+      @str = str + '\\"'+item.fieldName + '\\": \\""+'+item.fieldName + '+"\\", ';
+    @}
+  @}
+  @str = str + "}";
+		return "${str}";
+	}
+}

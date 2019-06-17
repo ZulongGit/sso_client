@@ -1,0 +1,161 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">ID：</label>
+              <div class="col-sm-8">
+                <input id="id" name="id" type="text" value="${entry.id!}" maxlength="32"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">对象名称：</label>
+              <div class="col-sm-8">
+                <input id="objName" name="objName" type="text" value="${entry.objName!}" maxlength="100"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">对象标识：</label>
+              <div class="col-sm-8">
+                <input id="objBs" name="objBs" type="text" value="${entry.objBs!}" maxlength="100"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">对象类型：</label>
+              <div class="col-sm-8">
+                <input id="objType" name="objType" type="text" value="${entry.objType!}" maxlength="10"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建人：</label>
+              <div class="col-sm-8">
+                <input id="createBy" name="createBy" type="text" value="${entry.createBy!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建时间：</label>
+              <div class="col-sm-8">
+                <input id="createDate" name="createDate" type="text" value="${entry.createDate!}" maxlength="7"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">修改时间：</label>
+              <div class="col-sm-8">
+                <input id="updateDate" name="updateDate" type="text" value="${entry.updateDate!}" maxlength="7"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">修改人：</label>
+              <div class="col-sm-8">
+                <input id="updateBy" name="updateBy" type="text" value="${entry.updateBy!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">状态：</label>
+              <div class="col-sm-8">
+                <input id="status" name="status" type="text" value="${entry.status!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">是否忽略：</label>
+              <div class="col-sm-8">
+                <input id="isIgnore" name="isIgnore" type="text" value="${entry.isIgnore!}" maxlength="1"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">描述：</label>
+              <div class="col-sm-8">
+                <input id="description" name="description" type="text" value="${entry.description!}" maxlength="500"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">反馈信息：</label>
+              <div class="col-sm-8">
+                <input id="feedback" name="feedback" type="text" value="${entry.feedback!}" maxlength="500"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">规则编码：</label>
+              <div class="col-sm-8">
+                <input id="ruleCode" name="ruleCode" type="text" value="${entry.ruleCode!}" maxlength="100"  />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入ID！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/abnormal/demoAbnormalData/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

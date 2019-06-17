@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.ProjectsMapper">
+	
+	<!-- 查询个人参与的所有项目id -->
+	<select id="queryMyProject" resultType="java.lang.String">
+		SELECT DISTINCT t.pro_id from(
+			SELECT p.id pro_id from gen_projects p WHERE p.CREATE_BY = #{userId}
+			union ALL
+			SELECT m.PRO_ID from gen_pro_team_member m WHERE m.member_id = #{userId}
+		)t
+	</select>
+	
+	<!-- 重写了分页查询-->
+	<!-- my_built:是否是我创建标记 -->
+	<select id="queryPageList" resultType="com.krm.common.base.CommonEntity">
+		select DISTINCT <include refid="projectsAliasColumns" />, u.name u_name, m.POST
+			, F_CHANGE_TO_DICT('member_type', m.POST) POST_TEXT, 'Y' my_built 
+		from gen_projects  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		left join gen_pro_team_member m on t.ID = m.PRO_ID <if test="@Ognl@isNotBlank(userId)"> and m.MEMBER_ID = #{userId} </if>
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proName)">and t.PRO_NAME like CONCAT('%', #{proName}, '%')</if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> 
+				and t.ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+			<if test="@Ognl@isNotBlank(userId)"> and t.CREATE_BY = #{userId} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+		union all
+		select DISTINCT <include refid="projectsAliasColumns" />, u.name u_name, m.POST 
+			, F_CHANGE_TO_DICT('member_type', m.POST) POST_TEXT, 'N' my_built  
+		from gen_projects  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		left join gen_pro_team_member m on t.ID = m.PRO_ID
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proName)">and t.PRO_NAME like CONCAT('%', #{proName}, '%') </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> 
+				and t.ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+			<if test="@Ognl@isNotBlank(userId)"> and t.CREATE_BY != #{userId} and m.member_id = #{userId} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.abnormal.mapper.DemoAbnormalDataMapper">
+
+	<!-- 表字段 -->
+	<sql id="demoAbnormalDataColumns">
+		 ID, OBJ_NAME, OBJ_BS, OBJ_TYPE, CREATE_BY, CREATE_DATE, UPDATE_DATE, UPDATE_BY, STATUS, IS_IGNORE,
+		 DESCRIPTION, FEEDBACK, RULE_CODE
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demoAbnormalDataAliasColumns">
+         t.ID, t.OBJ_NAME, t.OBJ_BS, t.OBJ_TYPE, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_DATE, t.UPDATE_BY, t.STATUS, t.IS_IGNORE,
+		 t.DESCRIPTION, t.FEEDBACK, t.RULE_CODE
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="demoAbnormalDataAliasColumns" />, u.name u_name 
+		from demo_abnormal_data  t
+		left join sys_user u on t.UPDATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(objName)">and t.OBJ_NAME = #{objName} </if>
+			<if test="@Ognl@isNotBlank(objBs)">and t.OBJ_BS = #{objBs} </if>
+			<if test="@Ognl@isNotBlank(objType)">and t.OBJ_TYPE = #{objType} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(isIgnore)">and t.IS_IGNORE = #{isIgnore} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(feedback)">and t.FEEDBACK = #{feedback} </if>
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.abnormal.model.DemoAbnormalData">
+        select  <include refid="demoAbnormalDataAliasColumns" />
+		from demo_abnormal_data  t
+		left join sys_user u on t.UPDATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(objName)">and t.OBJ_NAME = #{objName} </if>
+			<if test="@Ognl@isNotBlank(objBs)">and t.OBJ_BS = #{objBs} </if>
+			<if test="@Ognl@isNotBlank(objType)">and t.OBJ_TYPE = #{objType} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(isIgnore)">and t.IS_IGNORE = #{isIgnore} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(feedback)">and t.FEEDBACK = #{feedback} </if>
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.abnormal.model.DemoAbnormalData">
+		select  <include refid="demoAbnormalDataAliasColumns" />
+		from demo_abnormal_data  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(objName)"> and t.OBJ_NAME = #{objName} </if>
+			<if test="@Ognl@isNotBlank(objBs)"> and t.OBJ_BS = #{objBs} </if>
+			<if test="@Ognl@isNotBlank(objType)"> and t.OBJ_TYPE = #{objType} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(status)"> and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(isIgnore)"> and t.IS_IGNORE = #{isIgnore} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(feedback)"> and t.FEEDBACK = #{feedback} </if>
+			<if test="@Ognl@isNotBlank(ruleCode)"> and t.RULE_CODE = #{ruleCode} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demoAbnormalDataAliasColumns" />, u.name u_name 
+		from demo_abnormal_data  t
+		left join sys_user u on t.UPDATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(objName)">and t.OBJ_NAME = #{objName} </if>
+			<if test="@Ognl@isNotBlank(objBs)">and t.OBJ_BS = #{objBs} </if>
+			<if test="@Ognl@isNotBlank(objType)">and t.OBJ_TYPE = #{objType} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(isIgnore)">and t.IS_IGNORE = #{isIgnore} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(feedback)">and t.FEEDBACK = #{feedback} </if>
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demo_abnormal_data(<include refid="demoAbnormalDataColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.id, jdbcType = VARCHAR},
+		    	#{item.objName, jdbcType = VARCHAR},
+		    	#{item.objBs, jdbcType = VARCHAR},
+		    	#{item.objType, jdbcType = VARCHAR},
+		    	#{item.createBy, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.updateDate, jdbcType = DATE},
+		    	#{item.updateBy, jdbcType = VARCHAR},
+		    	#{item.status, jdbcType = VARCHAR},
+		    	#{item.isIgnore, jdbcType = VARCHAR},
+		    	#{item.description, jdbcType = VARCHAR},
+		    	#{item.feedback, jdbcType = VARCHAR},
+				#{item.ruleCode, jdbcType = VARCHAR}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demo_abnormal_data
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(objName)"> and OBJ_NAME = #{objName} </if>
+			<if test="@Ognl@isNotBlank(objBs)"> and OBJ_BS = #{objBs} </if>
+			<if test="@Ognl@isNotBlank(objType)"> and OBJ_TYPE = #{objType} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(status)"> and STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(isIgnore)"> and IS_IGNORE = #{isIgnore} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(feedback)"> and FEEDBACK = #{feedback} </if>
+			<if test="@Ognl@isNotBlank(ruleCode)"> and RULE_CODE = #{ruleCode} </if>
+		</where>
+	</delete>
+</mapper>

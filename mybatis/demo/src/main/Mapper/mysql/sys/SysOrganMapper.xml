@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysOrganMapper">
+
+	<sql id="SysOrganColumns">
+		id,address,area_id,code,create_by,create_date,del_flag,email,fax,grade,master,
+		name,parent_id,parent_ids,phone,remarks,type,update_by,update_date,zip_code,icon
+	</sql>
+	
+	<sql id="SysOrganAliasColumns">
+		t1.id,t1.address,t1.area_id,t1.code,t1.create_by,t1.create_date,t1.del_flag,t1.email,t1.fax,t1.grade,t1.master,
+		t1.name,t1.parent_id,t1.parent_ids,t1.phone,t1.remarks,t1.type,t1.update_by,t1.update_date,t1.zip_code,
+		t1.icon
+	</sql>
+	
+	<!-- 修改父节点字符串 -->
+	<update id="updateParentIds">
+		update sys_organ
+		set parent_ids = REPLACE(parent_ids, #{oldParentIds}, #{parentIds}) 
+		where parent_ids like CONCAT('%', #{code} , '%')
+	</update>
+	
+	<!-- 根据节点Id删除底下全部子节点包括孙子节点 -->
+	<update id="deleteOrganByRootId">
+		update sys_organ set del_flag=1 where parent_ids like CONCAT('%', #{code}, '%') or code = #{code}
+	</update>
+	
+	<!-- 根据根节点查询自身及其子孙节点 -->
+	<select id="findOrganIdsByRootId" resultType="java.lang.String">
+		SELECT code FROM sys_organ where parent_ids like CONCAT('%', #{code}, '%') or code = #{code}
+	</select>
+	
+	<!-- 根据用户的id的到跨机构数据范围 -->
+	<select id="findUserDataScopeByUserId" resultType="java.lang.String">
+		SELECT DISTINCT so.code FROM sys_organ so 
+		LEFT JOIN sys_role_organ sro ON so.code = sro.organ_id
+		LEFT JOIN sys_user_role sur ON sur.role_id = sro.role_id
+		WHERE sur.user_id = #{userId}
+	</select>
+	
+	<!-- 根据部门id查找公司id -->
+	<select id="findOrganCompanyIdByDepId" resultType="com.krm.web.sys.model.SysOrgan">
+		SELECT <include refid="SysOrganColumns"/> FROM sys_organ
+		WHERE code in(SELECT code FROM sys_organ where instr(#{parentIds}, code)>0)
+		AND type = 1 and del_flag=0 and rownum=1
+		ORDER BY grade
+	</select>
+	
+	<!-- 分页显示筛选查询 -->
+	<select id="findPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="SysOrganAliasColumns"/>, F_CHANGE_TO_DICT('sys_organ_type', t1.type) TYPE_TEXT, t2.name parent_name
+		from sys_organ t1
+		left join sys_organ t2 ON t1.parent_id=t2.code
+		
+		<where>
+		      t1.del_flag=0
+			<if test="name != ''">
+				and t1.name like CONCAT('%', #{name} , '%')
+			</if>
+			<if test="@Ognl@isNotBlank(userDataScope)">
+				and ${userDataScope}
+			</if>
+			<if test="code != 0 and  @Ognl@isNotBlank(code) "> 
+				and t1.parent_ids like CONCAT('%', #{code} , '%') or t1.code = #{code}
+			</if>
+		</where>
+		ORDER BY t1.update_date desc
+	</select>
+
+	<select id="findOrganByCode" resultType="com.krm.web.sys.model.SysOrgan">
+		select <include refid="SysOrganColumns"/> 
+		from sys_organ
+		<where>
+			<if test="code != 0 and @Ognl@isNotBlank(code) "> 
+				code = #{code}
+			</if>
+		</where>
+	</select>
+</mapper>

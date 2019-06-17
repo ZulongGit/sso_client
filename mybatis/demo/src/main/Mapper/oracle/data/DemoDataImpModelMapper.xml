@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.data.mapper.DemoDataImpModelMapper">
+
+	<!-- 表字段 -->
+	<sql id="demoDataImpModelColumns">
+		 MODEL_CODE, MODEL_NAME, DT_RANGE, DESCRIPTION, MODEL_VERSION, CREATE_DATE, CREATE_BY
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demoDataImpModelAliasColumns">
+		 t.MODEL_CODE, t.MODEL_NAME, t.DT_RANGE, t.DESCRIPTION, t.MODEL_VERSION, t.CREATE_DATE, t.CREATE_BY
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="demoDataImpModelAliasColumns" />, u.name u_name 
+		from demo_data_imp_model  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelCode)">and t.MODEL_CODE = #{modelCode} </if>
+			<if test="@Ognl@isNotBlank(modelName)">and t.MODEL_NAME = #{modelName} </if>
+			<if test="@Ognl@isNotBlank(dtRange)">and t.DT_RANGE = #{dtRange} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(modelVersion)">and t.MODEL_VERSION = #{modelVersion} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.data.model.DemoDataImpModel">
+        select  <include refid="demoDataImpModelAliasColumns" />
+		from demo_data_imp_model  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelCode)">and t.MODEL_CODE = #{modelCode} </if>
+			<if test="@Ognl@isNotBlank(modelName)">and t.MODEL_NAME = #{modelName} </if>
+			<if test="@Ognl@isNotBlank(dtRange)">and t.DT_RANGE = #{dtRange} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(modelVersion)">and t.MODEL_VERSION = #{modelVersion} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.data.model.DemoDataImpModel">
+		select  <include refid="demoDataImpModelAliasColumns" />
+		from demo_data_imp_model  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelCode)"> and t.MODEL_CODE = #{modelCode} </if>
+			<if test="@Ognl@isNotBlank(modelName)"> and t.MODEL_NAME = #{modelName} </if>
+			<if test="@Ognl@isNotBlank(dtRange)"> and t.DT_RANGE = #{dtRange} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(modelVersion)"> and t.MODEL_VERSION = #{modelVersion} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demoDataImpModelAliasColumns" />, u.name u_name 
+		from demo_data_imp_model  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelCode)">and t.MODEL_CODE = #{modelCode} </if>
+			<if test="@Ognl@isNotBlank(modelName)">and t.MODEL_NAME = #{modelName} </if>
+			<if test="@Ognl@isNotBlank(dtRange)">and t.DT_RANGE = #{dtRange} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(modelVersion)">and t.MODEL_VERSION = #{modelVersion} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demo_data_imp_model(<include refid="demoDataImpModelColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.modelCode, jdbcType = VARCHAR},
+		    	#{item.modelName, jdbcType = VARCHAR},
+		    	#{item.dtRange, jdbcType = VARCHAR},
+		    	#{item.description, jdbcType = VARCHAR},
+		    	#{item.modelVersion, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+				#{item.createBy, jdbcType = DATE}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demo_data_imp_model
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(modelCode)"> and MODEL_CODE = #{modelCode} </if>
+			<if test="@Ognl@isNotBlank(modelName)"> and MODEL_NAME = #{modelName} </if>
+			<if test="@Ognl@isNotBlank(dtRange)"> and DT_RANGE = #{dtRange} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(modelVersion)"> and MODEL_VERSION = #{modelVersion} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+		</where>
+	</delete>
+</mapper>

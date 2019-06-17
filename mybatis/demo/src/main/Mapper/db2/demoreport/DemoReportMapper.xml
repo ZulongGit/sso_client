@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.demoreport.mapper.DemoReportMapper">
+
+	<!-- 表字段 -->
+	<sql id="demoReportColumns">
+		 ID, NAME, SUBCLASS, DES, CREATEOR, REPDATE, STATUS, CREATE_BY, CREATE_DATE, UPDATE_BY,
+		 UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demoReportAliasColumns">
+         t.ID, t.NAME, t.SUBCLASS, t.DES, t.CREATEOR, t.REPDATE, t.STATUS, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY,
+		 t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="demoReportAliasColumns" /> 
+		from demo_report  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(subclass)">and t.SUBCLASS = #{subclass} </if>
+			<if test="@Ognl@isNotBlank(des)">and t.DES = #{des} </if>
+			<if test="@Ognl@isNotBlank(createor)">and t.CREATEOR = #{createor} </if>
+			<if test="@Ognl@isNotBlank(repdate)">and t.REPDATE = #{repdate} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.demoreport.model.DemoReport">
+        select  <include refid="demoReportAliasColumns" />
+		from demo_report  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(subclass)">and t.SUBCLASS = #{subclass} </if>
+			<if test="@Ognl@isNotBlank(des)">and t.DES = #{des} </if>
+			<if test="@Ognl@isNotBlank(createor)">and t.CREATEOR = #{createor} </if>
+			<if test="@Ognl@isNotBlank(repdate)">and t.REPDATE = #{repdate} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.demoreport.model.DemoReport">
+		select  <include refid="demoReportAliasColumns" />
+		from demo_report  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)"> and t.NAME = #{name} </if>
+			<if test="@Ognl@isNotBlank(subclass)"> and t.SUBCLASS = #{subclass} </if>
+			<if test="@Ognl@isNotBlank(des)"> and t.DES = #{des} </if>
+			<if test="@Ognl@isNotBlank(createor)"> and t.CREATEOR = #{createor} </if>
+			<if test="@Ognl@isNotBlank(repdate)"> and t.REPDATE = #{repdate} </if>
+			<if test="@Ognl@isNotBlank(status)"> and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demoReportAliasColumns" /> 
+		from demo_report  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)">and t.NAME like '%' || #{name} || '%'</if>
+			<if test="@Ognl@isNotBlank(subclass)">and t.SUBCLASS = #{subclass} </if>
+			<if test="@Ognl@isNotBlank(des)">and t.DES = #{des} </if>
+			<if test="@Ognl@isNotBlank(createor)">and t.CREATEOR = #{createor} </if>
+			<if test="@Ognl@isNotBlank(repdate)">and t.REPDATE = #{repdate} </if>
+			<if test="@Ognl@isNotBlank(status)">and t.STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demo_report(<include refid="demoReportColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.id, jdbcType = VARCHAR},
+		    	#{item.name, jdbcType = VARCHAR},
+		    	#{item.subclass, jdbcType = VARCHAR},
+		    	#{item.des, jdbcType = VARCHAR},
+		    	#{item.createor, jdbcType = VARCHAR},
+		    	#{item.repdate, jdbcType = VARCHAR},
+		    	#{item.status, jdbcType = NUMERIC},
+		    	#{item.createBy, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.updateBy, jdbcType = VARCHAR},
+		    	#{item.updateDate, jdbcType = DATE},
+				#{item.delFlag, jdbcType = DATE}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demo_report
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(name)"> and NAME = #{name} </if>
+			<if test="@Ognl@isNotBlank(subclass)"> and SUBCLASS = #{subclass} </if>
+			<if test="@Ognl@isNotBlank(des)"> and DES = #{des} </if>
+			<if test="@Ognl@isNotBlank(createor)"> and CREATEOR = #{createor} </if>
+			<if test="@Ognl@isNotBlank(repdate)"> and REPDATE = #{repdate} </if>
+			<if test="@Ognl@isNotBlank(status)"> and STATUS = #{status} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

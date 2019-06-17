@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.abnormal.mapper.DemoAbnormalRuleMapper">
+
+	<!-- 表字段 -->
+	<sql id="demoAbnormalRuleColumns">
+		 RULE_CODE, RULE_NAME, RULE_TYPE, RULE_PARAMTER, CREATE_DATE, CREATE_BY, DESCRIPTION
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demoAbnormalRuleAliasColumns">
+		 t.RULE_CODE, t.RULE_NAME, t.RULE_TYPE, t.RULE_PARAMTER, t.CREATE_DATE, t.CREATE_BY, t.DESCRIPTION
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="demoAbnormalRuleAliasColumns" />, u.name u_name 
+		from demo_abnormal_rule  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(ruleName)">and t.RULE_NAME = #{ruleName} </if>
+			<if test="@Ognl@isNotBlank(ruleType)">and t.RULE_TYPE = #{ruleType} </if>
+			<if test="@Ognl@isNotBlank(ruleParamter)">and t.RULE_PARAMTER = #{ruleParamter} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.abnormal.model.DemoAbnormalRule">
+        select  <include refid="demoAbnormalRuleAliasColumns" />
+		from demo_abnormal_rule  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(ruleName)">and t.RULE_NAME = #{ruleName} </if>
+			<if test="@Ognl@isNotBlank(ruleType)">and t.RULE_TYPE = #{ruleType} </if>
+			<if test="@Ognl@isNotBlank(ruleParamter)">and t.RULE_PARAMTER = #{ruleParamter} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.abnormal.model.DemoAbnormalRule">
+		select  <include refid="demoAbnormalRuleAliasColumns" />
+		from demo_abnormal_rule  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ruleCode)"> and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(ruleName)"> and t.RULE_NAME = #{ruleName} </if>
+			<if test="@Ognl@isNotBlank(ruleType)"> and t.RULE_TYPE = #{ruleType} </if>
+			<if test="@Ognl@isNotBlank(ruleParamter)"> and t.RULE_PARAMTER = #{ruleParamter} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demoAbnormalRuleAliasColumns" />, u.name u_name 
+		from demo_abnormal_rule  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ruleCode)">and t.RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(ruleName)">and t.RULE_NAME = #{ruleName} </if>
+			<if test="@Ognl@isNotBlank(ruleType)">and t.RULE_TYPE = #{ruleType} </if>
+			<if test="@Ognl@isNotBlank(ruleParamter)">and t.RULE_PARAMTER = #{ruleParamter} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demo_abnormal_rule(<include refid="demoAbnormalRuleColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.ruleCode, jdbcType = VARCHAR},
+		    	#{item.ruleName, jdbcType = VARCHAR},
+		    	#{item.ruleType, jdbcType = VARCHAR},
+		    	#{item.ruleParamter, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.createBy, jdbcType = VARCHAR},
+				#{item.description, jdbcType = VARCHAR}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demo_abnormal_rule
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(ruleCode)"> and RULE_CODE = #{ruleCode} </if>
+			<if test="@Ognl@isNotBlank(ruleName)"> and RULE_NAME = #{ruleName} </if>
+			<if test="@Ognl@isNotBlank(ruleType)"> and RULE_TYPE = #{ruleType} </if>
+			<if test="@Ognl@isNotBlank(ruleParamter)"> and RULE_PARAMTER = #{ruleParamter} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+		</where>
+	</delete>
+</mapper>

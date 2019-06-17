@@ -1,0 +1,305 @@
+@layout("/layout/container.html", {}){	
+	@var selectOptions;
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">建表记录</h5>
+					<div class="widget-toolbar">
+						<a href="#" data-action="fullscreen" class="orange2"> <i
+								class="ace-icon fa fa-expand"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8">
+						<form method="post" class="form-search" id="search-form" >
+							<div class="form-inline" role="form">
+							</div>
+						</form>
+					</div>
+					<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+						<table id="table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div id="toolbar">
+		@if(shiro.hasPermission("codegen:createTableHistory:add")){
+			<button type="button" class="btn btn-primary btn-sm" id="addcreateTableHistory"><i class="ace-icon fa fa-plus-circle middle-120"></i>&nbsp;添&nbsp;加</button>
+		@}
+		@if(shiro.hasPermission("codegen:createTableHistory:update")){
+			<button type="button" class="btn btn-primary btn-sm" id="editcreateTableHistory"><i class="ace-icon fa fa-pencil middle-120"></i>&nbsp;修&nbsp;改</button>
+		@}
+		@if(shiro.hasPermission("codegen:createTableHistory:delete")){
+			<div class="btn-group">
+			<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<i class="ace-icon fa fa-trash-o middle-120"></i>&nbsp;删&nbsp;除<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="javascript:void()" onclick="del('1')">移到回收站</a></li>
+				<li><a href="javascript:void()" onclick="del('0')">彻底删除</a></li>
+			</ul>
+			</div>
+		@}
+			<div class="btn-group">
+			<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<i class="ace-icon fa fa-font middle-120"></i>生成SQL<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="javascript:void()" onclick="generateSql('Oracle')">Oracle</a></li>
+				<li><a href="javascript:void()" onclick="generateSql('Mysql')">Mysql</a></li>
+				<li><a href="javascript:void()" onclick="generateSql('Db2')">Db2</a></li>
+			</ul>
+			</div>
+			<div class="btn-group">
+			<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<i class="ace-icon fa fa-font middle-120"></i>建表入库<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="javascript:void()" onclick="build('Oracle')">Oracle</a></li>
+				<li><a href="javascript:void()" onclick="build('Mysql')">Mysql</a></li>
+				<li><a href="javascript:void()" onclick="build('Db2')">Db2</a></li>
+			</ul>
+			</div>
+	</div>
+
+
+	<script>
+		//表格初始化
+		$(function(){
+			var $table = $('#table');
+			$table.bootstrapTable({
+				iconSize: 'sm',
+				url: '${ctxPath}/codegen/createTableHistory/list?r='+Math.random(),
+				toolbar: '#toolbar',
+				cache: false,
+				singleSelect: false,
+				clickToSelect: true,
+				striped: true,
+				pagination: true,
+				pageNumber: 1,//首页页码
+				pageSize: 10,//页面显示条数
+				pageList: [10, 25, 50, 100 ],
+				sidePagination: 'server',//服务器端分页
+				columns: [
+					{checkbox: true}, 
+					{field: "rowId", title: "序号"},
+					{field: "proIdText", title: "归属项目", sortable: true},
+					{field: "tableComments", title: "表注释", sortable: true},
+					{field: "tableName", title: "表名", sortable: true},
+					{field: "uName", title: "创建者", sortable: true},
+					{field: "", title: "最近修改信息", formatter: function(value, row, index){
+						if(row.updateName == undefined || row.updateDate == undefined){
+							return '-';
+						}
+						return row.updateName + '--' + row.updateDate;
+					}}
+				],
+				contentType: "application/x-www-form-urlencoded",
+				queryParamsType: "limit",
+				dataType: "json",
+				method: "post",
+				queryParams: function(params){
+					var json = $("#search-form").serializeJson();
+					$.extend(params,json);
+					return params;
+				}
+			});
+			$table.bootstrapTable('resetView', {height: window.innerHeight-$(".bootstrap-table").offset().top - 15});
+		})
+		
+		//初始化所有下拉框
+		$(".chosen").chosen({width: "140px", search_contains: true, disable_search_threshold: 10});
+		
+		function createTableHistoryDetail(value,row,index){
+			return 	'<a data-mode="detail" data-title="建表记录详细信息"'+
+					'data-url="${ctxPath}/codegen/createTableHistory/detail/showlayer"'+
+					'data-width="50%"'+
+					'data-data="{id:'+row.id+'}" >'+
+					value +
+					'</a>'; 
+		}
+		
+		//查询按钮
+		$("#ok").click(function(){
+			var params = jQuery("#search-form").serializeJson();
+			$('#table').bootstrapTable("refresh", {query: params});
+		}); 
+		
+		//重置按钮
+		$("#cancel").click(function(){
+			$(".chosen").val("").trigger("chosen:updated");
+		});
+		
+		//条件查询
+		function query(params){
+			if(params == undefined){
+				params = {};
+			}
+			var json = $("#search-form").serializeJson();
+			$.extend(params,json);
+			$('#table').bootstrapTable("refresh", {query: params});
+		}
+		
+		//增加操作
+		$("#addcreateTableHistory").click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/codegen/createTableHistory/add/showlayer",
+				title: '添加<表>',
+				width: '100%',
+				height: '100%'
+			});
+		}); 
+		
+		//修改操作
+		$("#editcreateTableHistory").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要修改的数据！");
+				return;
+			}else if(rows.length>1){
+				failMsg("只能选择一条数据哦！");
+				return;
+			}else{
+				var row = rows[0];
+				$.cuslayer({
+					mode: "page",
+					url: "${ctxPath}/codegen/createTableHistory/edit/showlayer",
+					data: {'tableName': row.tableName},
+					title: '修改<表>',
+					width: '100%',
+					height: '100%'
+				});
+			}
+		}); 
+		
+		//删除操作
+		function del(flag){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要删除的数据（可批量操作）！");
+				return;
+			}else{
+				var tableNames = [];
+				for(var i=0;i<rows.length;i++){
+					tableNames.push(rows[i].tableName);
+				}
+				$.cuslayer({
+					mode: "del",
+					url: "${ctxPath}/codegen/createTableHistory/deletes",
+					data: {
+						'tableNames': tableNames,
+						'delFlag': flag
+					},
+					msg: flag == 1 ? '确定要删除选中的数据吗（不可恢复）？' : '确定要将该条记录移到回收站吗（可恢复）？',
+					callback: function(){
+						query();
+					}
+				});
+			}
+		}
+		function generateSql(dbType){
+			if(dbType == 'Db2'){
+				failMsg("目前还不支持Db2数据库哦！");
+			}else{
+				var rows = $('#table').bootstrapTable("getSelections");
+				if(rows.length==0){
+					failMsg("请先选择表！");
+					return;
+				}else if(rows.length>1){
+					failMsg("只能选择一张表哦！");
+					return;
+				}else{
+					var row = rows[0];
+					$.ajax({
+						url: "${ctxPath}/codegen/createTableHistory/generateSql",
+						data: {
+							tableName: row.tableName,
+							tableComment: row.tableComments,
+							dbType: dbType
+						},
+						type: 'post',
+						success: function(data){
+							if(data.code == 1) {
+								$.cuslayer({
+									mode: "diy",
+									title: '建表语句',
+									content: data.data
+								});
+							}else{
+								failMsg(data.msg);
+							}
+						}
+					})
+				}
+			}
+		}
+		
+		function build(dbType){
+			if(dbType == 'Mysql'){
+				var rows = $('#table').bootstrapTable("getSelections");
+				if(rows.length==0){
+					failMsg("请选择要创建的表！");
+					return;
+				}else if(rows.length>1){
+					failMsg("只能选择一条数据哦！");
+					return;
+				}else{
+					var row = rows[0];
+					$.cuslayer({
+						mode: "confirm",
+						msg: '此操作仅支持创建到本系统数据库里，建议您使用我左边的生成SQL功能并手动执行，<br>如果您还不放弃，那确定要创建该表吗？',
+						yes: function(index, layero){
+							createTable(row, 0, dbType);
+						}
+					});
+				}
+			}else{
+				failMsg("此功能仅支持MySQL哦！");
+			}
+		}
+
+		function createTable(row, delFlag, dbType){
+			$.ajax({
+				url: "${ctxPath}/codegen/createTableHistory/executeCreate",
+				data: {
+					tableName: row.tableName,
+					tableComment: row.tableComments,
+					isDelete: delFlag || 0,
+					dbType: dbType
+				},
+				type: 'post',
+				success: function(data){
+					if(data.code == 1) {
+						successMsg(data.msg, function() {
+							if(data.data != ''){
+								$.cuslayer({
+									mode: "diy",
+									width: '50%',
+									content: data.data
+								});
+							}
+						}); 
+					}else if(data.code == -1) {
+						$.cuslayer({
+							mode: "confirm",
+							msg: "表已经存在，不能重复创建，是否删除表重新创建？",
+							yes: function(){
+								createTable(row, 1, dbType)
+							}
+						});
+					}else{
+						failMsg(data.msg);
+					}
+				}
+			})
+			
+		}
+	</script>
+@}

@@ -1,0 +1,229 @@
+@layout("/layout/container.html", {}){
+	@var selectOptions;
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">项目参数</h5>
+					<div class="widget-toolbar">
+						<a href="#" data-action="fullscreen" class="orange2"> <i
+								class="ace-icon fa fa-expand"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8">
+						<form method="post" class="form-search" id="search-form" >
+						<div class="form-horizontal" role="form">
+							<div class="container-fluid">
+							<div class="row">
+								<div class="col-xs-4">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">所属项目：</label>
+									<div class="col-sm-8">
+										<select class="chosen form-control w110" name="proId">
+											<option value="">--请选择--</option>
+											@var map = dict.getEmptyMap();
+											@if(!session.loginUser.isAdmin){
+											@map.userId = session.loginUser.id;
+											@}
+											@selectOptions = dict.getDictListByType("project_select_dynamic", map);
+											@if(selectOptions != ""){
+												@for(op in selectOptions){
+													<option value="${op.value! }">${op.label! }</option>
+												@}
+											@}
+										</select> 
+									</div>
+								</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						</form>
+					</div>
+					<div class="form-group width-100" style="text-align: center;margin-top: -10px;">
+					<button id="ok" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-search middle-120"></i>&nbsp;查&nbsp;询</button>
+					<button id="cancel" type="reset" class="btn btn-danger btn-sm"><i class="ace-icon fa fa-refresh middle-120"></i>&nbsp;重&nbsp;置</button>
+					</div>
+					<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+						<table id="table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div id="toolbar">
+		@if(shiro.hasPermission("codegen:proParams:add")){
+			<button type="button" class="btn btn-primary btn-sm" id="addproParams"><i class="ace-icon fa fa-plus-circle middle-120"></i>&nbsp;添&nbsp;加</button>
+		@}
+		@if(shiro.hasPermission("codegen:proParams:update")){
+			<button type="button" class="btn btn-primary btn-sm" id="editproParams"><i class="ace-icon fa fa-pencil middle-120"></i>&nbsp;修&nbsp;改</button>
+		@}
+		@if(shiro.hasPermission("codegen:proParams:delete")){
+			<button type="button" class="btn btn-primary btn-sm" id="deleteproParams"><i class="ace-icon fa fa-trash-o middle-120"></i>&nbsp;删&nbsp;除</button>
+		@}
+		@if(shiro.hasPermission("codegen:proParams:import")){
+			<button type="button" class="btn btn-primary btn-sm" id="importproParams"><i class="ace-icon fa fa-cloud-upload middle-120"></i>&nbsp;Excel导入</button>
+		@}
+		@if(shiro.hasPermission("codegen:proParams:export")){
+			<button type="button" class="btn btn-primary btn-sm" onclick="Angel.downloadFile('search-form','${ctxPath}/codegen/proParams/export')">
+					<i class="ace-icon fa fa-cloud-download middle-120"></i>导出Excel</button>
+		@}
+	</div>
+
+
+	<script>
+		//表格初始化
+		$(function(){
+			var $table = $('#table');
+			$table.bootstrapTable({
+				iconSize: 'sm',
+				url: '${ctxPath}/codegen/proParams/list?r='+Math.random(),
+				toolbar: '#toolbar',
+				cache: false,
+				singleSelect: false,
+				clickToSelect: true,
+				striped: true,
+				pagination: true,
+				pageNumber: 1,//首页页码
+				pageSize: 10,//页面显示条数
+				pageList: [10, 25, 50, 100 ],
+				sidePagination: 'server',//服务器端分页
+				columns: [
+					{checkbox: true}, 
+					{field: "rowId", title: "序号"},
+					{field: "alias", title: "别名", sortable: true},
+					{field: "author", title: "作者", sortable: true},
+					{field: "proIdText", title: "所属项目"},
+					{field: "proPath", title: "项目根路径", sortable: true},
+					{field: "sourceFolder", title: "源码路径", sortable: true},
+					{field: "codePath", title: "CODE父路径", sortable: true},
+					{field: "htmlPath", title: "HTML路径", sortable: true},
+					{field: "xmlPath", title: "XML路径", sortable: true},
+					{field: "jsPath", title: "JS路径", sortable: true},
+					{field: "codingText", title: "编码"},
+					{field: "uName", title: "创建者", sortable: true}
+				],
+				contentType: "application/x-www-form-urlencoded",
+				queryParamsType: "limit",
+				dataType: "json",
+				method: "post",
+				queryParams: function(params){
+					var json = $("#search-form").serializeJson();
+					$.extend(params,json);
+					return params;
+				},
+				onDblClickRow: function(row){
+					$.cuslayer({mode: "detail", url: "${ctxPath}/codegen/proParams/detail/showlayer", data: {id: row.id}, table: "table", width: '100%', height: '100%', title: '项目参数详细信息'});
+				}
+			});
+			$table.bootstrapTable('resetView', {height: window.innerHeight-$(".bootstrap-table").offset().top - 15});
+		})
+		
+		//初始化所有下拉框
+		$(".chosen").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+		
+		function proParamsDetail(value,row,index){
+			return 	'<a data-mode="detail" data-title="项目参数详细信息"'+
+					'data-url="${ctxPath}/codegen/proParams/detail/showlayer"'+
+					'data-width="50%"'+
+					'data-data="{id:'+row.id+'}" >'+
+					value +
+					'</a>'; 
+		}
+		
+		//查询按钮
+		$("#ok").click(function(){
+			var params = jQuery("#search-form").serializeJson();
+			$('#table').bootstrapTable("refresh", {query: params});
+		}); 
+		
+		//重置按钮
+		$("#cancel").click(function(){
+			$(".chosen").val("").trigger("chosen:updated");
+			$("input").val("");
+		});
+		
+		//条件查询
+		function query(params){
+			if(params == undefined){
+				params = {};
+			}
+			var json = $("#search-form").serializeJson();
+			$.extend(params,json);
+			$('#table').bootstrapTable("refresh", {query: params});
+		}
+		
+		//增加操作
+		$("#addproParams").click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/codegen/proParams/add/showlayer",
+				title: '添加<项目参数>',
+				width: '100%',
+				height: '100%'
+			});
+		}); 
+		
+		//修改操作
+		$("#editproParams").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要修改的数据！");
+				return;
+			}else if(rows.length>1){
+				failMsg("只能选择一条数据哦！");
+				return;
+			}else{
+				var row = rows[0];
+				$.cuslayer({
+					mode: "page",
+					url: "${ctxPath}/codegen/proParams/edit/showlayer",
+					data: {'id': row.id},
+					title: '修改<项目参数>',
+					width: '100%',
+					height: '100%'
+				});
+			}
+		}); 
+		
+		//删除操作
+		$("#deleteproParams").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要删除的数据（可批量操作）！");
+				return;
+			}else{
+				var ids = [];
+				for(var i=0;i<rows.length;i++){
+					ids.push(rows[i].id);
+				}
+				$.cuslayer({
+					mode: "del",
+					url: "${ctxPath}/codegen/proParams/deletes",
+					data: {
+						'ids': ids
+					},
+					msg: '确定要删除选中的数据吗（不可恢复）？',
+					callback: function(){
+						query();
+					}
+				});
+			}
+		}); 
+
+		//跳转到Excel导入窗口
+		$("#importproParams").click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/codegen/proParams/import/showlayer",
+				btn: ['<i class="ace-icon fa fa-cloud middle-120"></i>&nbsp;导 入', '<i class="ace-icon fa fa-times-circle middle-120"></i>&nbsp;关 闭'],
+				title: '<项目参数>Excel导入'
+			});
+		}); 
+	</script>
+@}

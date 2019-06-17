@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta charset="utf-8" />
+  <title>登录--数据管理分析系统</title>
+  
+  <meta name="description" content="login" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <link type="image/x-icon" href="${ctxPath!}/static/images/logo.png" rel="shortcut icon">
+  
+  <link rel="stylesheet" type="text/css" href="${ctxPath!}/static/login/css/global.css" />
+  <script type="text/javascript" src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="${ctxPath!}/static/layer-v3.1.0/layer/layer.js"></script>
+  <script type="text/javascript" src="${ctxPath!}/static/login/js/global.js"></script>
+  <script type="text/javascript" src="${ctxPath!}/static/login/js/jquery.nicescroll.min.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="${ctxPath!}/static/login/css/login.css"/>
+  <style type="text/css">
+  input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset;
+      -webkit-text-fill-color: #CCCCCC;
+  }
+  </style>
+
+<!--[if lt IE 9]>
+<h3><p style="text-align: center;padding-top:100px;">请使用高版本浏览器进入后台管理（建议浏览器：Firefox、Chrome）</p></h3>
+<p style="text-align: center;"><a href="http://www.firefox.com.cn/">下载Firefox浏览器</a></p>
+<p style="text-align: center;"><a href="https://www.google.cn/chrome/">下载Chrome浏览器</a></p>
+<div style="display:none">
+<![endif]-->
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="container and">
+    <div class="content">
+        <div id="large-header" class="large-header">
+            <canvas id="demo-canvas"></canvas>
+            <div id="login">
+                <h1>
+                    <strong>数据管理分析系统</strong>
+                   
+                </h1>
+
+                <div class="user info">
+                    <label>U</label>
+                    <input type="text" name="username" value="admin" id="UserUsername" class="en-font"
+                           placeholder="账号" autocomplete="off">
+                </div>
+                <div class="pwd info">
+                    <label>P</label>
+                    <input type="password" name="password" value="krmsoft888" id="UserPassword" class="en-font"
+                           placeholder="密码" autocomplete="off">
+                </div>
+                <div class="code info">
+                    <label>V</label>
+                    <input type="text" name="captcha" value="" id="captcha" class="en-font" autocomplete="off"
+                           placeholder="验证码">
+                    <span class="vimg"><img src="" class="tooltip"
+                                            onclick="this.src='${ctxPath!}/home/validateCode?'+Math.random()"/></span>
+                </div>
+                <div>
+                    <p style="text-align: right;margin: 4px 28px -8px 0px;">
+                      <a id="registered" href="#" target="_blank" style="color:white;">忘记密码？</a>
+                    </p>
+                </div>
+                <div class="sub">
+                    <input type="submit" id="loginSubmit" value="立即登录"/>
+                </div>
+
+                <div class="copy">
+                    <p>还没有账号？ <a id="registered" href="${ctxPath!}/home/enterRegistered" target="_blank" style="color:blue; font-size:14px;text-decoration: underline;">立即注册</a></p>
+                </div>
+                <button class="btn randomize">重新绘制</button>
+            </div>
+            <div class="auth">
+                <div class="loading">
+                    <div class="loader-inner ball-clip-rotate-multiple"></div>
+                </div>
+                <p>正在登录中...</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	$('img[class=tooltip]').click(function(){
+		setTimeout(function () {
+			$.getJSON('${ctxPath!}/home/getCode', function(result){
+	    		$("#captcha").val(result.data);
+			});
+        }, 550)
+	})
+	$('img[class=tooltip]').click();
+    $('body').keydown(function (e) {
+        if (e.keyCode == 13) {
+            $('#loginSubmit').trigger('click');
+        }
+    });
+
+    $('#loginSubmit').click(function () {
+        layer.closeAll();
+        var username = $.trim($('#UserUsername').val());
+        if (!username) {
+            layer.msg('请填写用户名',{
+                anim: 1,
+                offset: '200px'
+            });
+            return false;
+        }
+        var password = $.trim($('#UserPassword').val());
+        if (!password) {
+            layer.msg('请填写密码',{
+                anim: 1,
+                offset: '200px'
+            });
+            return false;
+        }
+        var captcha = $.trim($('input[name="captcha"]').val());
+        if (!captcha) {
+            layer.msg('请填写验证码',{
+                anim: 1,
+                offset: '200px'
+            });
+            return false;
+        }
+        $('#login').addClass('checking');
+        setTimeout(function () {
+            $('#login').animate({
+                //'margin-left': 450
+            }, 200, 'easeOutQuint');
+            $('.auth').addClass('checking');
+        }, 500);
+
+        setTimeout(function () {
+            $.post("${ctxPath}/login", {
+                username: username,
+                password: password,
+                captcha: captcha,
+            }, function (data) {
+                if(data.code == 1) {
+                    layer.msg(data.msg,{
+                        offset: '200px'
+                    });
+                    setTimeout(function () {
+                        location.href = "${ctxPath!}/index";
+                    }, 800)
+                } else {
+                    $('#login').animate({
+                        //'margin-left': -180
+                    }, 200, 'easeOutQuint');
+                    $('.auth').removeClass('checking');
+                    setTimeout(function () {
+                        $('#login').removeClass('checking');
+                    }, 250);
+                    setTimeout(function () {
+                        layer.msg(data.msg,{
+                            anim: 6,
+                            offset: '200px'
+                        });
+                    }, 550)
+                }
+            })
+        }, 1500)
+
+    })
+</script>
+<!--[if lt IE 10]>
+</div>
+<![endif]-->
+
+<script type="text/javascript" src="${ctxPath!}/static/login/sideshow/js/TweenLite.min.js"></script>
+<script type="text/javascript" src="${ctxPath!}/static/login/sideshow/js/EasePack.min.js"></script>
+
+<script type="text/javascript" src="${ctxPath!}/static/login/js/particles.js"></script>
+<script type="text/javascript" src="${ctxPath!}/static/login/js/app.js"></script>
+</body>
+</html>
+

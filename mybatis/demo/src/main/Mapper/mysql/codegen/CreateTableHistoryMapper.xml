@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.CreateTableHistoryMapper">
+
+	<!-- 表字段 -->
+	<sql id="createTableHistoryColumns">
+		 ID, PRO_ID, TABLE_NAME, TABLE_COMMENTS, FIELD_NAME, FIELD_ALIAS, FIELD_TYPE, IS_PRIMARY, FIELD_LENGTH, FIELD_DECIMAL,
+		 FIELD_DEFAULT_VALUE, FIELD_IS_NULL, SORT, CREATE_BY, CREATE_DATE, UPDATE_BY, UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="createTableHistoryAliasColumns">
+         t.ID, t.PRO_ID, t.TABLE_NAME, t.TABLE_COMMENTS, t.FIELD_NAME, t.FIELD_ALIAS, t.FIELD_TYPE, t.IS_PRIMARY, t.FIELD_LENGTH, t.FIELD_DECIMAL,
+		 t.FIELD_DEFAULT_VALUE, t.FIELD_IS_NULL, t.SORT, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY, t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="createTableHistoryAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+		from gen_create_table_history  t
+		left join gen_projects table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)">and t.TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)">and t.FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)">and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)">and t.FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)">and t.FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)">and t.FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)">and t.FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.CreateTableHistory">
+        select  <include refid="createTableHistoryAliasColumns" />
+		from gen_create_table_history  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)">and t.TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)">and t.FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)">and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)">and t.FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)">and t.FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)">and t.FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)">and t.FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.CreateTableHistory">
+		select  <include refid="createTableHistoryAliasColumns" />
+		from gen_create_table_history  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)"> and t.TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)"> and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)"> and t.FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)"> and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)"> and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)"> and t.FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)"> and t.FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)"> and t.FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)"> and t.FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="createTableHistoryAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+		from gen_create_table_history  t
+		left join gen_projects table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)">and t.TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)">and t.FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)">and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)">and t.FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)">and t.FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)">and t.FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)">and t.FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_create_table_history(<include refid="createTableHistoryColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.proId},
+	    	#{item.tableName},
+	    	#{item.tableComments},
+	    	#{item.fieldName},
+	    	#{item.fieldAlias},
+	    	#{item.fieldType},
+	    	#{item.isPrimary},
+	    	#{item.fieldLength},
+	    	#{item.fieldDecimal},
+	    	#{item.fieldDefaultValue},
+	    	#{item.fieldIsNull},
+	    	#{item.sort},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_create_table_history
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)"> and TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)"> and FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)"> and FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)"> and FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)"> and IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)"> and FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)"> and FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)"> and FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)"> and FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

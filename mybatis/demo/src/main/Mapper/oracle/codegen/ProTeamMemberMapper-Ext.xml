@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.ProTeamMemberMapper">
+	
+</mapper>

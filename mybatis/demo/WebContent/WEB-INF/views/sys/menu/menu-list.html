@@ -1,0 +1,217 @@
+@layout("/layout/container.html", {ztree: true}){ 
+	@var selectOptions;
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">菜单信息</h5>
+					<div class="widget-toolbar">
+						<a href="#" data-action="fullscreen" class="orange2">
+							<i class="ace-icon fa fa-expand"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8">
+						<div class="col-sm-3">
+							<div id="tree-menu-div" style="overflow: auto;">
+								<ul id="treeMenu" class="ztree"></ul>
+							</div>
+						</div>
+						<div class="col-sm-9" id="list-page" style="padding: 0;">
+							<form method="post" class="form-search" id="search-form">
+								<div class="form-horizontal" role="form">
+									<div class="container-fluid">
+										<div class="row">
+											<div class="col-xs-4">
+												<div class="form-group">
+													<label class="col-sm-4 control-label">菜单名称：</label>
+													<div class="col-sm-8">
+														<input id="search-input" name="name" class="form-control" type="text" />
+														<input type="hidden" name="id" />
+													</div>
+												</div>
+											</div>
+                                            <div class="col-xs-4">
+                                              <div class="form-group">
+                                                <div class="col-sm-12">
+                                                  <button id="ok" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-search middle-120"></i>&nbsp;查&nbsp;询</button>
+                                                  <button id="cancel" type="reset" class="btn btn-danger btn-sm"><i class="ace-icon fa fa-refresh middle-120"></i>&nbsp;重&nbsp;置</button>
+                                                </div>
+                                              </div>
+                                          </div>
+										</div>
+									</div>
+								</div>
+							</form>
+							<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+								<table id="table"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<#systree editUrl="menu/edit/showlayer" delUrl="menu/delete" formId="table-form"
+    addUrl="menu/add/showlayer" treeData="${treeList}" idKey="id"
+    rootNodeName="菜单列表" />
+
+	<script>
+		//表格初始化
+		$(function () {
+			window.operateEvents = {
+				'click .updateSysMenu': function (e, value, row, index) {
+					updateSysMenu(row);
+				},
+				'click .deleteSysMenu': function (e, value, row, index) {
+					deleteSysMenu(row);
+				}
+			};
+			var $table = $('#table');
+			$table.bootstrapTable({
+				iconSize: 'sm',
+				url: '${ctxPath}/menu/list?r=' + Math.random(),
+				toolbar: '#toolbar',
+				cache: false,
+				singleSelect: false,
+				clickToSelect: true,
+				striped: true,
+				pagination: true,
+				pageNumber: 1,//首页页码
+				pageSize: 10,//页面显示条数
+				pageList: [10, 25, 50, 100],
+				sidePagination: 'server',//服务器端分页
+				columns: [
+					{
+						field: "name", title: "菜单名称", sortable: false, formatter: function (value, row, index) {
+							return '<a href="javascript:;" data-title="菜单<' + value + '>详情" data-mode="detail" data-url="${ctxPath}/menu/detail/showlayer"' +
+								'data-data="{id:\'' + row.id + '\'}">' + value + '</a>';
+						}
+					},
+					{ field: "url", title: "菜单链接", sortable: true },
+					{ field: "parentName", title: "上级菜单", sortable: true },
+					{
+						field: "type", title: "菜单类型", sortable: false, formatter: function (value, row, index) {
+							if (value == '0') {
+								return '菜单资源';
+							} else {
+								return '按钮资源';
+							}
+						}
+					},
+					{ field: "common", title: "权限类型", sortable: false, formatter: function (value, row, index) {
+							if (value == '0') {
+								return '权限';
+							} else {
+								return '公共';
+							}
+						}
+					},
+					{ field: "permissionStr", title: "权限标识", sortable: true },
+					{ field: "icon", title: "菜单图标", sortable: false, formatter: function (value, row, index) {
+							if (value == '') {
+								return '无';
+							} else {
+								return '<i class="ace-icon fa '+value+' blue bigger-120"></i>';
+							}
+						}
+					},
+					{ field: "sort", title: "菜单序号", sortable: true },
+					{ field: "status", title: "使用状态", sortable: false, formatter: function (value, row, index) {
+							if (value == '0') {
+								return '正常';
+							} else {
+								return '禁用';
+							}
+						}
+					},
+					{ field: "", title: "操作", events: operateEvents, formatter: operateFormatter }
+				],
+				contentType: "application/x-www-form-urlencoded",
+				queryParamsType: "limit",
+				dataType: "json",
+				method: "post",
+				queryParams: function (params) {
+					var json = $("#search-form").serializeJson();
+					$.extend(params, json);
+					return params;
+				}
+			});
+			$table.bootstrapTable('resetView', { height: window.innerHeight - $(".bootstrap-table").offset().top - 15 });
+		})
+
+		//初始化所有下拉框
+		$(".chosen").chosen({ width: "100%", search_contains: true, disable_search_threshold: 10 });
+
+		function operateFormatter(value, row, index) {
+			var operates = [];
+			@if (shiro.hasPermission("menu:update")) {
+				operates.push('<a class="blue updateSysMenu" href="javascript:void(0);" title="编辑"><i class="ace-icon fa fa-pencil bigger-130"></i>&nbsp;编辑</a>');
+			@}
+			@if (shiro.hasPermission("menu:delete")) {
+				operates.push('<a class="red deleteSysMenu" href="javascript:void(0);" title="删除"><i class="ace-icon fa fa-trash-o bigger-130"></i></i>&nbsp;删除</a>');
+			@}
+			return operates.join('&nbsp;&nbsp;&nbsp;&nbsp;');
+		}
+
+		//查询按钮
+		$("#ok").click(function () {
+			var params = jQuery("#search-form").serializeJson();
+			$('#table').bootstrapTable("refresh", { query: params });
+			searchNode();
+		});
+
+		//重置按钮
+		$("#cancel").click(function () {
+			$(".chosen").val("").trigger("chosen:updated");
+			$("input").val("");
+		});
+
+		//条件查询
+		function query(params) {
+			if (params == undefined) {
+				params = {};
+			}
+			var json = $("#search-form").serializeJson();
+			$.extend(params, json);
+			$('#table').bootstrapTable("refresh", { query: params });
+		}
+
+		//增加操作
+		$("#addSysMenu").click(function () {
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/menu/add/showlayer",
+				title: '添加<菜单信息>',
+				width: '100%',
+				height: '100%'
+			});
+		});
+
+		//修改操作
+		function updateSysMenu(row) {
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/menu/edit/showlayer",
+				data: { 'id': row.id, parentId: row.parentId },
+				title: '修改<菜单信息>',
+				width: '100%',
+				height: '100%'
+			});
+		}
+
+		//删除操作
+		function deleteSysMenu(row){
+			$.cuslayer({
+				mode: "del",
+				url: "${ctxPath}/menu/delete",
+				data: {
+					'id': row.id
+				},
+				msg: '你确定删除<'+row.name+'>节点及其所有的子节点吗?(慎重操作)'
+			});
+		}
+
+	</script>
+@}

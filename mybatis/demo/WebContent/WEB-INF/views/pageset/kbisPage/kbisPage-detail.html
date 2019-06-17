@@ -1,0 +1,66 @@
+﻿@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿页面名称：</div>
+      <div class="profile-info-value" id="pageName">
+        <span class="editable editable-click">
+			${entry.pageName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿页面描述：</div>
+      <div class="profile-info-value" id="pageDesc">
+        <span class="editable editable-click">
+			${entry.pageDesc!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿页面内容：</div>
+      <div class="profile-info-value" id="pageContent">
+        <span class="editable editable-click">
+			${entry.pageContent!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿数据绑定：</div>
+      <div class="profile-info-value" id="pageData">
+        <span class="editable editable-click">
+			${entry.pageData!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿页面地址：</div>
+      <div class="profile-info-value" id="pageUrl">
+        <span class="editable editable-click">
+			${entry.pageUrl!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿页面排序：</div>
+      <div class="profile-info-value" id="pageStor">
+        <span class="editable editable-click">
+			${entry.pageStor!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿逻辑删除标记(0.正常，1.删除)：</div>
+      <div class="profile-info-value" id="delFlag">
+        <span class="editable editable-click">
+			${entry.delFlag!}
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+		$("#").html(html("${entry.pageContent!}"));
+	})
+</script>

@@ -1,0 +1,150 @@
+﻿r selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿用户：</div>
+      <div class="profile-info-value" id="userId">
+	   <span class="editable editable-click">${entry.userIdText!}</span>
+      </div>
+		</div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿机构：</div>
+      <div class="profile-info-value" id="organNo">
+	   <span class="editable editable-click">${entry.organNoText!}</span>
+      </div>
+		</div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段1：</div>
+      <div class="profile-info-value" id="coloum1">
+        <span class="editable editable-click">
+			${entry.coloum1!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段2：</div>
+      <div class="profile-info-value" id="coloum2">
+        <span class="editable editable-click">
+			${entry.coloum2!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段3：</div>
+      <div class="profile-info-value" id="coloum3">
+        <span class="editable editable-click">
+			${entry.coloum3!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段4：</div>
+      <div class="profile-info-value" id="coloum4">
+        <span class="editable editable-click">
+			${entry.coloum4!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段5：</div>
+      <div class="profile-info-value" id="coloum5">
+        <span class="editable editable-click">
+			${entry.coloum5!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段6：</div>
+      <div class="profile-info-value" id="coloum6">
+        <span class="editable editable-click">
+			${entry.coloum6!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段7：</div>
+      <div class="profile-info-value" id="coloum7">
+        <span class="editable editable-click">
+			${entry.coloum7!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段8：</div>
+      <div class="profile-info-value" id="coloum8">
+        <span class="editable editable-click">
+			${entry.coloum8!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段9：</div>
+      <div class="profile-info-value" id="coloum9">
+        <span class="editable editable-click">
+			${entry.coloum9!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿字段10：</div>
+		@var coloum10Arr = [];
+		@var coloum10String = '';
+		@if(entry.coloum10!0 != 0){
+			@coloum10Arr = strutil.split(entry.coloum10!,",");
+		@}
+		@selectOptions = dict.getDictListByType('field_type');
+          @if(selectOptions != ""){
+          	@var coloum10Flag = '0';//0：默认不选中
+          	@for(op in selectOptions){
+          		@if(test.coloum10!0 != 0){
+          			@for(var i=0;i<coloum10Arr.~size;i++){
+            			@if(strutil.toString(op.value) == strutil.toString(coloum10Arr[i])){
+            				@coloum10Flag = '1'; //1：有值选中
+						@}
+					@}
+					@if(coloum10Flag == '1'){
+	            		@coloum10String = coloum10String + op.label! + '，';
+					@}
+					@coloum10Flag = '0';
+          		@}
+          	@}
+      <div class="profile-info-value" id="coloum10">
+        <span class="editable editable-click">
+			${strutil.subStringTo(coloum10String!,0,strutil.length(coloum10String!)-1)} 
+        </span>
+      </div>
+          @}
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿富文本：</div>
+      <div class="profile-info-value" id="richText">
+        <span class="editable editable-click">
+			${entry.richText!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿查看附件：</div>
+      <div class="profile-info-value" id="">
+        <span class="editable editable-click">
+		  <button type="button" class="btn btn-primary btn-sm" id="viewFile"><i class="ace-icon fa fa-cloud-upload middle-120"></i>点击查看</button>
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+		$('#viewFile').click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/file/view/showlayer",
+				formId: 'file-form',
+				data: {
+					relateId: '${entry.id!}'
+				},
+				title: '查看附件',
+				heiheight: '100%'		});
+		})
+	})
+</script>

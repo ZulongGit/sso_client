@@ -1,0 +1,91 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">在线用户</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div class="widget-main margin-8">
+			
+				</div>
+				<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+					<table id="onlineUserTable"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div id="toolbar">
+	<button type="button" class="btn btn-primary btn-sm" id="goOut"><i class="ace-icon fa fa-plus-circle middle-120"></i>强制下线</button>
+</div>
+
+
+<script>
+$("#role-select").chosen({width: "80%",search_contains: true});
+	$(function(){
+		onlineUser();	//获取在线用户,在header.html中定义
+		var $table = $('#onlineUserTable');
+	    $table.bootstrapTable({
+	    	iconSize:'sm',
+			url : '',
+			toolbar:'#toolbar',
+			cache: false,
+			singleSelect:false,
+			clickToSelect:true,
+			striped : true,
+			pagination : false,
+			columns : [
+				{checkbox : true}, 
+			 	{field:"id",title : "序号"},
+				{field:"userName",title : "姓名"}
+			],
+		});
+	    $table.bootstrapTable('resetView', {height: $(window).height()-$(".bootstrap-table").offset().top-15});
+	})
+	
+	
+	$("#goOut").click(function(){
+		var rows = $('#onlineUserTable').bootstrapTable("getSelections");
+		if(rows.length == 0){
+			failMsg("请选择要强制下线的用户！");
+			return;
+		}else{
+			var flag = false;
+			$.each(rows, function(i, obj){
+				if(obj.isAdmin == '1'){
+					flag = true;
+					failMsg("用户【"+obj.userName+"】是管理员，不能强制下线！");
+					return false;
+				}
+			})
+			if(flag){
+				return;
+			}
+			$.cuslayer({
+				mode: "confirm",
+				msg: '确定将选中的用户强制下线吗？',
+				yes: function(index, layero){
+					layer.close(index);
+					var ids = [];
+					for(var i=0;i<rows.length;i++){
+						var message = {
+							type: 4,
+							scope: 'one',
+							content: '您被管理员强制下线，请点击后重新登录！',
+							sendTo: rows[i].userName
+						}
+						websocket.send(JSON.stringify(message))
+					}
+				}
+			});
+		}
+	}); 
+	
+</script>

@@ -1,0 +1,227 @@
+@layout("/layout/container.html", {}){		
+	@var selectOptions;
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">非固定字典表</h5>
+					<div class="widget-toolbar">
+						<a href="#" data-action="fullscreen" class="orange2"> <i
+								class="ace-icon fa fa-expand"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8">
+						<form method="post" class="form-search" id="search-form" >
+											<div class="form-horizontal" role="form">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-4">
+															<div class="form-group">
+																<label class="col-sm-4 control-label">类型：</label>
+																<div class="col-sm-8">
+																	<input name="type" class="form-control" type="text" />
+																</div>
+															</div>
+														</div>
+														<div class="col-xs-4">
+															<div class="form-group">
+																<label class="col-sm-4 control-label">说明：</label>
+																<div class="col-sm-8">
+																	<input name="remarks" class="form-control" type="text" />
+																</div>
+															</div>
+														</div>
+														<div class="col-xs-4">
+															<div class="form-group">
+																<label class="col-sm-4 control-label">数据范围：</label>
+																<div class="col-sm-8">
+																	<select class="chosen form-control w110" name="dataScope">
+												<option value="">--请选择--</option>
+									@selectOptions = dict.getDictListByType("sys_data_scope");
+									@if(selectOptions != ""){
+											@for(op in selectOptions){
+												<option value="${op.value! }">${op.label! }</option>
+											@}
+									@}
+										</select> 
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+						</form>
+					</div>
+									<div class="form-group width-100" style="text-align: center;margin-top: -10px;">
+										<button id="ok" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-search middle-120"></i>&nbsp;查&nbsp;询</button>
+										<button id="cancel" type="reset" class="btn btn-danger btn-sm"><i class="ace-icon fa fa-refresh middle-120"></i>&nbsp;重&nbsp;置</button>
+									</div>
+					<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+						<table id="table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div id="toolbar">
+		@if(shiro.hasPermission("sys:dynamicDicts:add")){
+			<button type="button" class="btn btn-primary btn-sm" id="addtableDicts"><i class="ace-icon fa fa-plus-circle middle-120"></i>&nbsp;添&nbsp;加</button>
+		@}
+		@if(shiro.hasPermission("sys:dynamicDicts:update")){
+			<button type="button" class="btn btn-primary btn-sm" id="edittableDicts"><i class="ace-icon fa fa-pencil middle-120"></i>&nbsp;修&nbsp;改</button>
+		@}
+		@if(shiro.hasPermission("sys:dynamicDicts:delete")){
+			<button type="button" class="btn btn-primary btn-sm" id="deletetableDicts"><i class="ace-icon fa fa-trash-o middle-120"></i>&nbsp;删&nbsp;除</button>
+		@}
+	</div>
+
+
+	<script>
+		//表格初始化
+		$(function(){
+			var $table = $('#table');
+				$table.bootstrapTable({
+					iconSize: 'sm',
+				url: '${ctxPath}/sys/dynamicDicts/list?r='+Math.random(),
+				toolbar: '#toolbar',
+				cache: false,
+				singleSelect: false,
+				clickToSelect: true,
+				striped: true,
+				pagination: true,
+				pageNumber: 1,//首页页码
+				pageSize: 10,//页面显示条数
+				pageList: [10, 25, 50, 100 ],
+				sidePagination: 'server',//服务器端分页
+				columns: [
+					{checkbox: true}, 
+					{field: "rowId", title: "序号"},
+					{field: "keyName", title: "文本显示字段", sortable: true},
+					{field: "valueName", title: "入库字段", sortable: true},
+					{field: "type", title: "类型", sortable: true},
+					{field: "remarks", title: "说明", sortable: true},
+					{field: "dataScopeText", title: "数据范围"},
+					{field: "tableName", title: "关联表", sortable: true},
+					{field: "sqlMode", title: "模式", formatter: function(value, row, index){
+						if(value == '1'){
+							return "简单模式";
+						}else if(value == '2'){
+							return "自定义模式";
+						}
+					}},
+					{field: "userIdFieldBind", title: "用户字段绑定", sortable: true},
+					{field: "organCodeFieldBind", title: "机构号字段绑定", sortable: true}
+				],
+				contentType: "application/x-www-form-urlencoded",
+				queryParamsType: "limit",
+				dataType: "json",
+				method: "post",
+				queryParams: function(params){
+					var json = $("#search-form").serializeJson();
+					$.extend(params,json);
+					return params;
+				},
+				onDblClickRow: function(row){
+							$.cuslayer({mode: "detail", url: "${ctxPath}/sys/dynamicDicts/detail/showlayer", data: {id: row.id}, table: "table", width: '50%', title: '非固定字典表详细信息'});
+					}
+			});
+				$table.bootstrapTable('resetView', {height: $(window).height()-$(".bootstrap-table").offset().top-15});
+		})
+		
+		//初始化所有下拉框
+		$(".chosen").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+		
+		function tableDictsDetail(value,row,index){
+			return 	'<a data-mode="detail" data-title="非固定字典表详细信息"'+
+					'data-url="${ctxPath}/sys/dynamicDicts/detail/showlayer"'+
+					'data-width="50%"'+
+					'data-data="{id:'+row.id+'}" >'+
+					value +
+					'</a>'; 
+		}
+		
+		//查询按钮
+		$("#ok").click(function(){
+			var params = jQuery("#search-form").serializeJson();
+			$('#table').bootstrapTable("refresh", {query: params});
+		}); 
+		
+		//重置按钮
+		$("#cancel").click(function(){
+			$(".chosen").val("").trigger("chosen:updated");
+			$("input").val("");
+		});
+		
+		//条件查询
+		function query(params){
+			if(params == undefined){
+				params = {};
+			}
+			var json = $("#search-form").serializeJson();
+			$.extend(params,json);
+			$('#table').bootstrapTable("refresh", {query: params});
+		}
+		
+		//增加操作
+		$("#addtableDicts").click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/sys/dynamicDicts/add/showlayer",
+				height: '100%',
+				title: '添加非固定字典'
+			});
+		}); 
+		
+		//修改操作
+		$("#edittableDicts").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要修改的数据！");
+				return;
+			}else if(rows.length>1){
+				failMsg("只能选择一条数据哦！");
+				return;
+			}else{
+				var row = rows[0];
+				$.cuslayer({
+					mode: "page",
+					url: "${ctxPath}/sys/dynamicDicts/edit/showlayer",
+					data: {'id': row.id},
+					height: '100%',
+					title: '修改非固定字典表'
+				});
+			}
+		}); 
+		
+		//删除操作
+		$("#deletetableDicts").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要删除的数据（可批量操作）！");
+				return;
+			}else{
+				var ids = [];
+				for(var i=0;i<rows.length;i++){
+					ids.push(rows[i].id);
+				}
+				$.cuslayer({
+					mode: "del",
+					url: "${ctxPath}/sys/dynamicDicts/deletes",
+					data: {
+						'ids': ids
+					},
+					msg: '确定要删除选中的数据吗（不可恢复）？',
+					callback: function(){
+						$("#table").bootstrapTable('refresh');
+					}
+				});
+			}
+		}); 
+
+	</script>
+@}

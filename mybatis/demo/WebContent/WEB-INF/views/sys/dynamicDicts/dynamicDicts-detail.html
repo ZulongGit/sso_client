@@ -1,0 +1,36 @@
+﻿@var selectOptions;
+<div class="layer">
+	<div class="profile-user-info profile-user-info-striped wordbreak" >
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿文本显示字段：</div>
+			<div class="profile-info-value">${entry.keyName!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿入库字段：</div>
+			<div class="profile-info-value">${entry.valueName!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿SQL内容：</div>
+			<div class="profile-info-value">${entry.sqlContent!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿类型：</div>
+			<div class="profile-info-value">${entry.type!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿说明：</div>
+			<div class="profile-info-value">${entry.remarks!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿数据范围：</div>
+			@selectOptions = dict.getDictListByType("sys_data_scope");
+            @if(selectOptions != ""){
+            	@for(op in selectOptions){
+            		@if(strutil.toString(op.value!0) == strutil.toString(entry.dataScope!0)){
+            			<div class="profile-info-value">${op.label!}</div>
+            		@}
+            	@}
+            @}
+		</div>
+	</div>
+</div>

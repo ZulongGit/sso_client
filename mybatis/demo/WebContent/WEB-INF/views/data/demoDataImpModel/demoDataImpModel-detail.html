@@ -1,0 +1,85 @@
+@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">模板编号：</div>
+      <div class="profile-info-value" id="modelCode">
+        <span class="editable editable-click">
+			${entry.modelCode!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">模板名称：</div>
+      <div class="profile-info-value" id="modelName">
+        <span class="editable editable-click">
+			${entry.modelName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据范围：</div>
+      <div class="profile-info-value" id="dtRange">
+        <span class="editable editable-click">
+			${entry.dtRange!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">描述：</div>
+      <div class="profile-info-value" id="description">
+        <span class="editable editable-click">
+			${entry.description!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">版本：</div>
+      <div class="profile-info-value" id="modelVersion">
+        <span class="editable editable-click">
+			${entry.modelVersion!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建时间：</div>
+      <div class="profile-info-value" id="createDate">
+        <span class="editable editable-click">
+			${entry.createDate!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建人：</div>
+      <div class="profile-info-value" id="createBy">
+        <span class="editable editable-click">
+			${entry.createBy!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">查看附件：</div>
+      <div class="profile-info-value" id="">
+        <span class="editable editable-click">
+		  <button type="button" class="btn btn-primary btn-sm" id="viewFile"><i class="ace-icon fa fa-cloud-upload middle-120"></i>点击查看</button>
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+		$('#viewFile').click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/file/view/showlayer",
+				formId: 'file-form',
+				data: {
+					relateId: '${entry.id!}'
+				},
+				title: '查看附件',
+				height: '60%'
+			});
+		})
+	})
+</script>

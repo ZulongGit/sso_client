@@ -1,0 +1,502 @@
+@layout("/layout/container.html", {vue: true}){
+  <div class="row">
+    <div class="col-xs-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#single" aria-controls="single" role="tab" data-toggle="tab"><i class="fa fa-align-right"></i> 单表生成</a></li>
+          <li role="presentation"><a href="#multiple" aria-controls="multiple" role="tab" data-toggle="tab"><i class="fa fa-align-left"></i> 多表生成</a></li>
+        </ul>
+      
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="single">
+              <div class="widget-body">
+                <div id="list-page" class="widget-main padding-8">
+                  <form id="config-form"  method="post" enctype="multipart/form-data" action="">
+                    <div class="form-horizontal" role="form">
+                      <div class="panel panel-info">
+                        <div class="panel-heading">选择项目及参数</div>
+                        <div class="panel-body">
+                          <div class="row">
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                <label class="col-sm-4 control-label">所属项目：</label>
+                                <div class="col-sm-8">
+                                  <select class="chosen-select linkage-table linkage-param linkage-template" id="proId" name="proId" linkage-level="1" select="true">
+                                    <option value="">--请选择--</option> 
+                                    @var map = dict.getEmptyMap();
+                                    @if(!session.loginUser.isAdmin){
+                                        @map.userId = session.loginUser.id;
+                                    @}
+                                    @selectOptions = dict.getDictListByType("project_select_dynamic", map);
+                                    @if(selectOptions != ""){
+                                        @for(op in selectOptions){
+                                          <option value="${op.value! }">${op.label! }</option>
+                                        @}
+                                    @}
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                <label class="col-sm-4 control-label">项目参数：</label>
+                                <div class="col-sm-8">
+                                  <select id="proParam_select" name="proParam" class="chosen-select linkage-param" linkage-level="2" select="true">
+                                    <option value="">--请选择--</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                <div class="col-sm-10 col-sm-offset-2">
+                                  <button id="generate" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-plus-circle middle-120"></i>本地生成</button>
+                                  <button id="downGenerate" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-cloud-download middle-120"></i>下载</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel panel-info">
+                        <div class="panel-heading">选择表及模板</div>
+                        <div class="panel-body">
+                          <div class="row">
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">链接：</label>
+                                  <div class="col-sm-8">
+                                    <select id="db_select" name="dbId" class="chosen-select linkage-table" linkage-level="2" select="true">
+                                      <option value="">--请选择--</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                  <label class="col-sm-4 control-label">数据库：</label>
+                                  <div class="col-sm-8">
+                                    <select id="alias_select" name="schemaName" class="chosen-select linkage-table" linkage-level="3" select="true">
+                                      <option value="">--请选择--</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">选择表：</label>
+                                  <div class="col-sm-8">
+                                    <select id="tables_select" name="tableName" class="chosen-select linkage-table" linkage-level="4" select="true">
+                                      <option value="">--请选择--</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                  <label class="col-sm-1 control-label" style="width: 16.6666667%;">模板：</label>
+                                  <div class="col-sm-8">
+                                    <select id="template_select" name="templates" multiple class="chosen-select tag-input-style linkage-template" data-placeholder="选择模板" linkage-level="2" select="true">
+                                      <option value="">全部</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="panel panel-info">
+                        <div class="panel-heading">参数展示</div>
+                        <div class="panel-body">
+                          <div class="row" id="proParam-show">
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">项目根路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="proPath" id="proPath" v-model="param.proPath" required/>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">源码路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="sourceFolder" id="sourceFolder"  v-model="param.sourceFolder" required/>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">CODE父路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="codePath" id="codePath" v-model="param.codePath" required/>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">HTML路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="htmlPath" id="htmlPath" v-model="param.htmlPath" required/>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">XML路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="xmlPath" id="xmlPath" v-model="param.xmlPath" />
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">JS路径：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="jsPath" id="jsPath" v-model="param.jsPath" />
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">作者：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" name="author" id="author" v-model="param.author" />
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">编码：</label>
+                                  <div class="col-sm-8">
+                                    <select class="chosen-select" name="coding" id="coding" v-model="param.coding">
+                                      <option value="">--请选择--</option>
+                                      @selectOptions = dict.getDictListByType("coding_type");
+                                      @if(selectOptions != ""){
+                                          @for(op in selectOptions){
+                                            <option value="${op.value!}">${op.label! }</option>
+                                          @}
+                                      @}
+                                  </select> 
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <label class="col-sm-4 control-label">模块名称：</label>
+                                  <div class="col-sm-8">
+                                    <input type="text" id="moduleName" name="moduleName" value="" 
+                                        placeholder="modules" data-toggle="tooltip" title="模块名称作为程序包路径的一部分，默认为modules">
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                  <div class="col-sm-8 col-sm-offset-4">
+                                                                        导入：
+                                    <label class="checkbox-label" data-toggle="tooltip" title="设置Excel文件导入按钮">
+                                      <input class="checkbox-hidden" type="checkbox" name="isImport" id="isImport" value="N">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>
+                                                                        导出：
+                                    <label class="checkbox-label" data-toggle="tooltip" title="设置Excel文件导出按钮">
+                                      <input class="checkbox-hidden" type="checkbox" name="isExport" id="isExport" value="N">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>
+                                                                         附件上传：
+                                    <label class="checkbox-label" data-toggle="tooltip" title="设置增改数据时是否有附件上传">
+                                      <input class="checkbox-hidden" type="checkbox" name="isUploadFile" id="isUploadFile" value="N">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_user表ID关联的字段，请绑定，用来控制权限">
+                                  <label class="col-sm-4 control-label">用户ID字段绑定：</label>
+                                  <div class="col-sm-8">
+                                    <select name="userIdFieldBind" id="userIdFieldBind" class="chosen-select">
+                                      <option value="">请选择</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-4">
+                              <div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_organ表code关联的字段，请绑定，用来控制权限">
+                                  <label class="col-sm-4 control-label">机构号字段绑定：</label>
+                                  <div class="col-sm-8">
+                                    <select name="organCodeFieldBind" id="organCodeFieldBind" class="chosen-select">
+                                      <option value="">请选择</option>
+                                    </select>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                  </form>
+                </div>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="multiple"><h3>该功能即将到来。。。</h3></div>
+            <!-- </div> -->
+          </div>
+        </div>
+      
+    </div>
+  </div>
+
+
+  </div>
+
+  <script>
+      var proParam_app = new Vue({
+          el: '#proParam-show',
+          data: {param: {}}
+      })
+      var validator;
+    $(function() {
+      /* 多级联动初始化 */
+      /* 选择链接、数据库、表下拉联动 */
+      $(".linkage-table").linkage({
+        url: ['', '${ctxPath}/dict/getDictListByType', '${ctxPath}/create/getSchema', '${ctxPath}/dict/getDictListByType'],
+        params: [
+          {}, {type: 'db_select_dynamic'}, {}, {type: 'saved_table_config_select_dynamic'}
+        ]
+      });
+      /* 选择项目参数下拉联动 */
+      $(".linkage-param").linkage({
+        url: ['', '${ctxPath}/dict/getDictListByType'],
+        params: [
+          {}, {type: 'pro_param_select_dynamic'}
+        ],
+        follow_linkage: true
+      });
+      /* 选择模板下拉联动 */
+      $(".linkage-template").linkage({
+        url: ['', '${ctxPath}/dict/getDictListByType'],
+        params: [
+          {}, {type: 'template_select_dynamic'}
+        ],
+        placeholder_text: '全部'
+      });
+      $("[data-toggle='tooltip']").tooltip();
+      /* 所有的CheckBox注册事件 */
+      $("input[type=checkbox]").change(function(){
+        if(this.checked){
+            $(this).val('Y');
+          }else{
+            $(this).val('N');
+          }
+      })
+      /* 初始化tab页高度 */
+      $(".tab-content").height($(window).height()-$(".tab-content").offset().top-15);
+      
+        $("#proParam_select").change(function(){
+          $.ajax({
+            url: '${ctxPath}/create/getProParam',
+            type: 'post',
+            data: {id: $(this).val()},
+            dataType: 'json',
+            success: function(result){
+                  Vue.set(proParam_app, 'param', result.data);
+                  setTimeout(function () {
+                    $("#coding").trigger('chosen:updated');//更新选项 
+                      }, 100)
+                  
+            }
+          })
+        })
+        
+        
+        /* 表单校验 */
+        validator = $("#config-form").validate({
+        messages:{
+          proId : {required: "请选择所属项目！"},
+          proPath : {required: "请输入项目根路径！"},
+          sourceFolder : {required: "请输入源码路径！"},
+          codePath : {required: "请输入CODE父路径！"},
+          htmlPath : {required: "请输入HTML路径！"},
+        },
+        submitHandler: function(form){
+          
+        },
+        /* submitHandler: function(form){
+          if($("#moduleName").val() == ''){
+            $.cuslayer({
+              mode:"confirm",
+              title:'系统提醒',
+              msg:'你的模块名称未填，确定使用默认名称（modules）吗？',
+              yes:function(index, layero){
+                layer.close(index);
+                submitForm();
+              }
+            });
+          }else{
+            submitForm();
+          }
+        }, */
+        errorPlacement: function(error, element) {
+                if(element.attr("id") == "proId"){
+            element = $("#proId_chosen");
+          }
+                if(element.attr("id") == "proParam_select"){
+            element = $("#proParam_select_chosen");
+          }
+                if(element.attr("id") == "alias_select"){
+            element = $("#alias_select_chosen");
+          }
+                if(element.attr("id") == "db_select"){
+            element = $("#db_select_chosen");
+          }
+                if(element.attr("id") == "tables_select"){
+            element = $("#tables_select_chosen");
+          }
+                if(element.attr("id") == "template_select"){
+            element = $("#template_select_chosen");
+          }
+          tip.errorTip(error.html(),element,undefined,4000);
+        }
+      });
+    })
+
+    function submitForm(){
+        var indexLoad = loading("系统正在提交数据，请稍后......");
+      $("#config-form").ajaxSubmit({
+              type:'post',
+              url:'${ctxPath}/create/generateFile',
+              success:function(data){
+                layer.close(indexLoad);
+                    if(data.code == 1) {
+                      successMsg(data.msg); 
+                    }else{
+                      failMsg(data.msg);
+                    }
+                }
+            });     
+      }
+    
+      function submitForm1(){
+        var indexLoad = loading("系统正在提交数据，请稍后......");
+      $("#config-form").ajaxSubmit({
+              type:'post',
+              url:'${ctxPath}/create/generateFile/down',
+              success:function(data){
+                layer.close(indexLoad);
+                    if(data.code == 1) {
+                      successMsg(data.msg); 
+                    }else{
+                      failMsg(data.msg);
+                    }
+                }
+            });     
+      }
+        
+    $(".chosen-select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+    
+    //下拉选择表事件
+    $("#tables_select").change(function(){
+      $("#userIdFieldBind").empty();
+        $("#organCodeFieldBind").empty();
+        $("#userIdFieldBind").append("<option value=''>请选择</option>");  //为Select追加一个Option(下拉项)
+        $("#organCodeFieldBind").append("<option value=''>请选择</option>");  //为Select追加一个Option(下拉项)
+        $(".chosen-select").trigger('chosen:updated');//更新选项 
+        $("#moduleName").val('');
+        $("#isImport").prop("checked",false);
+        $("#isExport").prop("checked",false);
+        $("#isUploadFile").prop("checked",false);
+        init();
+    })
+    
+    /* 初始化导入导出及字段下拉选项 */
+    function init(){
+      $.ajax({
+              url: "${ctxPath}/create/getTableConfig",
+              dataType: "json",
+              method:"post",
+              data: {id: $("#tables_select").val()},
+              success: function(data) {
+                $("#moduleName").val(data.moduleName);
+                if(data.isImport == 'Y'){
+                  $("#isImport").prop("checked",true); 
+                }else{
+                  $("#isImport").prop("checked",false); 
+                }
+                if(data.isExport == 'Y'){
+                  $("#isExport").prop("checked",true); 
+                }else{
+                  $("#isExport").prop("checked",false); 
+                }
+                if(data.isUploadFile == 'Y'){
+                  $("#isUploadFile").prop("checked",true); 
+                }else{
+                  $("#isUploadFile").prop("checked",false); 
+                }
+            initTableFieldConfig(data);
+              }
+          }); 
+      
+      /* 初始化用户ID字段绑定及机构号字段绑定下拉选项 */
+      function initTableFieldConfig(tableConfig){
+        var params = $.extend($("#config-form").serializeJson(), {tableName: tableConfig.tableName})
+        $.ajax({
+                url: "${ctxPath}/create/getTableFieldConfig",
+                dataType: "json",
+                method:"post",
+                data: params,
+                success: function(data) {
+              for(var i = 0; i < data.length; i++){
+                $("#userIdFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+              $("#organCodeFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+            }
+              $("#userIdFieldBind").val(tableConfig.userIdFieldBind); 
+                  $("#organCodeFieldBind").val(tableConfig.organCodeFieldBind); 
+                  $(".chosen-select").trigger('chosen:updated');//更新选项  
+                }
+            }); 
+      }
+    }
+    
+      //生成单表
+      $("#generate").click(function() {
+      $("#config-form").submit();
+        if(validator.form()){
+        if($("#moduleName").val() == ''){
+          $.cuslayer({
+            mode:"confirm",
+            title:'系统提醒',
+            msg:'你的模块名称未填，确定使用默认名称（modules）吗？',
+            yes:function(index, layero){
+              layer.close(index);
+              submitForm();
+            }
+          });
+        }else{
+          submitForm();
+        }
+        }
+    });
+
+      $("#downGenerate").click(function() {
+        $("#config-form").submit();
+        if(validator.form()){
+        if($("#moduleName").val() == ''){
+          $.cuslayer({
+            mode:"confirm",
+            title:'系统提醒',
+            msg:'你的模块名称未填，确定使用默认名称（modules）吗？',
+            yes:function(index, layero){
+              layer.close(index);
+              Angel.downloadFile("config-form", "${ctxPath}/create/generateFile/down")
+            }
+          });
+        }else{
+          Angel.downloadFile("config-form", "${ctxPath}/create/generateFile/down")
+        }
+        }
+      })
+      
+  </script>
+@}

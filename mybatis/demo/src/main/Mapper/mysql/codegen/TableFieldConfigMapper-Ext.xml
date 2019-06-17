@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.TableFieldConfigMapper">
+	
+	<!-- 检查是否已经保存配置 -->
+	<select id="checkConfigs" resultType="com.krm.common.base.CommonEntity">
+		select count(1) count from gen_table_field_config f
+		left join gen_table_config t on f.TABLE_ID = t.ID 
+		<where>
+			t.PRO_ID = #{proId} and t.DB_ID = #{dbId} 
+			and t.SCHEMA_NAME = #{schemaName} and t.TABLE_NAME = #{tableName} and t.CREATE_BY = #{createBy}
+		</where>
+	</select>
+	
+	<!-- 查询单表配置 -->
+	<select id="selectConfigs" resultType="com.krm.common.base.CommonEntity">
+		select f.*,d.SQL_MODE,d.KEY_NAME,d.VALUE_NAME,d.SQL_CONTENT,d.TABLE_NAME unoin_table 
+		from gen_table_field_config f
+		left join gen_table_config t on f.TABLE_ID = t.ID 
+		left join gen_dynamic_dicts d on f.DICT_TYPE = concat(d.TYPE,'_dynamic') and d.pro_id = #{proId}
+		<where>
+			t.PRO_ID = #{proId} and t.DB_ID = #{dbId} and t.SCHEMA_NAME = #{schemaName} and t.TABLE_NAME = #{tableName} and t.CREATE_BY = #{createBy}
+			<if test="@Ognl@isNotBlank(isUse)">
+				and f.is_use = #{isUse}
+			</if>
+		</where>
+		order by f.sorts
+	</select>
+</mapper>

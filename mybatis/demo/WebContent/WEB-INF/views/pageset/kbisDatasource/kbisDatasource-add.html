@@ -1,0 +1,178 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">编号：</label>
+              <div class="col-sm-8">
+                <input id="id" name="id" type="text" value="${entry.id!}" maxlength="32" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据源名称：</label>
+              <div class="col-sm-8">
+                <input id="sName" name="sName" type="text" value="${entry.sName!}" maxlength="60" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据源类型：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="sType" id="sType" >
+                  <option value="">--请选择--</option>
+                  @selectOptions = dict.getDictListByType("db_select_dynamic");
+                  @if(selectOptions != ""){
+                    @for(op in selectOptions){
+                      <option value="${op.value! }">${op.label! }</option>
+                    @}
+                  @}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">源描述：</label>
+              <div class="col-sm-8">
+                <input id="sDesc" name="sDesc" type="text" value="${entry.sDesc!}" maxlength="200" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">地址：</label>
+              <div class="col-sm-8">
+                <input id="sLocal" name="sLocal" type="text" value="${entry.sLocal!}" maxlength="200" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">连接：</label>
+              <div class="col-sm-8">
+                <input id="sUrl" name="sUrl" type="text" value="${entry.sUrl!}" maxlength="200" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">连接用户：</label>
+              <div class="col-sm-8">
+                <input id="sConn" name="sConn" type="text" value="${entry.sConn!}" maxlength="200" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">连接密码：</label>
+              <div class="col-sm-8">
+                <input id="sPass" name="sPass" type="text" value="${entry.sPass!}" maxlength="32" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">协议：</label>
+              <div class="col-sm-8">
+                <input id="sProtocol" name="sProtocol" type="text" value="${entry.sProtocol!}" maxlength="200" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建人：</label>
+              <div class="col-sm-8">
+                <input id="createBy" name="createBy" type="text" value="${entry.createBy!}" maxlength="32" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建时间：</label>
+              <div class="col-sm-8">
+                <input id="createDate" name="createDate" type="text" value="${entry.createDate!}" maxlength="0" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">最近修改人：</label>
+              <div class="col-sm-8">
+                <input id="updateBy" name="updateBy" type="text" value="${entry.updateBy!}" maxlength="32" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">最近修改时间：</label>
+              <div class="col-sm-8">
+                <input id="updateDate" name="updateDate" type="text" value="${entry.updateDate!}" maxlength="0" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">逻辑删除标记(0.正常，1.删除)：</label>
+              <div class="col-sm-8">
+                <input id="delFlag" name="delFlag" type="text" value="${entry.delFlag!}" maxlength="1" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入编号！"},
+				sLocal : {required: "请输入地址！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/pageset/kbisDatasource/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

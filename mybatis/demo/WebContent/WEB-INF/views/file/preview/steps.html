@@ -1,0 +1,38 @@
+<pre>
+软件下载地址：<a href="https://www.openoffice.org/download/" target="_blank">https://www.openoffice.org/download/</a>
+
+**********************************
+******Linux版安装及启动操作********
+**********************************
+
+将安装包复制到一个临时目录，如：/home/mmps/tools，解压：tar -zxvf Apache_OpenOffice_4.1.3_Linux_x86-64_install-rpm_zh-CN.tar.gz
+
+1. 进入压缩包解压后的目录
+	cd /home/mmps/tools/zh-CN/RPMS/
+2. 安装步骤1
+	rpm -ivh *.rpm
+3. 进入desktop-integration目录
+	cd desktop-integration/
+4. 安装步骤2
+	rpm -ivh openoffice4.1.3-redhat-menus-4.1.3-9783.noarch.rpm 
+5. 进入安装后的目录（默认安装到opt目录下）
+	cd /opt/openoffice4/program
+6. 启动命令
+	soffice -headless -accept="socket,host=127.0.0.1,port=8100;urp;" -nofirststartwizard &
+
+查看进程验证是否启动成功：
+	ps -ef|grep openoffice 或者 netstat -lnp |grep 8100
+查glibc 什么版本:
+	ls -l /lib/libc-*  
+	ls -l /lib/tls/libc-*	
+卸载命令：rpm -e `rpm -qa |grep openoffice` `rpm -qa |grep ooobasis`
+
+**********************************
+******Windows版安装及启动操作******
+**********************************
+安装：执行exe文件，正常安装，注意：记住安装的目录
+启动： 1. Windows键+R键组合，打开运行窗口
+	  2. 输入cmd，回车
+	  3. 输入命令，cd openoffice的安装目录，例如：cd C:\Program Files (x86)\OpenOffice 4\program，然后回车
+	  4. 输入命令，soffice -headless -accept="socket,host=127.0.0.1,port=8100;urp;" -nofirststartwizard，然后回车即可完成启动操作
+</pre>

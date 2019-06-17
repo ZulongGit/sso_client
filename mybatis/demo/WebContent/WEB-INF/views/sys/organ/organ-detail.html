@@ -1,0 +1,77 @@
+@var area = getAllArea(); //全部区域
+<div class="layer">
+<div class="profile-user-info profile-user-info-striped" >
+	<div class="profile-info-row">
+		<div class="profile-info-name">机构名称</div>
+		<div class="profile-info-value">
+			${organ.name!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">机构类型</div>
+		<div class="profile-info-value">
+			${dict.getDictByTypeAndValue("sys_organ_type",organ.type).label}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">上级机构</div>
+		<div class="profile-info-value">
+			${pOrgan.name!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">归属区域</div>
+		<div class="profile-info-value">
+			${area[organ.areaId].name!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">图标</div>
+		<div class="profile-info-value">
+			<i class="ace-icon ${organ.icon!} blue bigger-120"></i>
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">负责人</div>
+		<div class="profile-info-value">
+			${organ.master!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">电话</div>
+		<div class="profile-info-value">
+			${organ.phone!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">邮箱</div>
+		<div class="profile-info-value">
+			${organ.email!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">联系地址</div>
+		<div class="profile-info-value">
+			${organ.address!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">邮政编码</div>
+		<div class="profile-info-value">
+			${organ.zipCode!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">传真</div>
+		<div class="profile-info-value">
+			${organ.fax!}
+		</div>
+	</div>
+	<div class="profile-info-row">
+		<div class="profile-info-name">备注</div>
+		<div class="profile-info-value">
+			${organ.remarks!}
+		</div>
+	</div>
+</div>
+</div>

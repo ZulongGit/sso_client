@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.ProParamsMapper">
+
+	<!-- 表字段 -->
+	<sql id="proParamsColumns">
+		 ID, PRO_PATH, SOURCE_FOLDER, HTML_PATH, XML_PATH, CODE_PATH, JS_PATH, PRO_ID, ALIAS, AUTHOR,
+		 CODING, CREATE_BY, CREATE_DATE, UPDATE_BY, UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="proParamsAliasColumns">
+         t.ID, t.PRO_PATH, t.SOURCE_FOLDER, t.HTML_PATH, t.XML_PATH, t.CODE_PATH, t.JS_PATH, t.PRO_ID, t.ALIAS, t.AUTHOR,
+		 t.CODING, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY, t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="proParamsAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+			, F_CHANGE_TO_DICT('coding_type', t.CODING) CODING_TEXT
+		from gen_pro_params  t
+		left join gen_projects table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proPath)">and t.PRO_PATH = #{proPath} </if>
+			<if test="@Ognl@isNotBlank(sourceFolder)">and t.SOURCE_FOLDER = #{sourceFolder} </if>
+			<if test="@Ognl@isNotBlank(htmlPath)">and t.HTML_PATH = #{htmlPath} </if>
+			<if test="@Ognl@isNotBlank(xmlPath)">and t.XML_PATH = #{xmlPath} </if>
+			<if test="@Ognl@isNotBlank(codePath)">and t.CODE_PATH = #{codePath} </if>
+			<if test="@Ognl@isNotBlank(jsPath)">and t.JS_PATH = #{jsPath} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(alias)">and t.ALIAS = #{alias} </if>
+			<if test="@Ognl@isNotBlank(author)">and t.AUTHOR = #{author} </if>
+			<if test="@Ognl@isNotBlank(coding)">and t.CODING = #{coding} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.ProParams">
+        select  <include refid="proParamsAliasColumns" />
+		from gen_pro_params  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proPath)">and t.PRO_PATH = #{proPath} </if>
+			<if test="@Ognl@isNotBlank(sourceFolder)">and t.SOURCE_FOLDER = #{sourceFolder} </if>
+			<if test="@Ognl@isNotBlank(htmlPath)">and t.HTML_PATH = #{htmlPath} </if>
+			<if test="@Ognl@isNotBlank(xmlPath)">and t.XML_PATH = #{xmlPath} </if>
+			<if test="@Ognl@isNotBlank(codePath)">and t.CODE_PATH = #{codePath} </if>
+			<if test="@Ognl@isNotBlank(jsPath)">and t.JS_PATH = #{jsPath} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(alias)">and t.ALIAS = #{alias} </if>
+			<if test="@Ognl@isNotBlank(author)">and t.AUTHOR = #{author} </if>
+			<if test="@Ognl@isNotBlank(coding)">and t.CODING = #{coding} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.ProParams">
+		select  <include refid="proParamsAliasColumns" />
+		from gen_pro_params  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proPath)"> and t.PRO_PATH = #{proPath} </if>
+			<if test="@Ognl@isNotBlank(sourceFolder)"> and t.SOURCE_FOLDER = #{sourceFolder} </if>
+			<if test="@Ognl@isNotBlank(htmlPath)"> and t.HTML_PATH = #{htmlPath} </if>
+			<if test="@Ognl@isNotBlank(xmlPath)"> and t.XML_PATH = #{xmlPath} </if>
+			<if test="@Ognl@isNotBlank(codePath)"> and t.CODE_PATH = #{codePath} </if>
+			<if test="@Ognl@isNotBlank(jsPath)"> and t.JS_PATH = #{jsPath} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(alias)"> and t.ALIAS = #{alias} </if>
+			<if test="@Ognl@isNotBlank(author)"> and t.AUTHOR = #{author} </if>
+			<if test="@Ognl@isNotBlank(coding)"> and t.CODING = #{coding} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="proParamsAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+			, F_CHANGE_TO_DICT('coding_type', t.CODING) CODING_TEXT
+		from gen_pro_params  t
+		left join gen_projects table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proPath)">and t.PRO_PATH = #{proPath} </if>
+			<if test="@Ognl@isNotBlank(sourceFolder)">and t.SOURCE_FOLDER = #{sourceFolder} </if>
+			<if test="@Ognl@isNotBlank(htmlPath)">and t.HTML_PATH = #{htmlPath} </if>
+			<if test="@Ognl@isNotBlank(xmlPath)">and t.XML_PATH = #{xmlPath} </if>
+			<if test="@Ognl@isNotBlank(codePath)">and t.CODE_PATH = #{codePath} </if>
+			<if test="@Ognl@isNotBlank(jsPath)">and t.JS_PATH = #{jsPath} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(alias)">and t.ALIAS = #{alias} </if>
+			<if test="@Ognl@isNotBlank(author)">and t.AUTHOR = #{author} </if>
+			<if test="@Ognl@isNotBlank(coding)">and t.CODING = #{coding} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_pro_params(<include refid="proParamsColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.id, jdbcType = VARCHAR},
+		    	#{item.proPath, jdbcType = VARCHAR},
+		    	#{item.sourceFolder, jdbcType = VARCHAR},
+		    	#{item.htmlPath, jdbcType = VARCHAR},
+		    	#{item.xmlPath, jdbcType = VARCHAR},
+		    	#{item.codePath, jdbcType = VARCHAR},
+		    	#{item.jsPath, jdbcType = VARCHAR},
+		    	#{item.proId, jdbcType = VARCHAR},
+		    	#{item.alias, jdbcType = VARCHAR},
+		    	#{item.author, jdbcType = VARCHAR},
+		    	#{item.coding, jdbcType = VARCHAR},
+		    	#{item.createBy, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.updateBy, jdbcType = VARCHAR},
+		    	#{item.updateDate, jdbcType = DATE},
+				#{item.delFlag, jdbcType = DATE}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_pro_params
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proPath)"> and PRO_PATH = #{proPath} </if>
+			<if test="@Ognl@isNotBlank(sourceFolder)"> and SOURCE_FOLDER = #{sourceFolder} </if>
+			<if test="@Ognl@isNotBlank(htmlPath)"> and HTML_PATH = #{htmlPath} </if>
+			<if test="@Ognl@isNotBlank(xmlPath)"> and XML_PATH = #{xmlPath} </if>
+			<if test="@Ognl@isNotBlank(codePath)"> and CODE_PATH = #{codePath} </if>
+			<if test="@Ognl@isNotBlank(jsPath)"> and JS_PATH = #{jsPath} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(alias)"> and ALIAS = #{alias} </if>
+			<if test="@Ognl@isNotBlank(author)"> and AUTHOR = #{author} </if>
+			<if test="@Ognl@isNotBlank(coding)"> and CODING = #{coding} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

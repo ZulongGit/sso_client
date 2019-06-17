@@ -1,0 +1,193 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">报告编号：</label>
+              <div class="col-sm-8">
+                <input id="id" name="id" type="text" value="${entry.id!}" maxlength="32"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">报告名称：</label>
+              <div class="col-sm-8">
+                <input id="name" name="name" type="text" value="${entry.name!}" maxlength="64"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">报告日期：</label>
+              <div class="col-sm-8">
+                <input class="Wdate" id="bgdate" name="bgdate" type="text" value="${entry.bgdate!}" maxlength="20" onfocus="WdatePicker()" 
+                    style="background:url(${ctxPath}/static/My97DatePicker/skin/datePicker.gif) no-repeat right;"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">分类：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="subclass" id="subclass"  >
+                  <option value="">--请选择--</option>
+                  @selectOptions = dict.getDictListByType("CUSTOMERPPTYPE");
+                  @if(selectOptions != ""){
+                    @for(op in selectOptions){
+                      <option value="${op.value! }" ${decode(strutil.toString(op.value!''),strutil.toString(entry.subclass!''),'selected','')}>${op.label! }</option>
+                    @}
+                  @}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">报告类型：</label>
+              <div class="col-sm-8">
+                <input id="bgtype" name="bgtype" type="text" value="${entry.bgtype!}" maxlength="64"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">模板：</label>
+              <div class="col-sm-8">
+                <input id="bttemp" name="bttemp" type="text" value="${entry.bttemp!}" maxlength="64"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">报告描述：</label>
+              <div class="col-sm-8">
+                <input id="btdes" name="btdes" type="text" value="${entry.btdes!}" maxlength="500"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">报告人：</label>
+              <div class="col-sm-8">
+                <input id="btcerter" name="btcerter" type="text" value="${entry.btcerter!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建人：</label>
+              <div class="col-sm-8">
+                <input id="createBy" name="createBy" type="text" value="${entry.createBy!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">创建时间：</label>
+              <div class="col-sm-8">
+                <input id="createDate" name="createDate" type="text" value="${entry.createDate!}" maxlength="7"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">最近修改人：</label>
+              <div class="col-sm-8">
+                <input id="updateBy" name="updateBy" type="text" value="${entry.updateBy!}" maxlength="32"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">最近修改时间：</label>
+              <div class="col-sm-8">
+                <input id="updateDate" name="updateDate" type="text" value="${entry.updateDate!}" maxlength="7"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">null：</label>
+              <div class="col-sm-8">
+                <input id="delFlag" name="delFlag" type="text" value="${entry.delFlag!}" maxlength="1"  />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table class="EditTable" width="100%">
+      <tbody>
+        <tr class="FormData">
+          <td class="CaptionTD">是否上传附件:</td>
+          <td class="DataTD width-100">
+            <div class="switch" id="mySwitch">
+              <input type="checkbox" data-size="mini" data-on-text="是" data-off-text="否" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入报告编号！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/testcdu/testdev01/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+								if($('#mySwitch input').bootstrapSwitch('state')){	//打开附件上传页面
+									$.cuslayer({
+										mode: "page",
+										url: "${ctxPath}/file/upload/showlayer",
+										formId: 'file-form',
+										data: {
+											relateId: data.data
+										},
+										title: '上传附件'
+									});
+								}
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

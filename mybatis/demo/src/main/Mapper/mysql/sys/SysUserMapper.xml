@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysUserMapper">
+
+	<sql id="sysUserColumns">
+		id,dept_id,create_by,create_date,del_flag,email,login_date,login_ip,mobile,
+		name,no,organ_id,password,phone,remarks,update_by,update_date,username,user_type
+	</sql>
+	
+	<!-- 用户列表 -->
+	<select id="findPageInfo" resultType="com.krm.common.base.CommonEntity">
+		SELECT su.id,su.name,su.mobile,su.email,su.no,su.login_ip,su.login_date,
+			su.dept_id,su.organ_id,so.name organ_name, group_concat(sr.name) roles 
+		FROM sys_user su 
+		LEFT JOIN sys_user_role sur ON su.id = sur.user_id 
+		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+		LEFT JOIN sys_organ so ON so.code = su.organ_id
+		<where>
+			<if test="organId!=0 and organType==1 ">
+				and su.organ_id = #{organId}
+			</if>
+			<if test="organId!=0 and organType==2 ">
+				su.dept_id = #{organId}
+			</if>
+			<if test="@Ognl@isNotBlank(name)">
+				and su.name like CONCAT('%', #{name}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(no)">
+				and su.no like CONCAT('%', #{no}, '%')
+			</if>
+			<if test="@Ognl@isNotBlank(roles)">
+				and sr.id in (${roles})
+			</if>
+			<if test="@Ognl@isNotBlank(userDataScope)">
+				and ${userDataScope}
+			</if>
+			<if test="@Ognl@isNotBlank(userType) and userType!=1">
+				and user_type != 1
+			</if>
+			and su.del_flag = 0 
+		</where>
+		GROUP BY su.id,su.name,su.mobile,su.email,su.no,su.login_ip,su.login_date,
+			su.dept_id,su.organ_id,so.name,su.update_date ORDER BY su.update_date desc
+	</select>
+	
+	
+	<insert id="saveUser" useGeneratedKeys="false">
+		insert into sys_user(<include refid="sysUserColumns" />)
+		values(
+			#{id,jdbcType=VARCHAR},
+			#{companyId,jdbcType=VARCHAR},
+			#{createBy,jdbcType=VARCHAR},
+			#{createDate,jdbcType=DATE},
+			#{delFlag,jdbcType=VARCHAR},
+			#{email,jdbcType=VARCHAR},
+			#{loginDate,jdbcType=DATE},
+			#{loginIp,jdbcType=VARCHAR},
+			#{mobile,jdbcType=VARCHAR},
+			#{name,jdbcType=VARCHAR},
+			#{no,jdbcType=VARCHAR},
+			#{organId,jdbcType=VARCHAR},
+			#{password,jdbcType=VARCHAR},
+			#{phone,jdbcType=VARCHAR},
+			#{remarks,jdbcType=VARCHAR},
+			#{updateBy,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=DATE},
+			#{username,jdbcType=VARCHAR},
+			#{userType,jdbcType=VARCHAR}
+		)
+	</insert>
+
+</mapper>

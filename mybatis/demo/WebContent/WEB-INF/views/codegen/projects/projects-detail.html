@@ -1,0 +1,37 @@
+﻿<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿项目名称：</div>
+      <div class="profile-info-value" id="proName">
+        <span class="editable editable-click">
+			${entry.proName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿项目类型：</div>
+      <div class="profile-info-value" id="proType">
+        <span class="editable editable-click">
+			${decode('01',strutil.toString(entry.proType!''),'私人项目','')}
+			${decode('01',strutil.toString(entry.proType!''),'小组项目','')}
+        </span>
+      </div>			
+	</div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿排序：</div>
+      <div class="profile-info-value" id="sorts">
+        <span class="editable editable-click">
+			${entry.sorts!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿项目描述：</div>
+      <div class="profile-info-value" id="description">
+        <span class="editable editable-click">
+			${entry.description!}
+        </span>
+      </div>
+    </div>
+	</div>
+</div>

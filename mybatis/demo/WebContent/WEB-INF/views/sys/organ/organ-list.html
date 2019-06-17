@@ -1,0 +1,190 @@
+@layout("/layout/container.html", {ztree: true}){ 
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h5 class="widget-title">机构配置</h5>
+					<div class="widget-toolbar">
+						<a href="#" data-action="fullscreen" class="orange2">
+							<i class="ace-icon fa fa-expand"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8">
+						<div class="row">
+							<div class="col-sm-3">
+								<div id="tree-menu-div">
+									<ul id="treeMenu" class="ztree"></ul>
+								</div>
+							</div>
+							<div class="col-sm-9" style="padding: 0;">
+								<form method="post" class="form-search" id="search-form">
+									<div class="form-horizontal" role="form">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="col-xs-4">
+													<div class="form-group">
+														<label class="col-sm-4 control-label">机构名称：</label>
+														<div class="col-sm-8">
+															<input id="search-input" name="name" class="form-control" type="text" />
+                                                            <input type="hidden" name="id" />
+                                                          <input type="hidden" name="code" />
+														</div>
+													</div>
+												</div>
+												<div class="col-xs-4">
+													<div class="form-group">
+														<div class="col-sm-12">
+															<button id="ok" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-search middle-120"></i>&nbsp;查&nbsp;询</button>
+										                    <button id="cancel" type="reset" class="btn btn-danger btn-sm"><i class="ace-icon fa fa-refresh middle-120"></i>&nbsp;重&nbsp;置</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+										<table id="table"></table>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<#systree editUrl="organ/edit/showlayer" delUrl="organ/delete" 
+    	formId="table-form" addUrl="organ/add/showlayer" treeData="${treeList}"
+    	idKey="code" rootNodeName="机构列表" />
+
+	<script>
+		//表格初始化
+		$(function () {
+			window.operateEvents = {
+				'click .updateSysOrgan': function (e, value, row, index) {
+					updateSysOrgan(row);
+				},
+				'click .deleteOrgan': function (e, value, row, index) {
+					deleteOrgan(row);
+				}
+			};
+			var $table = $('#table');
+			$table.bootstrapTable({
+				iconSize: 'sm',
+				url: '${ctxPath}/organ/list?r=' + Math.random(),
+				toolbar: '#toolbar',
+				cache: false,
+				singleSelect: false,
+				clickToSelect: true,
+				striped: true,
+				pagination: true,
+				pageNumber: 1,//首页页码
+				pageSize: 10,//页面显示条数
+				pageList: [10, 25, 50, 100],
+				sidePagination: 'server',//服务器端分页
+				columns: [
+					{ field: "name", title: "机构名称", sortable: true, formatter: function (value, row, index) {
+						return '<a href="javascript:;" data-title="机构<' + value + '>详情" data-mode="detail" data-url="${ctxPath}/organ/detail/showlayer"' +
+						'data-data="{id:\'' + row.id + '\'}">' + value + '</a>';
+						}
+					},
+					{ field: "code", title: "机构号", sortable: true },
+					{ field: "type", title: "机构类型", sortable: true },
+					{ field: "parentName", title: "上级机构", sortable: false },
+					{ field: "master", title: "负责人", sortable: true },
+					{ field: "phone", title: "电话", sortable: true },
+					{ field: "", title: "操作", events: operateEvents, formatter: operateFormatter }
+				],
+				contentType: "application/x-www-form-urlencoded",
+				queryParamsType: "limit",
+				dataType: "json",
+				method: "post",
+				queryParams: function (params) {
+					var json = $("#search-form").serializeJson();
+					$.extend(params, json);
+					return params;
+				},
+				onDblClickRow: function (row) {
+					$.cuslayer({ mode: "detail", url: "${ctxPath}/organ/detail/showlayer", data: { id: row.id }, table: "table", width: '100%', height: '100%', title: '机构信息详细信息' });
+				}
+			});
+			$table.bootstrapTable('resetView', { height: window.innerHeight - $(".bootstrap-table").offset().top - 20 });
+		})
+
+		//初始化所有下拉框
+		$(".chosen").chosen({ width: "100%", search_contains: true, disable_search_threshold: 10 });
+
+		function operateFormatter(value, row, index) {
+			var operates = [];
+			@if (shiro.hasPermission("organ:update")) {
+				operates.push('<a class="blue updateSysOrgan" href="javascript:void(0);" title="编辑"><i class="ace-icon fa fa-pencil bigger-130"></i>&nbsp;编辑</a>');
+			@}
+			@if (shiro.hasPermission("organ:delete")) {
+				operates.push('<a class="red deleteOrgan" href="javascript:void(0);" title="编辑"><i class="ace-icon fa fa-trash-o bigger-130"></i>&nbsp;删除</a>');
+			@}
+			return operates.join('&nbsp;&nbsp;&nbsp;&nbsp;');
+		}
+
+		//查询按钮
+		$("#ok").click(function () {
+			var params = jQuery("#search-form").serializeJson();
+			$('#table').bootstrapTable("refresh", { query: params });
+			searchNode();
+		});
+
+		//重置按钮
+		$("#cancel").click(function () {
+			$(".chosen").val("").trigger("chosen:updated");
+			$("input").val("");
+		});
+
+		//条件查询
+		function query(params) {
+			if (params == undefined) {
+				params = {};
+			}
+			var json = $("#search-form").serializeJson();
+			$.extend(params, json);
+			$('#table').bootstrapTable("refresh", { query: params });
+		}
+
+		//增加操作
+		$("#addSysOrgan").click(function () {
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/organ/add/showlayer",
+				title: '添加<机构信息>',
+				width: '100%',
+				height: '100%'
+			});
+		});
+
+		//修改操作
+		function updateSysOrgan(row) {
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/organ/edit/showlayer",
+				data: { 'id': row.id, parentId: row.parentId},
+				title: '修改<机构信息>',
+				width: '100%',
+				height: '100%'
+			});
+		}
+
+		//删除操作
+		function deleteOrgan(row){
+			$.cuslayer({
+			mode:"del",
+			url:"${ctxPath}/organ/delete",
+			data:{
+				'id': row.code
+			},
+			msg:'你确定删除<'+row.name+'>节点及其所有的子节点吗?(慎重操作)'
+		});
+		}
+
+	</script>
+@}

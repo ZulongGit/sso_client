@@ -1,0 +1,294 @@
+@var selectOptions;
+<div class="layer">
+	<div id="" class="tab-pane active clearfix">
+        <div class="alert-success"><font style="color:red">提示信息：红色星号为必填选项</font></div>
+		<form cnName="FormPost" id="table-form" class="FormGrid"  method="post" enctype="multipart/form-data" action="">
+  		  <input type="hidden" name="id" value="${entry.id!}"/>
+  		  <input type="hidden" name="createBy" value="${entry.createBy!}"/>
+            <div class="form-horizontal" role="form" style="margin-top:20px;">
+              <div class="container-fluid">
+                <div class="row" id="form-row">
+                  <div class="col-xs-4">
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label red">归属项目：</label>
+                      <div class="col-sm-8">
+                        <select class="chosen_select form-control w110" name="proId" id="proId" select="true">
+                            <option value="">--请选择--</option>
+                            @var map = dict.getEmptyMap();
+                              @if(!session.loginUser.isAdmin){
+                                @map.userId = session.loginUser.id;
+                              @}
+						    @selectOptions = dict.getDictListByType("project_select_dynamic", map);
+                            @if(selectOptions != ""){
+                                @for(op in selectOptions){
+                                  <option value="${op.value!}" ${decode(strutil.toString(op.value!""),strutil.toString(entry.proId!""),"selected","")}>${op.label! }</option>
+                                @}
+                            @}
+                        </select> 
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label red">表名：</label>
+                      <div class="col-sm-8">
+                        <input id="tableName" name="tableName" type="text" value="${entry.tableName!}" maxlength="200" required/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-4">
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label red">表注释：</label>
+                      <div class="col-sm-8">
+                        <input type="text" name="tableComments" id="tableComments" value="${entry.tableComments!}" maxlength="50" required/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+			<br>
+			<div id="fields">
+					<div id="toolbar" style="padding: 5px 0;text-align: center;">
+			        	<button type="button" id="BtAdd" class="btn btn-primary btn-sm">添加字段&nbsp;</button>
+			        	<button type="button" id="BtDel" class="btn btn-primary btn-sm">删除</button>
+					</div>
+					<table id="tb" class="table table-striped table-bordered table-condensed " data-toolbar="#toolbar">
+						<thead>
+				            <tr align="center">
+				                <th style="width:45px;text-align: center;">序号</th>
+				                <th style="width:45px;text-align: center;">
+				                  <label class="checkbox-label">
+                                    <input class="checkbox-hidden" id="CKA" type="checkbox" name="CKA" value="0">
+                                    <span class="checkbox-style1 checkbox-inner"></span>
+                                  </label>      	
+				                </th>
+				                <th>字段名称</th>
+				                <th>字段注释</th>
+                                <th style="width:75px;text-align: center;">主键</th>
+				                <th>字段类型</th>
+				                <th>长度</th>
+				                <th>小数</th>
+				                <th>默认值</th>
+				                <th style="width:75px;text-align: center;">允许空值</th>
+				            </tr>
+			            </thead>
+			            <tbody>
+				            <tr>
+				                <td style="text-align: center;"></td>
+				                <td style="text-align: center;">
+				                   <label class="checkbox-label">
+                                      <input class="checkbox-hidden" id="CK" type="checkbox" name="CK" value="0">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>  					
+								</td>
+				                <td><input type="text" name="fieldName" value="" maxlength="50" class="ignore" required/><font color="red" size="+1">*</font></td>
+				                <td><input type="text" name="fieldAlias" value="" maxlength="50" class="ignore" required/><font color="red" size="+1">*</font></td>
+				                <td style="width:75px;text-align: center;">
+                                  <label class="checkbox-label">
+                                      <input class="checkbox-hidden" type="checkbox" name="isPrimary" value="0">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label> 
+                                </td>        
+                                <td>
+					                <select class="chosen ignore" name="fieldType" select="true" style="height: 26px;width: 141px;">
+										@selectOptions = dict.getDictListByType("field_type");
+										@if(selectOptions != ""){
+										   	@for(op in selectOptions){
+									   			<option value="${op.value!}" ${decode(strutil.toString(op.value!""),strutil.toString(createTableHistory.fieldType!""),"selected","")}>${op.label! }</option>
+									  		@}
+										@}
+						        	</select> 
+						        	<font color="red" size="+1">*</font>
+				        		</td>
+				                <td><input type="number" name="fieldLength" maxlength="10" value="" number="true"/></td>
+				                <td><input type="number" name="fieldDecimal" maxlength="10"  placeholder="小数精度" number="true"/></td>
+				                <td><input type="text" name="fieldDefaultValue" maxlength="100" placeholder="默认为空" value=""/></td>
+				                <td style="width:75px;text-align: center;">
+					               <label class="checkbox-label">
+                                      <input class="checkbox-hidden" type="checkbox" name="fieldIsNull" checked value="1">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>          	
+								</td>
+				            </tr>
+				            @for(item in list){
+				            	@var index = itemLP.index! -1;
+			            		<tr>
+				                <td style="text-align: center;">${itemLP.index!}</td>
+				                <td style="text-align: center;">
+					               <label class="checkbox-label">
+                                      <input class="checkbox-hidden" id="CK" type="checkbox" name="CK" value="0">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>          	
+								</td>
+				                <td><input type="text" name="list[${index}].fieldName" value="${item.fieldName!}" maxlength="50" class="ignore" required/><font color="red" size="+1">*</font></td>
+				                <td><input type="text" name="list[${index}].fieldAlias" value="${item.fieldAlias!}" maxlength="50" class="ignore" required/><font color="red" size="+1">*</font></td>
+				                <td style="width:75px;text-align: center;">
+					                  <label class="checkbox-label">
+                                        <input class="checkbox-hidden" type="checkbox" name="list[${index}].isPrimary" 
+												${decode("1",strutil.toString(item.isPrimary!""),"checked","")}
+												value="${item.isPrimary!}">
+                                        <span class="checkbox-style1 checkbox-inner"></span>
+                                      </label>					
+								</td>       
+                                <td>
+					                <select class="chosen ignore" name="list[${index}].fieldType" select="true" style="height: 26px;width: 141px;">
+										@selectOptions = dict.getDictListByType("field_type");
+										@if(selectOptions != ""){
+										   	@for(op in selectOptions){
+									   			<option value="${op.value!}" ${decode(strutil.toString(op.value!""),strutil.toString(item.fieldType!""),"selected","")}>${op.label! }</option>
+									  		@}
+										@}
+						        	</select> 
+						        	<font color="red" size="+1">*</font>
+				        		</td>
+				                <td><input type="number" name="list[${index}].fieldLength" value="${item.fieldLength!}" maxlength="10"  number="true"/></td>
+				                <td><input type="number" name="list[${index}].fieldDecimal" value="${item.fieldDecimal!}" placeholder="小数精度" maxlength="10"  number="true"/></td>
+				                <td><input type="text" name="list[${index}].fieldDefaultValue" value="${item.fieldDefaultValue!}" placeholder="默认为空" maxlength="100" value=""/></td>
+				                <td style="width:75px;text-align: center;">
+					               <label class="checkbox-label">
+                                      <input class="checkbox-hidden" type="checkbox" onchange="isNull(this)" name="list[${index}].fieldIsNull" 
+												${decode("1",strutil.toString(item.fieldIsNull!""),"checked","")}
+												value="${item.fieldIsNull!}">
+                                      <span class="checkbox-style1 checkbox-inner"></span>
+                                    </label>         	
+								</td>
+				            </tr>
+			            	@}
+			            </tbody>
+					</table>　
+			</div>
+
+		</form>
+	</div>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		//所有的CheckBox注册事件
+		$("input[type=checkbox]").change(function(){
+			if(this.checked){
+				$(this).val(1);
+			}else{
+				$(this).val(0);
+			}
+		})
+		//隐藏模板tr
+	    $("#tb tr").eq(1).hide();
+		var j = $("#tb tr").length-2;
+	    //--------------添加一行-------------------------------------------------------------------------------------------------------------------------------------- 
+	    $("#BtAdd").click(function() {
+			var trs = $("#tb tr");
+			var index = trs.length-2;//序号
+			//复制一行
+		    var $tr = $("#tb tr").eq(1).clone();
+			var seq = ++j;
+		    $tr.find("td").get(0).innerHTML = seq;
+		    var tds = $tr.find("td");
+		    $.each(tds,function(index1){
+				var td =tds.eq(index1);
+				var input = td.find("input,select").eq(0);
+				input.removeClass("ignore");
+				var name = input.attr("name");
+				if(name != "CK"){
+					input.attr("name","list["+index+"]."+name);
+				}
+			});
+		    $tr.show();
+		    $tr.appendTo("#tb");
+		  	//所有的CheckBox注册事件
+			$("input[type=checkbox]").change(function(){
+				if(this.checked){
+					$(this).val(1);
+				}else{
+					$(this).val(0);
+				}
+			})
+		});
+	   
+	    //--------------删除一行-------------------------------------------------------------------------------------------------------------------------------------- 
+	    $("#BtDel").click(function() {
+	    	var rows=$("input[name='CK']:checked");
+			if(rows.length==0||rows.length==null){
+				failMsg("请选择要删除的数据！");
+			}else{
+	            $("#tb tr:gt(1)").each(function() {
+	                if ($(this).find("#CK").get(0).checked == true) {
+	                    $(this).remove();
+	                }
+	            });
+	            j = 0;
+	            $("#tb tr:gt(1)").each(function() {
+	            	var obj = $(this);
+	                $(this).find("td").get(0).innerHTML = ++j;
+	                var tr = $("#tb tr").eq(1).clone();
+	                var tds = tr.find("td");
+				    $.each(tds,function(index){
+						if(index > 1){
+	    					var td = tds.eq(index);
+	    					var input = td.find("input,select").eq(0);
+	    					var name = input.attr("name");
+							obj.find("td").eq(index).find("input,select").eq(0).attr("name","list["+(j-1)+"]."+name);
+						}
+					});
+	            });
+	            $("#CKA").attr("checked", false);
+			}
+	    });
+	    $("#CKA").click(function() {
+	        $("#tb tr:gt(1)").each(function() {
+	            $(this).find("#CK").get(0).checked = $("#CKA").get(0).checked;
+	        });
+	    });
+	    
+	    
+		var layerIndex = layer.index;	//当前层参数
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				tableName : {required: "请输入表名！"},
+				tableComments : {required: "请输入表注释！"},
+				fieldName : {required: "请输入字段名称！"},
+				fieldAlias : {required: "请输入字段注释！"},
+				fieldType : {required: "请选择字段类型！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/codegen/createTableHistory/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+           		if(element.attr("id") == "fieldType"){
+					element = $("#fieldType_chosen");
+				}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+
+	function isNull(obj){
+		if(obj.checked){
+			$(obj).val(1);
+		}else{
+			$(obj).val(0);
+		}
+	}
+</script>

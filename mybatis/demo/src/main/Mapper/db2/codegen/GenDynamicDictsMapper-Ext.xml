@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.GenDynamicDictsMapper">
+	
+	<!-- 查询当前架构所有的表和注释 -->
+	<select id="allTable" resultType="com.krm.common.base.CommonEntity">
+		select a.table_name, b.comments from all_tables a
+		left join all_tab_comments b on a.table_name = b.table_name and a.owner = b.owner
+		<where>
+			a.owner = upper(#{schema})
+		</where>
+	</select>
+	
+	<!-- 查询单表的字段信息 -->
+	<select id="selectFields"  resultType="com.krm.common.base.CommonEntity">
+		select COLUMN_NAME,COMMENTS remarks from all_col_comments where
+			owner = upper(#{schema}) and TABLE_NAME = upper(#{tableName})
+	</select>
+</mapper>

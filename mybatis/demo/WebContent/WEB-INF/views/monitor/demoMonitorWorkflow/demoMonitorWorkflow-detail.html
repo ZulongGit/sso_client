@@ -1,0 +1,41 @@
+@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">流程编码：</div>
+      <div class="profile-info-value" id="wfCode">
+        <span class="editable editable-click">
+			${entry.wfCode!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">流程名称：</div>
+      <div class="profile-info-value" id="wfName">
+        <span class="editable editable-click">
+			${entry.wfName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建时间：</div>
+      <div class="profile-info-value" id="createDate">
+        <span class="editable editable-click">
+			${entry.createDate!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建人：</div>
+      <div class="profile-info-value" id="createBy">
+        <span class="editable editable-click">
+			${entry.createBy!}
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+	})
+</script>

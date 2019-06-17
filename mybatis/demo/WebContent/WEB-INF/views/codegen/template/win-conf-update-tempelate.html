@@ -1,0 +1,239 @@
+\@var selectOptions;
+@var fileIndex = 0;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+   @for(item in f){
+    @if(item.isPrimary == 'Y'){
+      <input name="${item.fieldName}" type="hidden" value="\${entry.${item.fieldName}!}">
+    @}
+   @}   
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+    @for(item in f){
+      @if(item.isUse == 'Y'){
+        @if(item.formType == '0'){  //输入框
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <input id="${item.fieldName!}" name="${item.fieldName!}" type="text" value="\${entry.${item.fieldName!}!}" maxlength="${item.length!}" ${decode(item.isReadonly,'Y','readonly','')} ${decode(item.isNullable,'Y','required','')}/>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '0.1'){  //日期框
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <input class="Wdate" id="${item.fieldName!}" name="${item.fieldName!}" type="text" value="\${entry.${item.fieldName!}!}" maxlength="${item.length!}" ${decode(item.isReadonly,'Y','readonly','onfocus="WdatePicker()"')} ${decode(item.isNullable,'Y','date="true"','')}
+                    style="background:url(\${ctxPath}/static/My97DatePicker/skin/datePicker.gif) no-repeat right;"/>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '0.2'){  //数字框
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <input id="${item.fieldName!}" name="${item.fieldName!}" type="number" value="\${entry.${item.fieldName!}!}" maxlength="${item.length!}" ${decode(item.isReadonly,'Y','readonly','')} ${decode(item.isNullable,'Y','required number="true"','')}/>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '0.3'){  //金额框
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <input class="money" id="${item.fieldName!}" name="${item.fieldName!}" type="text" value="\${entry.${item.fieldName!}!}" maxlength="${item.length!}" placeholder="0.00(精度：两位小数)" ${decode(item.isReadonly,'Y','readonly','')} ${decode(item.isNullable,'Y','required number="true"','')}/>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '0.4'){  //自动生成编号
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                \@var num_${item.fieldName!} = num.getDynamicNum('${item.fieldName!}','${t.tableName!}');
+                <input id="${item.fieldName!}" name="${item.fieldName!}" type="text" value="\${entry.${item.fieldName!}!}" maxlength="${item.length!}" ${decode(item.isReadonly,'Y','readonly','')} ${decode(item.isNullable,'Y','required','')}/>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '1'){  //下拉框
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="${item.fieldName!}" id="${item.fieldName!}" ${decode(item.isReadonly,'Y','disabled','')} ${decode(item.isNullable,'Y','select="true"','')}>
+                  <option value="">--请选择--</option>
+                  \@selectOptions = dict.getDictListByType("${item.dictType!}");
+                  \@if(selectOptions != ""){
+                    \@for(op in selectOptions){
+                      <option value="\${op.value! }" \${decode(strutil.toString(op.value!''),strutil.toString(entry.${item.fieldName!}!''),'selected','')}>\${op.label! }</option>
+                    \@}
+                  \@}
+                </select>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '1.1'){  //下拉框（带编号）
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ${decode(item.isNullable,'Y','red','')}">${item.remarks!}：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" id="${item.fieldName!}" name="${item.fieldName!}" ${decode(item.isReadonly,'Y','disabled','')} ${decode(item.isNullable,'Y','select="true"','')}>
+                  <option value="">--请选择--</option>
+                  \@selectOptions = dict.getDictListByType("${item.dictType!}");
+                  \@if(selectOptions != ""){
+                    \@for(op in selectOptions){
+                      <option value="\${op.value! }" \${decode(strutil.toString(op.value!''),strutil.toString(entry.${item.fieldName!}!''),'selected','')}>\${op.value! }【\${op.label! }】</option>
+                    \@}
+                  \@}
+                </select>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '2'){  //文本域
+          <div class="col-xs-8">
+            <div class="form-group">
+              <label class="col-sm-1 control-label ${decode(item.isNullable,'Y','red','')}" style="width: 16.6666667%;">${item.remarks!}：</label>
+              <div class="col-sm-10">
+                <textarea name="${item.fieldName!}" maxlength="${item.length!}" style="width:100%;height:50px;" ${decode(item.isReadonly,'Y','readonly','')} ${decode(item.isNullable,'Y','required','')}>\${entry.${item.fieldName!}!}</textarea>
+              </div>
+            </div>
+          </div>
+        @}
+        @if(item.formType == '4'){  //富文本
+          <div class="col-xs-12">
+            <div class="form-group">
+              <label class="col-sm-1 control-label ${decode(item.isNullable,'Y','red','')}" style="width: 11.111111111%;">${item.remarks!}：</label>
+              <div class="col-sm-10">
+                <div class="controls">
+                  <script type="text/plain" id="${item.fieldName!}" name="${item.fieldName!}" style="width: 100%;"></script>
+                </div>
+              </div>
+            </div>
+          </div>
+        @}
+      @}
+    @}
+        </div>
+      </div>
+    </div>
+  @if(t.isUploadFile == 'Y'){
+    <table class="EditTable" width="100%">
+      <tbody>
+        <tr class="FormData">
+          <td class="CaptionTD">是否上传附件:</td>
+          <td class="DataTD width-100">
+            <div class="switch" id="mySwitch">
+              <input type="checkbox" data-size="mini" data-on-text="是" data-off-text="否" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  @}
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+@for(item in f){
+	@if(item.formType == '4'){
+		var ue_${fileIndex!} = UE.getEditor('${item.fieldName!}',{});	//初始化富文本
+		ue_${fileIndex!}.ready(function() {
+			var content = html('\${${t.tableName}.${item.fieldName!}!}');
+			ue_${fileIndex!}.setContent(content);
+		});
+		@fileIndex = fileIndex + 1;
+   	@}
+@}
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+	@//添加校验提示语
+	@for(item in f){
+		@if(item.isNullable == 'Y'){
+			@if(item.formType == '0' || item.formType == '0.1' || item.formType == '0.2' || item.formType == '0.3' || item.formType == '2'){
+				${item.fieldName!} : {required: "请输入${item.remarks!}！"},
+         	@}else if(item.formType == '1' || item.formType == '1.1'){
+				${item.fieldName!} : {required: "请选择${item.remarks!}！"},
+         	@}
+		@}
+    @}
+			},
+			submitHandler: function(form){
+		@//添加富文本校验提示语
+		@for(item in f){
+			@if(item.formType == '4' && item.isNullable == 'Y'){
+				if(UE.getEditor('${item.fieldName!}').getContent() == ''){
+					failMsg('请输入${item.remarks!}！');
+					return;
+				}
+         	@}
+	    @}
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'\${ctxPath}/${t.moduleName}/${p.entityName}/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+                        	@if(t.isUploadFile == 'Y'){
+								if($('#mySwitch input').bootstrapSwitch('state')){	//打开附件上传页面
+									$.cuslayer({
+										mode: "page",
+										url: "\${ctxPath}/file/upload/showlayer",
+										formId: 'file-form',
+										data: {
+											relateId: data.data
+										},
+										title: '上传附件'
+									});
+								}
+							@}
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+		@for(item in f){
+           	@if(item.formType == '1' && item.isNullable == 'Y'){
+           		if(element.attr("id") == "${item.fieldName!}"){
+					element = $("#${item.fieldName!}_chosen");
+				}
+          	@}
+        @}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

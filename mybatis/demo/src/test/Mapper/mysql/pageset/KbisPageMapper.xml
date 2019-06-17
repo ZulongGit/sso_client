@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.pageset.mapper.KbisPageMapper">
+
+	<!-- 表字段 -->
+	<sql id="kbisPageColumns">
+		 ID, PAGE_NAME, PAGE_DESC, PAGE_CONTENT, PAGE_DATA, PAGE_URL, PAGE_STOR, CREATE_BY, CREATE_DATE, UPDATE_BY,
+		 UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="kbisPageAliasColumns">
+         t.ID, t.PAGE_NAME, t.PAGE_DESC, t.PAGE_CONTENT, t.PAGE_DATA, t.PAGE_URL, t.PAGE_STOR, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY,
+		 t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="kbisPageAliasColumns" /> 
+		from kbis_page  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(pageName)">and t.PAGE_NAME like CONCAT('%', #{pageName}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageDesc)">and t.PAGE_DESC like CONCAT('%', #{pageDesc}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageContent)">and t.PAGE_CONTENT = #{pageContent} </if>
+			<if test="@Ognl@isNotBlank(pageData)">and t.PAGE_DATA = #{pageData} </if>
+			<if test="@Ognl@isNotBlank(pageUrl)">and t.PAGE_URL like CONCAT('%', #{pageUrl}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageStor)">and t.PAGE_STOR like CONCAT('%', #{pageStor}, '%')</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.pageset.model.KbisPage">
+        select  <include refid="kbisPageAliasColumns" />
+		from kbis_page  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(pageName)">and t.PAGE_NAME like CONCAT('%', #{pageName}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageDesc)">and t.PAGE_DESC like CONCAT('%', #{pageDesc}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageContent)">and t.PAGE_CONTENT = #{pageContent} </if>
+			<if test="@Ognl@isNotBlank(pageData)">and t.PAGE_DATA = #{pageData} </if>
+			<if test="@Ognl@isNotBlank(pageUrl)">and t.PAGE_URL like CONCAT('%', #{pageUrl}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageStor)">and t.PAGE_STOR like CONCAT('%', #{pageStor}, '%')</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.pageset.model.KbisPage">
+		select  <include refid="kbisPageAliasColumns" />
+		from kbis_page  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(pageName)"> and t.PAGE_NAME = #{pageName} </if>
+			<if test="@Ognl@isNotBlank(pageDesc)"> and t.PAGE_DESC = #{pageDesc} </if>
+			<if test="@Ognl@isNotBlank(pageContent)"> and t.PAGE_CONTENT = #{pageContent} </if>
+			<if test="@Ognl@isNotBlank(pageData)"> and t.PAGE_DATA = #{pageData} </if>
+			<if test="@Ognl@isNotBlank(pageUrl)"> and t.PAGE_URL = #{pageUrl} </if>
+			<if test="@Ognl@isNotBlank(pageStor)"> and t.PAGE_STOR = #{pageStor} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="kbisPageAliasColumns" /> 
+		from kbis_page  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(pageName)">and t.PAGE_NAME like CONCAT('%', #{pageName}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageDesc)">and t.PAGE_DESC like CONCAT('%', #{pageDesc}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageContent)">and t.PAGE_CONTENT = #{pageContent} </if>
+			<if test="@Ognl@isNotBlank(pageData)">and t.PAGE_DATA = #{pageData} </if>
+			<if test="@Ognl@isNotBlank(pageUrl)">and t.PAGE_URL like CONCAT('%', #{pageUrl}, '%')</if>
+			<if test="@Ognl@isNotBlank(pageStor)">and t.PAGE_STOR like CONCAT('%', #{pageStor}, '%')</if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into kbis_page(<include refid="kbisPageColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.pageName},
+	    	#{item.pageDesc},
+	    	#{item.pageContent},
+	    	#{item.pageData},
+	    	#{item.pageUrl},
+	    	#{item.pageStor},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from kbis_page
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(pageName)"> and PAGE_NAME = #{pageName} </if>
+			<if test="@Ognl@isNotBlank(pageDesc)"> and PAGE_DESC = #{pageDesc} </if>
+			<if test="@Ognl@isNotBlank(pageContent)"> and PAGE_CONTENT = #{pageContent} </if>
+			<if test="@Ognl@isNotBlank(pageData)"> and PAGE_DATA = #{pageData} </if>
+			<if test="@Ognl@isNotBlank(pageUrl)"> and PAGE_URL = #{pageUrl} </if>
+			<if test="@Ognl@isNotBlank(pageStor)"> and PAGE_STOR = #{pageStor} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.TableFieldConfigMapper">
+
+	<!-- 表字段 -->
+	<sql id="TableFieldConfigColumns">
+		ID,TABLE_ID,FIELD_NAME,DB_NAME,REMARKS,IS_PRIMARY,FIELD_TYPE,JAVA_TYPE,LENGTH,DECIMAL_PRECISION,
+		DEFAULT_VALUE,SORTS,FORM_TYPE,DICT_TYPE,IS_NULLABLE,IS_READONLY,IS_LIST_SHOW,IS_USE,QUERY_MODE,IS_IM_OUTPORT,
+		MIN_VALUE,MAX_VALUE,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="TableFieldConfigAliasColumns">
+		t.ID,t.TABLE_ID,t.FIELD_NAME,t.DB_NAME,t.REMARKS,t.IS_PRIMARY,t.FIELD_TYPE,t.JAVA_TYPE,t.LENGTH,t.DECIMAL_PRECISION,
+		t.DEFAULT_VALUE,t.SORTS,t.FORM_TYPE,t.DICT_TYPE,t.IS_NULLABLE,t.IS_READONLY,t.IS_LIST_SHOW,t.IS_USE,t.QUERY_MODE,t.IS_IM_OUTPORT,
+		t.MIN_VALUE,t.MAX_VALUE,t.CREATE_BY,t.CREATE_DATE,t.UPDATE_BY,t.UPDATE_DATE,t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="TableFieldConfigAliasColumns" />
+		from gen_table_field_config  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(tableId)">and t.TABLE_ID = #{tableId} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(dbName)">and t.DB_NAME = #{dbName} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)">and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(javaType)">and t.JAVA_TYPE = #{javaType} </if>
+			<if test="@Ognl@isNotBlank(length)">and t.LENGTH = #{length} </if>
+			<if test="@Ognl@isNotBlank(decimalPrecision)">and t.DECIMAL_PRECISION = #{decimalPrecision} </if>
+			<if test="@Ognl@isNotBlank(defaultValue)">and t.DEFAULT_VALUE = #{defaultValue} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(formType)">and t.FORM_TYPE = #{formType} </if>
+			<if test="@Ognl@isNotBlank(dictType)">and t.DICT_TYPE = #{dictType} </if>
+			<if test="@Ognl@isNotBlank(isNullable)">and t.IS_NULLABLE = #{isNullable} </if>
+			<if test="@Ognl@isNotBlank(isReadonly)">and t.IS_READONLY = #{isReadonly} </if>
+			<if test="@Ognl@isNotBlank(isListShow)">and t.IS_LIST_SHOW = #{isListShow} </if>
+			<if test="@Ognl@isNotBlank(isUse)">and t.IS_USE = #{isUse} </if>
+			<if test="@Ognl@isNotBlank(queryMode)">and t.QUERY_MODE = #{queryMode} </if>
+			<if test="@Ognl@isNotBlank(isImOutport)">and t.IS_IM_OUTPORT = #{isImOutport} </if>
+			<if test="@Ognl@isNotBlank(minValue)">and t.MIN_VALUE = #{minValue} </if>
+			<if test="@Ognl@isNotBlank(maxValue)">and t.MAX_VALUE = #{maxValue} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.TableFieldConfig">
+		select  <include refid="TableFieldConfigAliasColumns" />  
+		from gen_table_field_config  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id}</if>
+			<if test="@Ognl@isNotBlank(tableId)"> and t.TABLE_ID = #{tableId}</if>
+			<if test="@Ognl@isNotBlank(fieldName)"> and t.FIELD_NAME = #{fieldName}</if>
+			<if test="@Ognl@isNotBlank(dbName)"> and t.DB_NAME = #{dbName}</if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks}</if>
+			<if test="@Ognl@isNotBlank(isPrimary)"> and t.IS_PRIMARY = #{isPrimary}</if>
+			<if test="@Ognl@isNotBlank(fieldType)"> and t.FIELD_TYPE = #{fieldType}</if>
+			<if test="@Ognl@isNotBlank(javaType)"> and t.JAVA_TYPE = #{javaType}</if>
+			<if test="@Ognl@isNotBlank(length)"> and t.LENGTH = #{length}</if>
+			<if test="@Ognl@isNotBlank(decimalPrecision)"> and t.DECIMAL_PRECISION = #{decimalPrecision}</if>
+			<if test="@Ognl@isNotBlank(defaultValue)"> and t.DEFAULT_VALUE = #{defaultValue}</if>
+			<if test="@Ognl@isNotBlank(sorts)"> and t.SORTS = #{sorts}</if>
+			<if test="@Ognl@isNotBlank(formType)"> and t.FORM_TYPE = #{formType}</if>
+			<if test="@Ognl@isNotBlank(dictType)"> and t.DICT_TYPE = #{dictType}</if>
+			<if test="@Ognl@isNotBlank(isNullable)"> and t.IS_NULLABLE = #{isNullable}</if>
+			<if test="@Ognl@isNotBlank(isReadonly)"> and t.IS_READONLY = #{isReadonly}</if>
+			<if test="@Ognl@isNotBlank(isListShow)"> and t.IS_LIST_SHOW = #{isListShow}</if>
+			<if test="@Ognl@isNotBlank(isUse)"> and t.IS_USE = #{isUse}</if>
+			<if test="@Ognl@isNotBlank(queryMode)"> and t.QUERY_MODE = #{queryMode}</if>
+			<if test="@Ognl@isNotBlank(isImOutport)"> and t.IS_IM_OUTPORT = #{isImOutport}</if>
+			<if test="@Ognl@isNotBlank(minValue)"> and t.MIN_VALUE = #{minValue}</if>
+			<if test="@Ognl@isNotBlank(maxValue)"> and t.MAX_VALUE = #{maxValue}</if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy}</if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate}</if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy}</if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate}</if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag}</if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.TableFieldConfig">
+		select  <include refid="TableFieldConfigAliasColumns" />
+		from gen_table_field_config  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(tableId)"> and t.TABLE_ID = #{tableId} </if>
+			<if test="@Ognl@isNotBlank(fieldName)"> and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(dbName)"> and t.DB_NAME = #{dbName} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)"> and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldType)"> and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(javaType)"> and t.JAVA_TYPE = #{javaType} </if>
+			<if test="@Ognl@isNotBlank(length)"> and t.LENGTH = #{length} </if>
+			<if test="@Ognl@isNotBlank(decimalPrecision)"> and t.DECIMAL_PRECISION = #{decimalPrecision} </if>
+			<if test="@Ognl@isNotBlank(defaultValue)"> and t.DEFAULT_VALUE = #{defaultValue} </if>
+			<if test="@Ognl@isNotBlank(sorts)"> and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(formType)"> and t.FORM_TYPE = #{formType} </if>
+			<if test="@Ognl@isNotBlank(dictType)"> and t.DICT_TYPE = #{dictType} </if>
+			<if test="@Ognl@isNotBlank(isNullable)"> and t.IS_NULLABLE = #{isNullable} </if>
+			<if test="@Ognl@isNotBlank(isReadonly)"> and t.IS_READONLY = #{isReadonly} </if>
+			<if test="@Ognl@isNotBlank(isListShow)"> and t.IS_LIST_SHOW = #{isListShow} </if>
+			<if test="@Ognl@isNotBlank(isUse)"> and t.IS_USE = #{isUse} </if>
+			<if test="@Ognl@isNotBlank(queryMode)"> and t.QUERY_MODE = #{queryMode} </if>
+			<if test="@Ognl@isNotBlank(isImOutport)"> and t.IS_IM_OUTPORT = #{isImOutport} </if>
+			<if test="@Ognl@isNotBlank(minValue)"> and t.MIN_VALUE = #{minValue} </if>
+			<if test="@Ognl@isNotBlank(maxValue)"> and t.MAX_VALUE = #{maxValue} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="TableFieldConfigAliasColumns" />
+		from gen_table_field_config  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(tableId)">and t.TABLE_ID = #{tableId} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(dbName)">and t.DB_NAME = #{dbName} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)">and t.IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(javaType)">and t.JAVA_TYPE = #{javaType} </if>
+			<if test="@Ognl@isNotBlank(length)">and t.LENGTH = #{length} </if>
+			<if test="@Ognl@isNotBlank(decimalPrecision)">and t.DECIMAL_PRECISION = #{decimalPrecision} </if>
+			<if test="@Ognl@isNotBlank(defaultValue)">and t.DEFAULT_VALUE = #{defaultValue} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(formType)">and t.FORM_TYPE = #{formType} </if>
+			<if test="@Ognl@isNotBlank(dictType)">and t.DICT_TYPE = #{dictType} </if>
+			<if test="@Ognl@isNotBlank(isNullable)">and t.IS_NULLABLE = #{isNullable} </if>
+			<if test="@Ognl@isNotBlank(isReadonly)">and t.IS_READONLY = #{isReadonly} </if>
+			<if test="@Ognl@isNotBlank(isListShow)">and t.IS_LIST_SHOW = #{isListShow} </if>
+			<if test="@Ognl@isNotBlank(isUse)">and t.IS_USE = #{isUse} </if>
+			<if test="@Ognl@isNotBlank(queryMode)">and t.QUERY_MODE = #{queryMode} </if>
+			<if test="@Ognl@isNotBlank(isImOutport)">and t.IS_IM_OUTPORT = #{isImOutport} </if>
+			<if test="@Ognl@isNotBlank(minValue)">and t.MIN_VALUE = #{minValue} </if>
+			<if test="@Ognl@isNotBlank(maxValue)">and t.MAX_VALUE = #{maxValue} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_table_field_config(<include refid="TableFieldConfigColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.tableId},
+	    	#{item.fieldName},
+	    	#{item.dbName},
+	    	#{item.remarks},
+	    	#{item.isPrimary},
+	    	#{item.fieldType},
+	    	#{item.javaType},
+	    	#{item.length},
+	    	#{item.decimalPrecision},
+	    	#{item.defaultValue},
+	    	#{item.sorts},
+	    	#{item.formType},
+	    	#{item.dictType},
+	    	#{item.isNullable},
+	    	#{item.isReadonly},
+	    	#{item.isListShow},
+	    	#{item.isUse},
+	    	#{item.queryMode},
+	    	#{item.isImOutport},
+	    	#{item.minValue},
+	    	#{item.maxValue},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_table_field_config
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(tableId)"> and TABLE_ID = #{tableId} </if>
+			<if test="@Ognl@isNotBlank(fieldName)"> and FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(dbName)"> and DB_NAME = #{dbName} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(isPrimary)"> and IS_PRIMARY = #{isPrimary} </if>
+			<if test="@Ognl@isNotBlank(fieldType)"> and FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(javaType)"> and JAVA_TYPE = #{javaType} </if>
+			<if test="@Ognl@isNotBlank(length)"> and LENGTH = #{length} </if>
+			<if test="@Ognl@isNotBlank(decimalPrecision)"> and DECIMAL_PRECISION = #{decimalPrecision} </if>
+			<if test="@Ognl@isNotBlank(defaultValue)"> and DEFAULT_VALUE = #{defaultValue} </if>
+			<if test="@Ognl@isNotBlank(sorts)"> and SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(formType)"> and FORM_TYPE = #{formType} </if>
+			<if test="@Ognl@isNotBlank(dictType)"> and DICT_TYPE = #{dictType} </if>
+			<if test="@Ognl@isNotBlank(isNullable)"> and IS_NULLABLE = #{isNullable} </if>
+			<if test="@Ognl@isNotBlank(isReadonly)"> and IS_READONLY = #{isReadonly} </if>
+			<if test="@Ognl@isNotBlank(isListShow)"> and IS_LIST_SHOW = #{isListShow} </if>
+			<if test="@Ognl@isNotBlank(isUse)"> and IS_USE = #{isUse} </if>
+			<if test="@Ognl@isNotBlank(queryMode)"> and QUERY_MODE = #{queryMode} </if>
+			<if test="@Ognl@isNotBlank(isImOutport)"> and IS_IM_OUTPORT = #{isImOutport} </if>
+			<if test="@Ognl@isNotBlank(minValue)"> and MIN_VALUE = #{minValue} </if>
+			<if test="@Ognl@isNotBlank(maxValue)"> and MAX_VALUE = #{maxValue} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

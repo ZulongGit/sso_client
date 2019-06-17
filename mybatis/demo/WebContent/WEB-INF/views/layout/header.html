@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>kwaw DAS</title>
+  <meta name="description" content="index" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link type="image/x-icon" href="${ctxPath!}/static/images/logo.png" rel="shortcut icon">
+  <!-- bootstrap & fontawesome -->
+  <link rel="stylesheet" href="${ctxPath!}/static/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/css/font-awesome.min.css" />
+  <!-- ace styles -->
+  <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace.min.css"/>
+  
+  <!-- ace自带皮肤已放弃，目前已自定义了皮肤，请打开index.html文件进行切换 -->
+  <!-- <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-skins.min.css" /> -->
+  <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-rtl.min.css" />
+  <!--[if lte IE 8]>
+     <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-ie.min.css" />
+  <![endif]-->
+  <link rel="stylesheet" href="${ctxPath}/static/validate/css/validform.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/css/custom.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/skin/skin-1.css" />
+  <!-- ace settings handler -->
+  <script src="${ctxPath!}/static/ace/js/ace-extra.min.js"></script>
+  <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+  <!--[if lte IE 8]>
+    <script src="${ctxPath!}/static/bootstrap/html5shiv.min.js"></script>
+    <script src="${ctxPath!}/static/bootstrap/respond.min.js"></script>
+    <script>var ie8 = "ie8";</script>
+  <![endif]-->
+  <!-- basic scripts -->
+  <!--[if !IE]> -->
+  <script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+  <!-- <![endif]-->
+  <!--[if IE]>
+    <script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+  <![endif]-->
+  <script src="${ctxPath!}/static/bootstrap/bootstrap.min.js"></script>
+  <!-- ace scripts -->
+  <script src="${ctxPath!}/static/ace/js/ace-elements.min.js"></script>
+  <script src="${ctxPath!}/static/ace/js/ace.min.js"></script>
+  <script>
+     var ctxPath = "${ctxPath!}";
+     var $curmenu;
+   </script>
+  <script src="${ctxPath!}/static/layer-v3.1.0/layer/layer.js"></script>
+  <script src="${ctxPath}/static/validate/Validform_v5.3.2_min.js"></script>
+  <script src="${ctxPath}/static/validate/Validform_Datatype.js"></script>
+  <script src="${ctxPath}/static/bootstrap/extensions/contextmenu/bootstrap-contextmenu.js"></script>
+  <script src="${ctxPath}/static/js/jquery.nicescroll.min.js"></script>
+  <script src="${ctxPath!}/static/js/history.js"></script>
+  <script src="${ctxPath}/static/js/public.js"></script>
+  <!-- 导航栏tab -->
+  <script src="${ctxPath}/static/js/contabs.js"></script> 
+  <script src="${ctxPath}/static/js/Sortable.js"></script> 
+  <script>
+    @var msg = "";
+    $(function(){
+      $.ajaxSetup({
+        cache:false,
+        statusCode:{
+          401:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">抱歉，您没有相关操作权限，请联系管理员！</font>',
+              yes: function(index, layer0){
+                layer.closeAll();
+              }
+            })
+          },
+          403:function(){
+            $.cuslayer({
+              mode: 'alert',
+              btn: ['重新登录'],
+              content: '<font color="red">[403] 会话失效，请点击后重新登录！</font>',
+              yes: function(index, layer0){
+                location.href ="${ctxPath}/login";
+              }
+            })
+          },
+          404:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[404] 抱歉，您访问的页面不小心给丢了~~~</font>'
+            })
+          },
+          408:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[408] 抱歉，请求超时，请重试！</font>'
+            })
+          },
+          500:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[500] 抱歉，系统内部发生错误，请联系管理员！</font>'
+            })
+          },
+          501:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[501] 抱歉，Web 服务器不支持实现此请求所需的功能，请联系管理员！</font>'
+            })
+          },
+          502:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[502] 抱歉，网关出错，请联系管理员！</font>'
+            })
+          },
+          600:function(data){
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[600] 系统发生错误，请重新进入页面或联系管理员！</font>'
+            })
+          }
+        },
+        dataFilter: function(data, type){
+            if(type == ''){
+            	return $.parseJSON(data);
+            }else{
+            	return data;
+            }
+        }
+      });
+    });
+  </script>
+</head>
+<body class="skin-1" id="body-content" style="overflow: hidden;">
+  <div class="container-fluid" style="padding: 0">

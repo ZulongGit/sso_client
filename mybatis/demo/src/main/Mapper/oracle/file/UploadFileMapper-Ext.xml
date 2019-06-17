@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.krm.web.file.mapper.UploadFileMapper">
+
+	<delete id="deleteRepeted">
+		delete from upload_file  
+			 where DOC_TITLE in (select DOC_TITLE from upload_file where relate_id = #{relateId} group by DOC_TITLE having count(*) > 1)
+			   and CREATE_DATE not in  
+			       (select min(CREATE_DATE) from upload_file where relate_id = #{relateId} group by DOC_TITLE having count(*) > 1) 
+	</delete>
+</mapper>

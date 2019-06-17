@@ -1,0 +1,101 @@
+@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+    <div class="profile-info-row">
+      <div class="profile-info-name">ID：</div>
+      <div class="profile-info-value" id="pkid">
+        <span class="editable editable-click">
+			${entry.pkid!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">源数据：</div>
+      <div class="profile-info-value" id="dtSource">
+        <span class="editable editable-click">
+			${entry.dtSource!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">源数据集：</div>
+      <div class="profile-info-value" id="dtCollection">
+        <span class="editable editable-click">
+			${entry.dtCollection!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">模板ID：</div>
+      <div class="profile-info-value" id="dtModelCode">
+        <span class="editable editable-click">
+			${entry.dtModelCode!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">模板名称：</div>
+      <div class="profile-info-value" id="dtModelName">
+        <span class="editable editable-click">
+			${entry.dtModelName!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建时间：</div>
+      <div class="profile-info-value" id="createDate">
+        <span class="editable editable-click">
+			${entry.createDate!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">创建人：</div>
+      <div class="profile-info-value" id="createBy">
+        <span class="editable editable-click">
+			${entry.createBy!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">数据条数：</div>
+      <div class="profile-info-value" id="dtNum">
+        <span class="editable editable-click">
+			${entry.dtNum!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">描述：</div>
+      <div class="profile-info-value" id="description">
+        <span class="editable editable-click">
+			${entry.description!}
+        </span>
+      </div>
+    </div>
+    <div class="profile-info-row">
+      <div class="profile-info-name">查看附件：</div>
+      <div class="profile-info-value" id="">
+        <span class="editable editable-click">
+		  <button type="button" class="btn btn-primary btn-sm" id="viewFile"><i class="ace-icon fa fa-cloud-upload middle-120"></i>点击查看</button>
+        </span>
+      </div>
+    </div>
+	</div>
+</div>
+<script>
+	$(function(){
+		$('#viewFile').click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "${ctxPath}/file/view/showlayer",
+				formId: 'file-form',
+				data: {
+					relateId: '${entry.id!}'
+				},
+				title: '查看附件',
+				height: '60%'
+			});
+		})
+	})
+</script>

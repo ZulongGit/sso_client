@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>自动化编程系统 V3.2.2</title>
+  <meta name="description" content="index" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- bootstrap系列 -->
+  <link rel="stylesheet" href="${ctxPath!}/static/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/bootstrap/extensions/multiselect/bootstrap-multiselect.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/bootstrap/extensions/switch/bootstrap-switch.min.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/table/bootstrap-table.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/table/extensions/sticky-header/bootstrap-table-sticky-header.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/css/font-awesome.min.css" />
+  <!-- ace模块引入 -->
+  <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace.min.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-rtl.min.css" />
+  <!--[if lte IE 8]>
+    <link rel="stylesheet" href="${ctxPath!}/static/ace/css/ace-ie.min.css" />
+    <![endif]-->
+  <link rel="stylesheet" href="${ctxPath!}/static/chosen/chosen.min.css" />
+  <link href="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.min.css">
+  <!-- 自定义样式及皮肤 -->
+  <link rel="stylesheet" href="${ctxPath!}/static/css/custom.css" />
+  <link rel="stylesheet" href="${ctxPath!}/static/skin/skin-1.css" />
+  <!-- ace settings handler -->
+  <script src="${ctxPath!}/static/ace/js/ace-extra.min.js"></script>
+  <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+  <!--[if lte IE 8]>
+    <script src="${ctxPath!}/static/bootstrap/html5shiv.min.js"></script>
+    <script src="${ctxPath!}/static/bootstrap/respond.min.js"></script>
+    <script>var ie8 = "ie8";</script>
+  <![endif]-->
+  <!-- basic scripts -->
+  <!--[if !IE]> -->
+  <script src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+  <!-- <![endif]-->
+  <!--[if IE]>
+    <script src="${ctxPath!}/static/jquery/jquery-1.11.1.min.js"></script>
+    <![endif]-->
+  <script src="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.js"></script>
+  <script src="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.method.js"></script>
+  <script>
+    if ('ontouchstart' in document.documentElement) document.write("<script src='${ctxPath!}/static/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+  </script>
+  <!-- bootstrap系列 -->
+  <script src="${ctxPath!}/static/bootstrap/bootstrap.min.js"></script>
+  <script src="${ctxPath}/static/bootstrap/extensions/contextmenu/bootstrap-contextmenu.js"></script>
+  <script src="${ctxPath!}/static/bootstrap/extensions/multiselect/bootstrap-multiselect.js"></script>
+  <script src="${ctxPath!}/static/bootstrap/extensions/switch/bootstrap-switch.min.js"></script>
+  <script src="${ctxPath!}/static/table/bootstrap-table-all.js"></script>
+  <script src="${ctxPath!}/static/table/bootstrap-table-zh-CN.min.js"></script>
+  <script src="${ctxPath!}/static/table/extensions/sticky-header/bootstrap-table-sticky-header.js"></script>
+  <!-- ace模块引入 -->
+  <script src="${ctxPath!}/static/ace/js/ace-elements.min.js"></script>
+  <script src="${ctxPath!}/static/ace/js/ace.min.js"></script>
+  <script>
+    var ctxPath = "${ctxPath!}";
+    /* 获取父级页面的变量：记录当前菜单dom */
+    var $curmenu = window.parent.$curmenu;
+  </script>
+  <!-- 自定义公共组件 -->
+  <!-- <script src="${ctxPath}/static/js/form.js"></script> -->
+  <script src="${ctxPath!}/static/js/history.js"></script>
+  <script src="${ctxPath}/static/js/public.js"></script>
+  <script src="${ctxPath!}/static/js/accounting.js"></script>
+  <!-- 自定义的多级联动插件，异步请求数据，支持无线级别 -->
+  <script src="${ctxPath}/static/js/linkage.js"></script>
+  <script src="${ctxPath}/static/js/browser.js"></script>
+  <!-- 第三方插件 -->
+  <script src="${ctxPath!}/static/layer-v3.1.0/layer/layer.js"></script>
+  <!-- textarea自动增加高度（不用滚动条） -->
+  <script src="${ctxPath!}/static/js/jquery.autosize.min.js"></script>
+  <script src="${ctxPath!}/static/chosen/chosen.jquery.min.js"></script>
+  <script src="${ctxPath}/static/js/jquery.form.js"></script>
+  <script src="${ctxPath}/static/js/jquery.nicescroll.min.js"></script>
+  <script src="${ctxPath}/static/My97DatePicker/WdatePicker.js"></script>
+  <!-- 以下是按需加载，在所需加载的页面layout函数里加上“对应的参数：true”即可，如：加载ztree：\@layout("/layout/container.html", {ztree:true}){ -->
+  <!-- bootstrap-table表格可编辑组件 -->
+  @if(editable!false){
+    @include("/layout/components/editable.html"){} 
+  @}
+  <!-- ztree树组件 -->
+  @if(ztree!false){
+    @include("/layout/components/ztree.html"){} 
+  @}
+  <!-- echarts组件 -->
+  @if(echarts!false){
+    @include("/layout/components/echarts.html"){} 
+  @}
+  <!-- validform表单校验组件 -->
+  @if(validform!false){
+    @include("/layout/components/validform.html"){} 
+  @}
+  <!-- vue组件 -->
+  @if(vue!false){
+    @include("/layout/components/vue.html"){} 
+  @}
+  <!-- 富文本组件 -->
+  @if(richText!false){
+    @include("/layout/components/ueditor.html"){} 
+  @}
+  <!-- 其他组件 -->
+  @if(other!false){
+    @include("/layout/components/other.html"){} 
+  @}
+  <script>
+    var user = ${json(session.loginUser!)};
+    @var msg = "";
+    $(function () {
+      $.ajaxSetup({
+        cache: false,
+        statusCode: {
+          401: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">抱歉，您没有相关操作权限，请联系管理员！</font>',
+              yes: function (index, layer0) {
+                layer.closeAll();
+              }
+            })
+          },
+          403: function () {
+            $.cuslayer({
+              mode: 'alert',
+              btn: ['重新登录'],
+              content: '<font color="red">[403] 会话失效，请点击后重新登录！</font>',
+              yes: function (index, layer0) {
+                location.href = "${ctxPath}/login";
+              }
+            })
+          },
+          404: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[404] 抱歉，您访问的页面不小心给丢了~~~</font>'
+            })
+          },
+          408: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[408] 抱歉，请求超时，请重试！</font>'
+            })
+          },
+          500: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[500] 抱歉，系统内部发生错误，请联系管理员！</font>'
+            })
+          },
+          501: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[501] 抱歉，Web 服务器不支持实现此请求所需的功能，请联系管理员！</font>'
+            })
+          },
+          502: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[502] 抱歉，网关出错，请联系管理员！</font>'
+            })
+          },
+          600: function (data) {
+            $.cuslayer({
+              mode: 'alert',
+              content: '<font color="red">[600] 系统发生错误，请重新进入页面或联系管理员！</font>'
+            })
+          }
+        },
+        dataFilter: function (data, type) {
+          if (type == '') {
+            return $.parseJSON(data);
+          } else {
+            return data;
+          }
+        }
+      });
+    });
+  </script>
+</head>
+
+<body class="skin-1" style="overflow-x: hidden;">
+  <div id="body-content" class="container-fluid" style="padding: 0">
+    ${layoutContent!}
+  </div>
+  <a href="javascript:void(0);" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse" style="z-index: 1111">
+      <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+  </a>
+</body>
+
+</html>

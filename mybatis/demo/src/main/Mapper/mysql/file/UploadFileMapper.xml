@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.file.mapper.UploadFileMapper">
+
+	<!-- 表字段 -->
+	<sql id="UploadFileColumns">
+		ID,DOC_TITLE,FILE_NAME,EXT_NAME,FILE_SIZE,DISPORDER,RELATE_ID,TABLE_NAME,DESCRIPTION,CREATE_BY,
+		CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="UploadFileAliasColumns">
+		t.ID,t.DOC_TITLE,t.FILE_NAME,t.EXT_NAME,t.FILE_SIZE,t.DISPORDER,t.RELATE_ID,t.TABLE_NAME,t.DESCRIPTION,t.CREATE_BY,
+		t.CREATE_DATE,t.UPDATE_BY,t.UPDATE_DATE,t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="UploadFileAliasColumns" />
+		from UPLOAD_FILE  t
+		left join sys_user u on t.CREATE_BY = u.id
+			left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(docTitle)">and t.DOC_TITLE = #{docTitle} </if>
+			<if test="@Ognl@isNotBlank(fileName)">and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(extName)">and t.EXT_NAME = #{extName} </if>
+			<if test="@Ognl@isNotBlank(fileSize)">and t.FILE_SIZE = #{fileSize} </if>
+			<if test="@Ognl@isNotBlank(disporder)">and t.DISPORDER = #{disporder} </if>
+			<if test="@Ognl@isNotBlank(relateId)">and t.RELATE_ID = #{relateId} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC}   ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.file.model.UploadFile">
+		select  <include refid="UploadFileAliasColumns" />  
+		from UPLOAD_FILE  t 
+			left join sys_user u on t.CREATE_BY = u.id
+			left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id}</if>
+			<if test="@Ognl@isNotBlank(docTitle)"> and t.DOC_TITLE = #{docTitle}</if>
+			<if test="@Ognl@isNotBlank(fileName)"> and t.FILE_NAME = #{fileName}</if>
+			<if test="@Ognl@isNotBlank(extName)"> and t.EXT_NAME = #{extName}</if>
+			<if test="@Ognl@isNotBlank(fileSize)"> and t.FILE_SIZE = #{fileSize}</if>
+			<if test="@Ognl@isNotBlank(disporder)"> and t.DISPORDER = #{disporder}</if>
+			<if test="@Ognl@isNotBlank(relateId)"> and t.RELATE_ID = #{relateId}</if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName}</if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description}</if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy}</if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate}</if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy}</if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate}</if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag}</if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+
+	<!-- 查询单条数据 -->
+	<select id="queryOne" resultType="com.krm.web.file.model.UploadFile">
+		select  <include refid="UploadFileAliasColumns" />
+		from UPLOAD_FILE  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(docTitle)"> and t.DOC_TITLE = #{docTitle} </if>
+			<if test="@Ognl@isNotBlank(fileName)"> and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(extName)"> and t.EXT_NAME = #{extName} </if>
+			<if test="@Ognl@isNotBlank(fileSize)"> and t.FILE_SIZE = #{fileSize} </if>
+			<if test="@Ognl@isNotBlank(disporder)"> and t.DISPORDER = #{disporder} </if>
+			<if test="@Ognl@isNotBlank(relateId)"> and t.RELATE_ID = #{relateId} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams"  parameterType="java.util.Map">
+		delete from UPLOAD_FILE
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(docTitle)"> and DOC_TITLE = #{docTitle} </if>
+			<if test="@Ognl@isNotBlank(fileName)"> and FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(extName)"> and EXT_NAME = #{extName} </if>
+			<if test="@Ognl@isNotBlank(fileSize)"> and FILE_SIZE = #{fileSize} </if>
+			<if test="@Ognl@isNotBlank(disporder)"> and DISPORDER = #{disporder} </if>
+			<if test="@Ognl@isNotBlank(relateId)"> and RELATE_ID = #{relateId} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

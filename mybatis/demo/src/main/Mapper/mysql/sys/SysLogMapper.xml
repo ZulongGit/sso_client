@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.sys.mapper.SysLogMapper">
+	
+	<sql id="sysLogColumns">
+		id,create_by,create_date,exception_,method,params,description,remote_addr,request_uri,type,user_agent
+	</sql>
+	
+	<resultMap type="com.krm.web.sys.model.SysLog" id="sysLog">  
+		<result property="params" column="params" jdbcType="CLOB"   
+            javaType = "java.lang.String"  typeHandler ="com.krm.common.mybatis.OracleClobTypeHandler"/>  
+		<result property="description" column="description" jdbcType="CLOB"   
+            javaType = "java.lang.String"  typeHandler ="com.krm.common.mybatis.OracleClobTypeHandler"/>  
+		<result property="exception" column="exception_" jdbcType="CLOB"   
+            javaType = "java.lang.String"  typeHandler ="com.krm.common.mybatis.OracleClobTypeHandler"/>  
+	</resultMap>
+	
+	<select id="findSysLogList" resultType="com.krm.web.sys.model.SysLog">
+	</select>
+	
+	<select id="findPageInfo" resultMap="sysLog">
+		select  
+        <include refid="sysLogColumns" />  
+        from sys_log  
+        <where>
+        	<if test="type!=null and type!=''">
+        		type = #{type}
+        	</if>
+        	<if test="@Ognl@isNotBlank(description)">
+        		description like CONCAT('%', #{description}, '%')
+        	</if>
+        </where> 
+	</select>
+	
+	<select id="getById" resultMap="sysLog" parameterType="Object">
+		select  
+        <include refid="sysLogColumns" />  
+        from sys_log  
+        <where>
+        	id = #{id}
+        </where> 
+	</select>
+</mapper>

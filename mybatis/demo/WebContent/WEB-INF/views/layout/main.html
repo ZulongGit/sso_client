@@ -1,0 +1,106 @@
+<div class="main-top main-container" id="main-container">
+    @layout("/layout/sidebar.html",{menuList:menuList!}){}
+    <div id="main-content" class="main-content sidebar-hidden">
+        <div id="tab-menu">
+            <ul class="dropdown-menu dropdown-caret" style="min-width: 0px;">
+                <li>
+                    <a id="J_refresh" class="J_refresh hidden" href="javascript:void(0);" data-right-menu="refresh">刷新当前选项卡</a>
+                </li>
+                 <li>
+                    <a id="J_openBlank" class="J_openBlank hidden" href="javascript:void(0);" data-right-menu="openBlank">新窗口中打开</a>
+                </li>
+                <li>
+                    <a id="J_openNew" class="J_openNew hidden" href="javascript:void(0);" data-right-menu="openNew">在新窗口中打开</a>
+                </li>
+                <li>
+                    <a id="J_tabCloseOther" class="J_tabCloseOther hidden" href="javascript:void(0);" data-right-menu="other_close">关闭其他选项卡</a>
+                </li>
+                <li>
+                    <a class="J_tabCloseAll" href="javascript:void(0);" data-right-menu="all_close">关闭全部选项卡</a>
+                </li>
+            </ul>
+        </div>
+        <div id="breadcrumb" class="row content-tabs">
+            <button class="roll-nav roll-left J_tabLeft">
+                <i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs J_menuTabs">
+                <div id="page-tabs-content" class="page-tabs-content">
+                    <a href="javascript:;" class="active J_menuTab" data-id="index">
+                        <i class="ace-icon fa fa-home home-icon"></i>首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right J_tabRight">
+                <i class="fa fa-forward"></i>
+            </button>
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作
+                    <span class="caret"></span>
+                </button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <!-- <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                </li>
+                <li class="divider"></li> -->
+                	<li class="J_tabOpenBlank">
+                        <a>在新窗口中打开</a>
+                    </li>
+                    <li class="J_tabCloseOther">
+                        <a>关闭其他选项卡</a>
+                    </li>
+                    <li class="J_tabCloseAll">
+                        <a>关闭全部选项卡</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="J_mainContent" id="content-main">
+            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${ctxPath!}/dashboard" frameborder="0" data-id="index"
+                seamless></iframe>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#sidebar').height($(window).height() - $("#sidebar").offset().top);
+        $('#categories').height($(window).height() - $("#categories").offset().top);
+        $("#content-main").height($(window).height() - $("#content-main").offset().top);
+        var current;
+        $('#breadcrumb').contextmenu({
+            scopes: 'div',
+            target: '#tab-menu',
+            before: function (e, element, target) {
+                var $element = $(e.target);
+                /* 当前标签页出现“刷新”选项 */
+                if ($element.hasClass("active")) {
+                    $('#J_refresh').removeClass('hidden');
+                    $('#J_openNew').removeClass('hidden');
+                    $('#J_tabCloseOther').removeClass('hidden');
+                }
+                /* 非tab页不弹出右键菜单 */
+                if (!$element.hasClass("J_menuTab")) {
+                    return false;
+                }
+                current = $element;
+                return true;
+            },
+            onItem: function (context, e) {
+                var t = $(e.target).data("right-menu");
+                if (t == 'refresh') {
+                    var target = $('.J_iframe[data-id="' + $(current).data('id') + '"]');
+                    var url = target.attr('src');
+                    target.attr('src', url);
+                }else if (t == 'openNew') {
+                	var target = $('.J_iframe[data-id="' + $(current).data('id') + '"]');
+                    var url = target.attr('src');
+                    window.open(url);
+                }
+            }
+        });
+        $('#tab-menu').on('hidden.bs.context', function (context, e) {
+            $('#J_refresh').addClass('hidden');
+            $('#J_openNew').addClass('hidden');
+            $('#J_tabCloseOther').addClass('hidden');
+            current = null;
+        });
+    })
+</script>

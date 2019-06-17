@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 此文件生成时为空，自动生成的SQL不在此文件中，请将手动添加的SQL写到此文件，以免生成时被覆盖 -->
+<mapper namespace="com.krm.web.codegen.mapper.CreateTableHistoryMapper">
+	
+	<select id="list" resultType="com.krm.common.base.CommonEntity">
+		SELECT DISTINCT t.TABLE_NAME, t.TABLE_COMMENTS, t.UPDATE_DATE, u.name u_name, u1.name update_name, table1.PRO_NAME as PRO_ID_TEXT
+		from gen_create_table_history  t
+		left join gen_projects table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_user u1 on t.UPDATE_BY = u1.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(tableComments)">and t.TABLE_COMMENTS = #{tableComments} </if>
+			<if test="@Ognl@isNotBlank(fieldName)">and t.FIELD_NAME = #{fieldName} </if>
+			<if test="@Ognl@isNotBlank(fieldAlias)">and t.FIELD_ALIAS = #{fieldAlias} </if>
+			<if test="@Ognl@isNotBlank(fieldType)">and t.FIELD_TYPE = #{fieldType} </if>
+			<if test="@Ognl@isNotBlank(fieldLength)">and t.FIELD_LENGTH = #{fieldLength} </if>
+			<if test="@Ognl@isNotBlank(fieldDecimal)">and t.FIELD_DECIMAL = #{fieldDecimal} </if>
+			<if test="@Ognl@isNotBlank(fieldDefaultValue)">and t.FIELD_DEFAULT_VALUE = #{fieldDefaultValue} </if>
+			<if test="@Ognl@isNotBlank(fieldIsNull)">and t.FIELD_IS_NULL = #{fieldIsNull} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC}   ${order}
+		</if>
+	</select>
+	
+	<update id="executeCreate">
+		${sql}
+	</update>
+	
+	<update id="updateByParams">
+		update gen_create_table_history set DEL_FLAG = #{delFlag}
+		<where>
+			<if test="@Ognl@isNotBlank(tableName)">TABLE_NAME = #{tableName} </if>
+		</where>
+	</update>
+</mapper>

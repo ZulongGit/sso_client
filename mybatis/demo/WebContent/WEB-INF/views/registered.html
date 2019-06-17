@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>账号注册</title>
+	<link type="image/x-icon" href="${ctxPath!}/static/images/logo.png" rel="shortcut icon">
+	<!-- Google web font "Open Sans" -->
+	<link rel="stylesheet" href="${ctxPath!}/static/css/font-awesome.min.css">
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css//bootstrap.min.css">
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/demo.css" />
+	<link rel="stylesheet" href="${ctxPath!}/static/login/css/templatemo-style.css">
+    <script type="text/javascript" src="${ctxPath!}/static/jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="${ctxPath!}/static/login/js/modernizr.custom.86080.js"></script>
+    <script type="text/javascript" src="${ctxPath!}/static/layer-v3.1.0/layer/layer.js"></script>
+    
+    <link href="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.min.css">
+    <script src="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.js"></script>
+    <script src="${ctxPath}/static/jquery-validation/1.11.1/jquery.validate.method.js"></script>
+	<style>
+      .padding {
+      	margin: 6px 0;
+      }
+      
+      .vimg {
+      	position: absolute;
+        right: 13px;
+        bottom: 0;
+        height: 100%;
+        background: #fff;
+        overflow: hidden;
+        border-radius: 6px;
+        line-height: 55px;
+        cursor: pointer;
+      }
+</style>
+</head>
+
+<body>
+	<div id="particles-js"></div>
+	<ul class="cb-slideshow">
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	<div class="container-fluid">
+		<div class="row cb-slideshow-text-container ">
+			<div class="tm-content col-xl-6 col-sm-8 col-xs-8 ml-auto section">
+				<header class="mb-5">
+					<h1>账号注册</h1>
+				</header>
+				<!-- <P class="mb-5">A sign-up letter template with three background images shuffling by fade in out movements. Thank you for visiting our site!</P> -->
+				<form class="subscribe-form" id="table-form" action="#" method="post">
+					<div class="row">
+						<div class="col-md-7 col-sm-7 col-xs-7 padding">
+							<input name="username" type="email" class="form-control" id="username" placeholder="你的邮箱，推荐使用公司邮箱" required/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-7 col-sm-7 col-xs-7 padding">
+							<input name="password" type="password" class="form-control" id="password" placeholder="密码" required/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-7 col-sm-7 col-xs-7 padding">
+							<input name="repassword" type="password" class="form-control" id="repassword" placeholder="确认密码" required equalTo="#password"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-5 col-sm-5 col-xs-5 padding">
+							<input name="captcha" type="text" class="form-control" id="captcha" placeholder="验证码" required/>
+						</div>
+                        <div class="col-md-2 col-sm-2 col-xs-2 padding">
+                            <span class="vimg"><img src="" class="captcha"
+                                            onclick="this.src='${ctxPath!}/home/validateCode?'+Math.random()"/></span>
+                        </div>
+					</div>
+					<div class="row">
+						<div class="col-md-7 col-sm-7 col-xs-7 padding" style="text-align: center;">
+							<button class="tm-btn-subscribe" id="submit" type="button">立即注册</button>
+						</div>
+					</div>
+				</form>
+				<!-- <div class="tm-social-icons-container text-xs-center">
+	                    <a href="#" class="tm-social-link"><i class="fa fa-facebook"></i></a>
+	                    <a href="#" class="tm-social-link"><i class="fa fa-google-plus"></i></a>
+	                    <a href="#" class="tm-social-link"><i class="fa fa-twitter"></i></a>
+	                    <a href="#" class="tm-social-link"><i class="fa fa-linkedin"></i></a>
+	                </div> -->
+			</div>
+		</div>
+		<div class="footer-link">
+			<p>Copyright © 2018
+				<a rel="nofollow" href="#" target="_parent">Templatemo</a>
+			</p>
+			<p>
+				<a href="#" target="_blank" title="自动化编程系统">自动化编程系统</a>
+			</p>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="${ctxPath!}/static/login/js/particles.js"></script>
+<script type="text/javascript" src="${ctxPath!}/static/login/js/app.js"></script>
+<script src="${ctxPath}/static/js/jquery.form.js"></script>
+
+<script type="text/javascript">
+$(function(){
+	$('body').keydown(function (e) {
+        if (e.keyCode == 13) {
+        	$("#table-form").submit();
+        }
+    });
+	//表单校验
+	$("#table-form").validate({
+		messages:{
+			username: {required:"请输入邮箱，推荐使用公司邮箱！"},
+			password: {required:"1. 密码由8到32位字符组成<br>2. 至少由字母、数字和特殊字符其中两种进行组合<br>3. 特殊字符仅支持!\@#$%^&*-_！"},
+			repassword: {required:"请再次输入密码！",equalTo: "您两次输入的密码不一致！"},
+			captcha: {required:"请输入验证码！"}
+		},
+		submitHandler: function(form){
+			var indexLoad = layer.msg("正在注册，请稍后......", {
+				icon: 16,
+				time: 10000000
+			});
+			$("#table-form").ajaxSubmit({
+            	type:'post',
+            	url:'${ctxPath}/home/registered',
+            	success:function(data){
+            		layer.close(indexLoad);
+                    if(data.code == 1) {
+                    	layer.open({
+                    		type: 0,
+                    		time: 2000,
+                    		icon: 1,
+                    		content: data.msg,
+                    		btn: 0,
+                    		title: false,
+                    		closeBtn: false,
+                    		skin: 'layui-layer-rim',
+                    		end: function (){
+                        	 	location.href = "${ctxPath}/login";
+                    		}
+                    	})
+                    }else{
+                    	layer.msg(data.msg, {
+                    		time: 3000,
+                    		anim:6,
+                    		icon: 7
+                    	});
+                    }
+                }
+            });     
+		},
+		errorPlacement: function(error, element) {
+			layer.tips(error.html(), element, {
+				tips: [2, '#F26C4F'],
+				time: 3000,
+			});
+			/* layer.msg(error.html(), {
+                anim: 1,
+                offset: '200px'
+            }); */
+		}
+	});
+	
+	$("#submit").click(function(){
+		$("#table-form").submit();
+	})
+	$('img[class=captcha]').click();
+})
+</script>
+</html>

@@ -1,0 +1,785 @@
+@layout("/layout/container.html", {}){
+	<style>
+		.bootstrap-table .table:not(.table-condensed)>tbody>tr>td {
+			padding: 4px 8px;
+		}
+	</style>
+	<div class="row">
+	<div class="col-xs-12">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+    		<li role="presentation" class="active"><a href="#single" aria-controls="single" role="tab" data-toggle="tab"><i
+    			class="fa fa-align-right"
+    			></i> 单表生成</a></li>
+    		<li role="presentation"><a href="#multiple" aria-controls="multiple" role="tab" data-toggle="tab"><i class="fa fa-align-left"></i> 多表生成</a></li>
+            <a href="#" data-action="fullscreen" class="orange2" style="float: right;padding: 8px 10px 8px;border-left: 1px solid #D9D9D9;"> 
+              <i class="ace-icon fa fa-expand"></i>
+            </a>
+		</ul>
+		<!-- Tab panes -->
+		<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="single">
+			<div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+				<form id="gatherform" class="gatherform" method="post" action="">
+					<table id="table" class="table" data-toolbar="#toolbar">
+					</table>
+				</form>
+				</div>
+			</div>
+			<!-- </div> -->
+		</div>
+		<div role="tabpanel" class="tab-pane" id="multiple">
+			<!-- <div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+				<form id="gatherform" class="gatherform" method="post" action="">
+					<table id="table_multiple" class="table" data-toolbar="#toolbar">
+					<thead>
+						<tr>
+						<th align="center"></th>
+						<th>序号</th>
+						<th>字段名</th>
+						<th>中文名称</th>
+						<th>表单类型</th>
+						<th>字典类型</th>
+						<th>java类型</th>
+						<th>字段长度</th>
+						<th>小数精度</th>
+						<th>主键</th>
+						<th>是否必填</th>
+						<th>readonly</th>
+						<th>列表是否显示</th>
+						<th>查询模式</th>
+						<th>是否使用</th>
+						</tr>
+					</thead>
+					<tbody id='coloums_multiple'></tbody>
+					</table>
+				</form>
+				</div>
+			</div> -->
+		</div>
+		</div>
+	</div>
+	</div>
+	<div id="toolbar">
+		<form id="config-form" action="">
+			<div class="form-inline" role="form">
+				<div class="form-group width-100">
+					<a id="saveConfig" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa  fa-search-plus  bigger-130"></i> <span>保存配置</span></a> 
+					<a id='sync' class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-refresh bigger-130"></i> <span>同步表结构</span></a> 
+					<a id="deleteConfig" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-trash-o bigger-130"></i> <span>删除当前配置</span></a> 
+					<a id="upButton" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-arrow-up bigger-130"></i> <span>上移</span></a> 
+					<a id="downButton" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-arrow-down bigger-130"></i> <span>下移</span></a> 
+					<a id='refresh' class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-refresh bigger-130"></i> <span>刷新数据</span></a> 
+					<a id='refreshSelect' class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-refresh bigger-130"></i> <span>刷新下拉框</span></a> 
+				</div>
+			</div>
+			<div class="form-inline" role="form">
+			<div class="form-group">
+				<span>所属项目：</span>
+				<select class="chosen-select form-control w110 linkage" name="proId" id="proId" linkage-level="1">
+					<option value="">--请选择--</option>
+					@var map = dict.getEmptyMap();
+						@if(!session.loginUser.isAdmin){
+						@map.userId = session.loginUser.id;
+						@}
+					@selectOptions = dict.getDictListByType("project_select_dynamic", map);
+					@if(selectOptions != ""){
+						@for(op in selectOptions){
+							<option value="${op.value! }">${op.label! }</option>
+						@}
+					@}
+					</select> 
+			</div>
+			<div class="form-group">
+				<span>链接：</span>
+				<select id="db-select" name="dbId" class="chosen-select linkage" linkage-level="2">
+				<option value="">--请选择--</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<span>数据库：</span>
+				<select id="alias-select" name="schemaName" class="chosen-select linkage" linkage-level="3">
+				<option value="">--请选择--</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<span>选择表：</span>
+				<select id="tables-select" name="tableName" class="chosen-select linkage" linkage-level="4">
+				<option value="">--请选择--</option>
+				</select>
+			</div>
+			</div>
+			<div class="form-inline" role="form">
+				<div class="form-group">
+					<span>模块名称：</span>
+					<input type="text" id="moduleName" name="moduleName" value="" style="width: auto !important;"
+						placeholder="modules" data-toggle="tooltip" title="模块名称作为程序包路径的一部分，默认为modules">
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置Excel文件导入按钮">
+					<div class="checkbox checkbox-primary" style="padding-bottom: 4px;">
+						导入：
+						<label class="checkbox-label">
+							<input class="checkbox-hidden" type="checkbox" name="isImport" id="isImport" value="N">
+							<span class="checkbox-style1 checkbox-inner"></span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置Excel文件导出按钮">
+					<div class="checkbox" style="padding-bottom: 4px;">
+						导出：
+						<label class="checkbox-label">
+							<input class="checkbox-hidden" type="checkbox" name="isExport" id="isExport" value="N">
+							<span class="checkbox-style1 checkbox-inner"></span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置增改数据时是否有附件上传">
+					附件上传：
+					<div class="checkbox" style="padding-bottom: 4px;">
+						<label class="checkbox-label">
+							<input class="checkbox-hidden" type="checkbox" name="isUploadFile" id="isUploadFile" value="N">
+							<span class="checkbox-style1 checkbox-inner"></span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_user表ID关联的字段，请绑定，用来控制权限">
+					<span>用户ID字段绑定：</span>
+					<select name="userIdFieldBind" id="userIdFieldBind" class="chosen-select">
+						<option value="">请选择</option>
+					</select>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_organ表code关联的字段，请绑定，用来控制权限">
+					<span>机构号字段绑定：</span>
+					<select name="organCodeFieldBind" id="organCodeFieldBind" class="chosen-select">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+		</form>
+		</div>
+	<!-- <div id="toolbar_multiple">
+		<form id="config-form" action="">
+			<div class="form-inline" role="form">
+				<div class="form-group width-100">
+					<a id="saveConfig" class="btn btn-purple btn-sm" href="javascript:void(0);"> <i class="ace-icon fa  fa-search-plus  bigger-130"></i> <span>保存配置</span></a> 
+					<a id="deleteConfig" class="btn btn-purple btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-trash-o bigger-130"></i> <span>删除当前配置</span></a> 
+					<a id="upButton" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-arrow-up bigger-130"></i> <span>上移</span></a> 
+					<a id="downButton" class="btn btn-primary btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-arrow-down bigger-130"></i> <span>下移</span></a> 
+					<a id="relation" class="btn btn-warn btn-sm" href="javascript:void(0);"> <i class="ace-icon fa fa-arrow-down bigger-130"></i> <span>添加关联表</span></a> 
+				</div>
+			</div>
+			<div class="form-inline" role="form">
+				<div class="form-group">
+					<span>模块名称：</span>
+					<input type="text" id="moduleName" name="moduleName" value="" style="width: auto !important;"
+						placeholder="modules" data-toggle="tooltip" title="模块名称作为程序包路径的一部分，默认为modules">
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置Excel文件导入按钮">
+					<div class="checkbox checkbox-primary" style="margin-left: -15px;">
+						<label>
+							<input class="ace ace-checkbox-2" type="checkbox" name="isImport" id="isImport" value="N">
+							<span class="lbl">导入</span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置Excel文件导出按钮">
+					<div class="checkbox" style="margin-left: -15px;width: 75px;">
+						<label>
+							<input class="ace ace-checkbox-2" type="checkbox" name="isExport" id="isExport" value="N">
+							<span class="lbl">导出</span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="设置增改数据时是否有附件上传">
+					<div class="checkbox" style="margin-left: -25px;width: 95px;">
+						<label>
+							<input class="ace ace-checkbox-2" type="checkbox" name="isUploadFile" id="isUploadFile" value="N">
+							<span class="lbl">附件上传</span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_user表ID关联的字段，请绑定，用来控制权限">
+					<span>用户ID字段绑定：</span>
+					<select name="userIdFieldBind" id="userIdFieldBind" class="chosen-select">
+						<option value="">请选择</option>
+					</select>
+				</div>
+				<div class="form-group" data-toggle="tooltip" title="如果该表里有和sys_organ表code关联的字段，请绑定，用来控制权限">
+					<span>机构号字段绑定：</span>
+					<select name="organCodeFieldBind" id="organCodeFieldBind" class="chosen-select">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+		</form>
+		</div> -->
+	</div>
+
+	<script>
+		$(function() {
+			//$('body').css('overflow-y', 'hidden');
+			//多级联动初始化
+			$(".linkage").linkage({
+				url: ['', '${ctxPath}/dict/getDictListByType', '${ctxPath}/form/config/getSchema', '${ctxPath}/form/config/getDbTable'],
+				params: [
+					{}, {type: 'db_select_dynamic'}, {}, {}
+				]
+			});
+			$("[data-toggle='tooltip']").tooltip();
+			initTable();
+			$('#proId').change(function(){
+				$.ajax({
+					url: '${ctxPath}/form/config/getDicts',
+					type: 'post',
+					data: {proId: $(this).val()},
+					success: function(result){
+						initTable(result.data);
+					}
+				})
+			})
+			function initTable(dicts){
+				$('#table').bootstrapTable('destroy');
+				$('#table').bootstrapTable({
+					iconSize : 'sm',
+					pagination : false,
+					method : "post",
+					toolbar : "#toolbar",
+					striped : true,
+					stickyHeader: true,
+					clickToSelect : true,
+					height : window.innerHeight - 70,
+					/* rowStyle: function(row, index){
+						if(row.isUse == 'Y'){
+							return { classes: '' };
+						}else{
+							//return { css: {'background-color': '#ebcccd'} };
+							return { classes: 'danger' };
+						}
+					}, */
+					columns: [
+						{radio: true}, 
+						{title: "序号", formatter: function(value, row, index) {
+							return `<span class="lable">\${index+1}</span>
+								<input type="hidden" value="\${row.id}" name="configs[\${index}].id" />
+								<input type="hidden" value="\${row.sorts}" name="configs[\${index}].sorts" />
+								<input type="hidden" value="\${row.defaultValue}" name="configs[\${index}].defaultValue" />`;
+						}},
+						{title: "字段名", formatter: function(value, row, index) {
+							return `\${row.fieldName}
+								<input type="hidden" name="configs[\${index}].fieldName" value="\${row.fieldName}" />
+								<input type="hidden" name="configs[\${index}].dbName" value="\${row.dbName}" />`;
+						}},
+						{title: "中文名称", formatter: function(value, row, index) {
+							return `<input type="text" name="configs[\${index}].remarks" value="\${row.remarks}" />`;
+						}},
+						{title: "表单类型", formatter: function(value, row, index) {
+							return `<select class="chosen" name="configs[\${index}].formType" style="width:100%;height:26px;" >
+										<option value='0' \${row.formType=='0'?'selected':''}>文本框</option>
+										<option value='0.1' \${row.formType=='0.1'?'selected':''}>日期框</option>
+										<option value='0.2' \${row.formType=='0.2'?'selected':''}>数字框</option>
+										<option value='0.3' \${row.formType=='0.3'?'selected':''}>金额框</option>
+										<option value='0.4' \${row.formType=='0.4'?'selected':''}>自动编号生成</option>
+										<option value='1' \${row.formType=='1'?'selected':''}>下拉框</option>
+										<option value='1.1' \${row.formType=='1.1'?'selected':''}>下拉框（带编号）</option>
+										<option value='1.2' \${row.formType=='1.2'?'selected':''}>下拉多选框</option>
+										<option value='2' \${row.formType=='2'?'selected':''}>文本域</option>
+										<option value='3' \${row.formType=='3'?'selected':''}>单选弹出框(暂不支持)</option>
+										<option value='4' \${row.formType=='4'?'selected':''}>富文本</option>
+									</select>`;
+						}},
+						{title: "字典类型", formatter: function(value, row, index) {
+							var opStr = '';
+							$.each(dicts, function(i, obj){
+								opStr += `<option value="\${obj.type}" \${row.dictType==obj.type?'selected':''}>\${obj.description}</option>`
+							})
+							return `<select class="chosen" name="configs[\${index}].dictType" style="width:100%;height:26px;">
+										<option value="">--请选择--</option>
+										\${opStr}
+									</select>`;
+						}},
+						{title: "java类型", formatter: function(value, row, index) {
+							return `
+								<input type="text" name="configs[\${index}].javaType" value="\${row.javaType}" />
+								<input type="hidden" name="configs[\${index}].fieldType" value="\${row.fieldType}" />`;
+						}},
+						{title: "字段长度", align: "right", formatter: function(value, row, index) {
+							return `\${row.length}
+								<input type="hidden" name="configs[\${index}].length" value="\${row.length}" />`;
+						}},
+						{title: "小数精度", align: "right", formatter: function(value, row, index) {
+							return `\${row.decimalPrecision}
+								<input type="hidden" name="configs[\${index}].decimalPrecision" value="\${row.decimalPrecision}" />`;
+						}},
+						{title: "主键", formatter: function(value, row, index) {
+							return `<input type="checkbox" name="configs[\${index}].isPrimary" value="\${row.isPrimary}" \${row.isPrimary=='Y'?'checked':''}/>`;
+						}},
+						{title: "是否必填", formatter: function(value, row, index) {
+							return `<input type="checkbox" name="configs[\${index}].isNullable" value="\${row.isNullable}" \${row.isNullable=='Y'?'checked':''}/>`;
+						}},
+						{title: "readonly", formatter: function(value, row, index) {
+							return `<input type="checkbox" name="configs[\${index}].isReadonly" value="\${row.isReadonly}" \${row.isReadonly=='Y'?'checked':''}/>`;
+						}},
+						{title: "列表", formatter: function(value, row, index) {
+							return `<input type="checkbox" name="configs[\${index}].isListShow" value="\${row.isListShow}" \${row.isListShow=='Y'?'checked':''}/>`;
+						}},
+						{title: "条件查询", formatter: function(value, row, index) {
+							return `<select  class="chosen" name="configs[\${index}].queryMode" style="width:100%;height:26px;" >
+									<option value='0'>--请选择--</option>
+									<option value='1' \${row.queryMode=='1'?'selected':''}>=</option>
+									<option value='2' \${row.queryMode=='2'?'selected':''}>like</option>
+									<option value='3' \${row.queryMode=='3'?'selected':''}>between...and</option>
+									</select>`;
+						}},
+						{title: "是否使用", formatter: function(value, row, index) {
+							return `<input for="all" type="checkbox" name="configs[\${index}].isUse" value="\${row.isUse}" \${row.isUse=='Y'?'checked':''}/>`;
+						}},
+					]
+				});
+			}
+			
+			/* $('#table_multiple').bootstrapTable({
+				iconSize : 'sm',
+				pagination : false,
+				method : "post",
+				toolbar : "#toolbar_multiple",
+				striped : true,
+				clickToSelect : true,
+				height : screen.height - 290
+			}); */
+			/* 所有的CheckBox注册事件 */
+			$("input[type=checkbox]").change(function(){
+				if(this.checked){
+					$(this).val('Y');
+				}else{
+					$(this).val('N');
+				}
+			})
+		})
+
+		$("#tables-select").chosen({width: "400px", search_contains: true, disable_search_threshold: 10});
+		$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10});
+		
+		function registerChangeEvent(){
+			/* 所有的CheckBox注册事件 */
+			$("input[type=checkbox]").change(function(){
+				if(this.checked){
+					$(this).val('Y');
+				}else{
+					$(this).val('N');
+				}
+			})
+			$("input[type=checkbox]").each(function(i, checkbox){
+				if(!$(checkbox).hasClass('checkbox-hidden')){
+				$(checkbox).addClass('checkbox-hidden');
+				var parent = $(checkbox).parent();
+				var checkbox_label = $("<label class=\"checkbox-label\"></label>");
+				var checkbox_inner = $("<span class=\"checkbox-style1 checkbox-inner\"></span>");
+				parent.append(checkbox_label);
+				checkbox_label.append($(checkbox))
+				checkbox_label.append(checkbox_inner);
+				}
+			})
+		}
+		//下拉选择表事件
+		$("#tables-select").change(function(){
+			var loadi = loading("系统正在处理，请稍后......");
+			$("#userIdFieldBind").empty();
+			$("#organCodeFieldBind").empty();
+			$("#userIdFieldBind").append("<option value=''>请选择</option>");  //为Select追加一个Option(下拉项)
+			$("#organCodeFieldBind").append("<option value=''>请选择</option>");  //为Select追加一个Option(下拉项)
+			$(".chosen-select").trigger('chosen:updated');//更新选项 
+			$("#moduleName").val('');
+			$("#isImport").prop("checked",false);
+			$("#isExport").prop("checked",false);
+			$("#isUploadFile").prop("checked",false);
+			$.ajax({
+				url: "${ctxPath}/form/config/checkConfigs",
+				dataType: "json",
+				method:"post",
+				data: $("#config-form").serializeJson(),
+				success: function(data) {
+					layer.close(loadi);
+					if(data.count > 0){
+						init(true);
+					}else{
+						init(false);
+					}
+				}
+			}); 
+		})
+		
+		function init(flag){
+			var postion = $('#table').bootstrapTable('getScrollPosition');
+			if(flag){
+				var loadi = loading("该表配置已保存，系统正在获取中，请稍后......");
+				//初始化已保存的字段配置
+				$.ajax({
+					url: "${ctxPath}/form/config/getTableFieldConfig",
+					dataType: "json",
+					method:"post",
+					data: $("#config-form").serializeJson(),
+					success: function(data) {
+						$('#table').bootstrapTable('load', data);
+						setTimeout(function(){
+							$('#table').bootstrapTable('scrollTo', postion);
+						}, 1000);
+						$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10});
+						registerChangeEvent();
+						for(var i = 0; i < data.length; i++){
+							$("#userIdFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+							$("#organCodeFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+						}
+						$(".chosen-select").trigger('chosen:updated');//更新选项  
+						initTableConfig(loadi);
+					}
+				}); 
+				//初始化表配置
+				function initTableConfig(loadi){
+					$.ajax({
+						url: "${ctxPath}/form/config/getTableConfig",
+						dataType: "json",
+						method:"post",
+						data: $("#config-form").serializeJson(),
+						success: function(data) {
+							layer.close(loadi);
+							successMsg('获取配置信息成功！',function(){
+								$("#moduleName").val(data.moduleName);
+								if(data.isImport == 'Y'){
+									$("#isImport").prop("checked",true); 
+								}else{
+									$("#isImport").prop("checked",false); 
+								}
+								if(data.isExport == 'Y'){
+									$("#isExport").prop("checked",true); 
+								}else{
+									$("#isExport").prop("checked",false); 
+								}
+								if(data.isUploadFile == 'Y'){
+									$("#isUploadFile").prop("checked",true); 
+								}else{
+									$("#isUploadFile").prop("checked",false); 
+								}
+								$("#userIdFieldBind").val(data.userIdFieldBind); 
+								$("#organCodeFieldBind").val(data.organCodeFieldBind); 
+								$(".chosen-select").trigger('chosen:updated');//更新选项  
+							})
+						}
+					}); 
+				}
+				
+			}else{
+				//尚未保存过配置，初始化数据库读取的信息
+				var loadi = loading("该表配置尚未保存，系统正在初始化配置信息，请稍后......");
+				$.ajax({
+					url: "${ctxPath}/form/config/initField",
+					dataType: "json",
+					method:"post",
+					data: $("#config-form").serializeJson(),
+					success: function(data) {
+						layer.close(loadi);
+						successMsg('初始化成功！',function(){
+							$('#table').bootstrapTable('load', data);
+							setTimeout(function(){
+								$('#table').bootstrapTable('scrollTo', postion);
+							}, 100);
+							$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10});
+							registerChangeEvent();
+							for(var i = 0; i < data.length; i++){
+								$("#userIdFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+								$("#organCodeFieldBind").append("<option value='"+data[i].fieldName+"'>"+data[i].fieldName + "【" + data[i].remarks+"】</option>");  //为Select追加一个Option(下拉项)
+							}
+							$(".chosen-select").trigger('chosen:updated');//更新选项  
+						})
+					}
+				}); 
+			}
+		}
+		/* 表格渲染由jsrender初始化改成bootstrap table初始化，此处删除 */
+		/*function rowSelect(obj){
+			$.each($("input[name=btSelectItem]"), function(i, obj){
+				$(obj).removeClass("selected");
+			})
+			if($(obj).is(':checked')){
+				$(obj).addClass("selected");
+			}
+		} */
+		
+		//保存配置
+		$("#saveConfig").click(function() {
+			if($("#tables-select").val() == ''){
+				failMsg("您还没选择表呢！");
+				return;
+			}
+			var params = $("#config-form").serializeJson();
+			var isImport, isExport;
+			if($("#isImport").is(':checked')){isImport='Y'}else{isImport = 'N';}
+			if($("#isExport").is(':checked')){isExport='Y'}else{isExport = 'N'};
+			if($("#isUploadFile").is(':checked')){isUploadFile='Y'}else{isUploadFile = 'N'};
+			var remarks = $("#tables-select").find("option:selected").text();
+			params = $.extend(params, {isImport: isImport, isExport: isExport, isUploadFile: isUploadFile, remarks: remarks})
+			var loadi = loading("系统正在提交数据，请稍后......");
+			$("#gatherform").ajaxSubmit({
+				type:'post',
+				url:'${ctxPath}/form/config/saveConfigs',
+				data:params,
+				success:function(data){
+					layer.close(loadi);
+					if(data.code == 1){
+						successMsg('保存配置成功！',function(){
+							$("#tables-select").change();
+						})
+					}else{
+						failMsg(data.msg);
+					}
+				}
+			});
+		});
+			
+		//同步表结构
+		$("#sync").click(function() {
+			var postion = $('#table').bootstrapTable('getScrollPosition');
+			var params = $("#config-form").serializeJson();
+			var tableName = params.tableName;
+			if(tableName != ''){
+				var indexLoad = loading("正在同步表结构，请稍后......");
+				$.ajax({
+					url : "${ctxPath}/form/config/sync",
+					dataType : "json",
+					method : "post",
+					data : params,
+					success : function(data) {
+						layer.close(indexLoad);
+						if (data.code == 1) {
+							successMsg(data.msg, function() {
+								$('#table').bootstrapTable('load', data);
+								setTimeout(function(){
+									$('#table').bootstrapTable('scrollTo', postion);
+								}, 100);
+								$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10});
+								registerChangeEvent();
+							});
+						} else {
+							failMsg(data.msg);
+						}
+					}
+				});
+			}else{
+				failMsg("您还没选择表呢！");
+			}
+		});
+		
+		//删除配置
+		$("#deleteConfig").click(function() {
+			var params = $("#config-form").serializeJson();
+			var tableName = params.tableName;
+			if(tableName != ''){
+				$.cuslayer({
+					mode:"confirm",
+					title:'系统提醒',
+					msg:'当前操作为删除当前表配置（不可恢复），确定继续吗？',
+					yes:function(index, layero){
+						var indexLoad = loading("正在删除表结构，请稍后......");
+						$.ajax({
+							url : "${ctxPath}/form/config/deleteConfig",
+							dataType : "json",
+							method : "post",
+							data : params,
+							success : function(data) {
+								layer.close(indexLoad);
+								if (data.code == 1) {
+									successMsg(data.msg, function() {
+										$("#tables-select").change();
+									});
+								} else {
+									failMsg(data.msg);
+								}
+							}
+						});
+					}
+				});
+			}else{
+				failMsg("您还没选择表呢！");
+			}
+		});
+		
+		//上移按钮
+		$("#upButton").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要上移的数据！");
+				return;
+			}else if(rows.length>1){
+				failMsg("只能选择一条数据哦！");
+				return;
+			}else{
+				var row = rows[0];
+				if(row.sorts == 1){
+					failMsg("前面没有啦！");
+					return;
+				}
+				//$(".chosen-select").chosen('destroy');
+				var index = $('tr[class=selected]').attr("data-index");	//当前序号
+				var $tr = $('tr[data-index='+index+']');	//当前tr
+				var recent = $tr.html();	//当前行内容
+				var before = $('tr[data-index='+(index-1)+']').html();	//上一行内容
+				//互换内容
+				$tr.html(before);
+				$('tr[data-index='+(index-1)+']').html(recent);
+				//互换后，tr变成互换前的上一行内容，序号加1，即index
+				$.each($tr.find("td"), function(i, td){
+					var inputs = $(td).find("input,select");
+					$.each(inputs, function(i, input){
+						var name = $(input).attr("name");
+						if(name != undefined){
+							name = name.substring(name.indexOf(".")+1)
+							if(name == "btSelectItem"){
+								$(input).attr("data-index", index);
+							}else{
+								$(input).attr("name","configs["+index+"]."+name);
+							}
+							//更改隐藏的序号值
+							if(name == "sorts"){
+								$(input).val(parseInt(index)+1);
+							}
+						}
+					});
+					$.each($(td).find("span"), function(i, obj){
+						if($(obj).attr('class') == 'lable'){
+							$(obj).html(parseInt(index)+1)
+						}
+					})
+				});
+				$tr.removeClass('selected');
+				//此处是上移后的tr，互换后，序号减1
+				$.each($('tr[data-index='+(index-1)+']').find("td"), function(i, td){
+					var inputs = $(td).find("input,select");
+					$.each(inputs, function(i, input){
+						var name = $(input).attr("name");
+						if(name != undefined){
+							name = name.substring(name.indexOf(".")+1)
+							if(name == "btSelectItem"){
+								$(input).attr("data-index", index-1);
+								$(input).prop("checked", true);
+							}else{
+								$(input).attr("name","configs["+(index-1)+"]."+name);
+							}
+							//更改隐藏的序号值
+							if(name == "sorts"){
+								$(input).val(index);
+							}
+						}
+					})
+					$.each($(td).find("span"), function(i, obj){
+						if($(obj).attr('class') == 'lable'){
+							$(obj).html(index)
+						}
+					})
+				});
+				$('tr[data-index='+(index-1)+']').addClass("selected");
+				/* $("#tables-select").chosen({width: "400px", search_contains: true, disable_search_threshold: 10});
+				$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10}); */
+			}
+		})
+		
+		//下移按钮
+		$("#downButton").click(function(){
+			var rows = $('#table').bootstrapTable("getSelections");
+			if(rows.length==0){
+				failMsg("请选择要下移的数据！");
+				return;
+			}else if(rows.length>1){
+				failMsg("只能选择一条数据哦！");
+				return;
+			}else{
+				var row = rows[0];
+				var index = $('tr[class=selected]').attr("data-index");	//当前序号
+				if(!$('tr[data-index='+(parseInt(index)+1)+']')[0]){
+					failMsg("后面没有啦！");
+					return;
+				}
+				//$(".chosen-select").chosen('destroy');
+				var $tr = $('tr[data-index='+index+']');	//当前tr
+				var recent = $tr.html();	//当前行内容
+				var after = $('tr[data-index='+(parseInt(index)+1)+']').html();	//下一行内容
+				//互换内容
+				$tr.html(after);
+				$('tr[data-index='+(parseInt(index)+1)+']').html(recent);
+				//互换后，tr变成互换前的下一行内容，序号减1，即index
+				$.each($tr.find("td"), function(i, td){
+					var inputs = $(td).find("input,select");
+					$.each(inputs, function(i, input){
+						var name = $(input).attr("name");
+						if(name != undefined){
+							name = name.substring(name.indexOf(".")+1)
+							if(name == "btSelectItem"){
+								$(input).attr("data-index", index);
+							}else{
+								$(input).attr("name","configs["+index+"]."+name);
+							}
+							//更改隐藏的序号值
+							if(name == "sorts"){
+								$(input).val(parseInt(index)+1);
+							}
+						}
+					});
+					$.each($(td).find("span"), function(i, obj){
+						if($(obj).attr('class') == 'lable'){
+							$(obj).html(parseInt(index)+1)
+						}
+					})
+				});
+				$tr.removeClass('selected');
+				//选中行，序号index加1
+				$.each($('tr[data-index='+(parseInt(index)+1)+']').find("td"), function(i, td){
+					var inputs = $(td).find("input,select");
+					$.each(inputs, function(i, input){
+						var name = $(input).attr("name");
+						if(name != undefined){
+							name = name.substring(name.indexOf(".")+1)
+							if(name == "btSelectItem"){
+								$(input).attr("data-index", parseInt(index)+1);
+								$(input).prop("checked", true);
+							}else{
+								$(input).attr("name","configs["+(parseInt(index)+1)+"]."+name);
+							}
+							//更改隐藏的序号值
+							if(name == "sorts"){
+								$(input).val(parseInt(index)+2);
+							}
+						}
+					})
+					$.each($(td).find("span"), function(i, obj){
+						if($(obj).attr('class') == 'lable'){
+							$(obj).html(parseInt(index)+2)
+						}
+					})
+				});
+				$('tr[data-index='+(parseInt(index)+1)+']').addClass("selected");
+				/* $('#table').bootstrapTable("check", parseInt(index)+1);
+				$('#table').bootstrapTable("uncheck", parseInt(index)); */
+				/* $("#tables-select").chosen({width: "400px", search_contains: true, disable_search_threshold: 10});
+				$(".chosen-select").chosen({width: "200px", search_contains: true, disable_search_threshold: 10}); */
+			}
+		})
+		
+		//同步表结构
+		$("#refresh").click(function() {
+			$("#tables-select").change();
+		});
+		
+		//同步表结构
+		$("#refreshSelect").click(function() {
+			
+		});
+		
+		$("#relation").click(function(){
+			$.cuslayer({
+				mode: "page",
+				title: "关联表配置",
+				url: "${ctxPath}/form/config/toRelation"
+			});
+		})
+	</script>
+@}

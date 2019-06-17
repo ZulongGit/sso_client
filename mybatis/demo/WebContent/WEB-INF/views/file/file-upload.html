@@ -1,0 +1,165 @@
+﻿<style>
+.profile-info-name{
+    text-align: left;
+}
+.fileName{
+	margin-left: 4px;
+}
+</style>
+<div class="layer">
+	@if(view != 1){
+		<form cnName="FormPost" id="file-form" class="FormGrid"  method="post" enctype="multipart/form-data" action="">
+            <table class="EditTable" width="100%">
+           		<tbody>
+					<input type="hidden" name="relateId" value="${relateId!}">
+					<tr class="FormData">
+    					<td class="CaptionTD">附件:</td>
+						<td class="DataTD width-100">
+							<input id="hiddenFile" type="file" multiple name="file" required style="display: none">
+							<div class="input-append" style="position: relative; width: 80%;">
+								<input id="file-input" type="text" style="display: inline-block;">
+								<a class="btn btn-primary btn-sm" id="input-append" onclick="$('#hiddenFile').click();" style="display: inline-block; position: absolute;"><i class="fa fa-folder-open-o"></i>&nbsp;上传附件</a>
+							</div>
+						</td>
+					</tr>
+        		</tbody>
+			</table>
+		</form>
+	@}
+		<br>
+		<div id="" class="tab-pane active clearfix">
+			<div id="file-list" class="profile-user-info profile-user-info-striped wordbreak">
+			</div>
+		</div>
+</div>
+  
+<script type="text/javascript">
+	$(function(){
+		init();
+		$('#hiddenFile').change(function() {
+			$('#file-input').val($(this).val());
+		});
+		//表单校验
+		$("#file-form").validate({
+			messages:{
+				file : {required: "请先上传文件！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#file-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/file/upload',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		init();
+	                   		}); 
+	                    }else{
+	                    	init();
+	                    	failMsg(data.msg, 5000);
+	                    }
+	                    $('#file-input').val('');
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				if(element.attr("id") == "hiddenFile"){
+					element = $("#input-append");
+				}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+	
+	function init(){
+		$.ajax({
+			url: '${ctxPath}/file/list',
+			type:'post',
+			data: {
+				relateId: '${relateId!}'
+			},
+			sync: true,
+			success:function(data){
+				var html = '';
+				$('#file-list').html(html)
+				if(data.length == 0){
+					html += '<div class="profile-info-row">';
+					html += '<div class="profile-info-value">暂未上传附件！</div>';
+					html += '</div>';
+					$('#file-list').html(html)
+				}else{
+					for(var i=0; i<data.length; i++){
+						html += '<div class="profile-info-row">';
+						html += '<div class="profile-info-value">'
+						html += '<img src="${ctxPath}/static/ueditor-dev-1.5.0/dialogs/attachment/fileTypeImages/icon_'+data[i].extName+'.gif">'
+							  + '<a class="fileName" href="javascript:void(0)" titile="点击预览" onclick="preview(\''+data[i].fileName+'\', '+data[i].fileSize+')">'+data[i].docTitle+'</a></div>';
+				  	@if(view != 1){
+						html += '<div class="profile-info-name">'﻿
+							  + '<a class="red" href="javascript:void(0);" onclick="deleteFile(\''+data[i].id+'\', \''+data[i].fileName+'\')"><i class="ace-icon fa fa-trash-o bigger-130"></i>&nbsp;删除</a></div>';
+					@}
+						html += '</div>';
+					}
+					$('#file-list').html(html)
+				}
+			}
+		})
+	}
+	
+	function downFile(fileName){
+		var $tempForm = $("<form style='display:none;'></form>");
+		var $input = $("<input name=fileName value='" + fileName + "'/>");
+		$tempForm.append($input);
+		$("body").append($tempForm);
+		$tempForm.attr("action", "${ctxPath}/file/downFile");
+		$tempForm.attr("method", "post");
+		$tempForm.submit();
+		$tempForm.remove();
+	};
+	
+	function preview(fileName, fileSize){
+		var size = fileSize/1024/1024;
+		var suffix = fileName.substring(fileName.lastIndexOf(".")+1);
+		if(suffix == 'doc' || suffix == 'docx' || suffix == 'xls' || suffix == 'xlsx' || suffix == 'ppt' || suffix == 'pptx'){
+			if(size >= 10){
+				failMsg("您的文件较大，如果您是首次浏览，加载时间可能较长，请耐心等候！")
+			}
+		}
+		var url = "${ctxPath}/file/document/entrance";
+		var $tempForm = $("<form  target='_blank' style='display:none;'></form>");
+		var $input = $("<input name='fileName' value='" + fileName + "'/>");
+		$tempForm.append($input);
+		$("body").append($tempForm);
+		$tempForm.attr("action", url);
+		$tempForm.attr("method", "post");
+		$tempForm.submit();
+		$tempForm.remove();
+	}
+	
+	function deleteFile(id, fileName){
+		$.cuslayer({
+			mode: "confirm",
+			msg: '确定要删除该附件吗（不可恢复）？',
+			yes: function(){
+				$.ajax({
+					url: '${ctxPath}/file/delete',
+					type:'post',
+					data: {
+						id: id,
+						fileName: fileName
+					},
+					sync: true,
+					success:function(data){
+						if(data.code == 1){
+							successMsg(data.msg, function() {
+								init();
+		               		}); 
+						}else{
+							failMsg(data.msg);
+						}
+					}
+				})
+			}
+		});
+	}
+</script>

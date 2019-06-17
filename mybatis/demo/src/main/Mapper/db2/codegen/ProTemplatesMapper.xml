@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.ProTemplatesMapper">
+
+	<!-- 表字段 -->
+	<sql id="proTemplatesColumns">
+		 ID, PRO_ID, TEMPLATE_NAME, REMARKS, FILE_NAME, PATH, GEN_TYPE, TEMP_LANGUAGE, SORTS, CAN_DEL,
+		 CONTENTS, CREATE_BY, CREATE_DATE, UPDATE_BY, UPDATE_DATE, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="proTemplatesAliasColumns">
+         t.ID, t.PRO_ID, t.TEMPLATE_NAME, t.REMARKS, t.FILE_NAME, t.PATH, t.GEN_TYPE, t.TEMP_LANGUAGE, t.SORTS, t.CAN_DEL,
+		 t.CONTENTS, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY, t.UPDATE_DATE, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="proTemplatesAliasColumns" />, u.name u_name 
+			, table1.lable as PRO_ID_TEXT
+			, F_CHANGE_TO_DICT('code_language', t.TEMP_LANGUAGE) TEMP_LANGUAGE_TEXT
+		from gen_pro_templates  t
+		left join (SELECT t.PRO_NAME LABLE, t.ID VALUE FROM gen_projects t where 1=1) table1 on t.PRO_ID = table1.value
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(templateName)">and t.TEMPLATE_NAME = #{templateName} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(fileName)">and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(path)">and t.PATH = #{path} </if>
+			<if test="@Ognl@isNotBlank(genType)">and t.GEN_TYPE = #{genType} </if>
+			<if test="@Ognl@isNotBlank(tempLanguage)">and t.TEMP_LANGUAGE = #{tempLanguage} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(canDel)">and t.CAN_DEL = #{canDel} </if>
+			<if test="@Ognl@isNotBlank(contents)">and t.CONTENTS = #{contents} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.ProTemplates">
+        select  <include refid="proTemplatesAliasColumns" />
+		from gen_pro_templates  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(templateName)">and t.TEMPLATE_NAME = #{templateName} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(fileName)">and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(path)">and t.PATH = #{path} </if>
+			<if test="@Ognl@isNotBlank(genType)">and t.GEN_TYPE = #{genType} </if>
+			<if test="@Ognl@isNotBlank(tempLanguage)">and t.TEMP_LANGUAGE = #{tempLanguage} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(canDel)">and t.CAN_DEL = #{canDel} </if>
+			<if test="@Ognl@isNotBlank(contents)">and t.CONTENTS = #{contents} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.ProTemplates">
+		select  <include refid="proTemplatesAliasColumns" />
+		from gen_pro_templates  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(templateName)"> and t.TEMPLATE_NAME = #{templateName} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(fileName)"> and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(path)"> and t.PATH = #{path} </if>
+			<if test="@Ognl@isNotBlank(genType)"> and t.GEN_TYPE = #{genType} </if>
+			<if test="@Ognl@isNotBlank(tempLanguage)"> and t.TEMP_LANGUAGE = #{tempLanguage} </if>
+			<if test="@Ognl@isNotBlank(sorts)"> and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(canDel)"> and t.CAN_DEL = #{canDel} </if>
+			<if test="@Ognl@isNotBlank(contents)"> and t.CONTENTS = #{contents} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="proTemplatesAliasColumns" />, u.name u_name 
+			, table1.lable as PRO_ID_TEXT
+			, F_CHANGE_TO_DICT('code_language', t.TEMP_LANGUAGE) TEMP_LANGUAGE_TEXT
+		from gen_pro_templates  t
+		left join (SELECT t.PRO_NAME LABLE, t.ID VALUE FROM gen_projects t where 1=1) table1 on t.PRO_ID = table1.value
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(templateName)">and t.TEMPLATE_NAME = #{templateName} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(fileName)">and t.FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(path)">and t.PATH = #{path} </if>
+			<if test="@Ognl@isNotBlank(genType)">and t.GEN_TYPE = #{genType} </if>
+			<if test="@Ognl@isNotBlank(tempLanguage)">and t.TEMP_LANGUAGE = #{tempLanguage} </if>
+			<if test="@Ognl@isNotBlank(sorts)">and t.SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(canDel)">and t.CAN_DEL = #{canDel} </if>
+			<if test="@Ognl@isNotBlank(contents)">and t.CONTENTS = #{contents} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_pro_templates(<include refid="proTemplatesColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.id, jdbcType = VARCHAR},
+		    	#{item.proId, jdbcType = VARCHAR},
+		    	#{item.templateName, jdbcType = VARCHAR},
+		    	#{item.remarks, jdbcType = VARCHAR},
+		    	#{item.fileName, jdbcType = VARCHAR},
+		    	#{item.path, jdbcType = VARCHAR},
+		    	#{item.genType, jdbcType = VARCHAR},
+		    	#{item.tempLanguage, jdbcType = VARCHAR},
+		    	#{item.sorts, jdbcType = NUMERIC},
+		    	#{item.canDel, jdbcType = NUMERIC},
+		    	#{item.contents, jdbcType = VARCHAR},
+		    	#{item.createBy, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.updateBy, jdbcType = VARCHAR},
+		    	#{item.updateDate, jdbcType = DATE},
+				#{item.delFlag, jdbcType = DATE}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_pro_templates
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(templateName)"> and TEMPLATE_NAME = #{templateName} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(fileName)"> and FILE_NAME = #{fileName} </if>
+			<if test="@Ognl@isNotBlank(path)"> and PATH = #{path} </if>
+			<if test="@Ognl@isNotBlank(genType)"> and GEN_TYPE = #{genType} </if>
+			<if test="@Ognl@isNotBlank(tempLanguage)"> and TEMP_LANGUAGE = #{tempLanguage} </if>
+			<if test="@Ognl@isNotBlank(sorts)"> and SORTS = #{sorts} </if>
+			<if test="@Ognl@isNotBlank(canDel)"> and CAN_DEL = #{canDel} </if>
+			<if test="@Ognl@isNotBlank(contents)"> and CONTENTS = #{contents} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

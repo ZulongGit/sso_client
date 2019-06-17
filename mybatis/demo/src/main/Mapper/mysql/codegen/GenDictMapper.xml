@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.GenDictMapper">
+
+	<!-- 表字段 -->
+	<sql id="genDictColumns">
+		 ID, PRO_ID, LABEL, VALUE, TYPE, DESCRIPTION, SORT, CREATE_BY, CREATE_DATE, UPDATE_BY,
+		 UPDATE_DATE, REMARKS, DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="genDictAliasColumns">
+         t.ID, t.PRO_ID, t.LABEL, t.VALUE, t.TYPE, t.DESCRIPTION, t.SORT, t.CREATE_BY, t.CREATE_DATE, t.UPDATE_BY,
+		 t.UPDATE_DATE, t.REMARKS, t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="genDictAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+		from gen_dict  t
+		left join GEN_PROJECTS table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(label)">and t.LABEL like CONCAT('%', #{label}, '%')</if>
+			<if test="@Ognl@isNotBlank(value)">and t.VALUE like CONCAT('%', #{value}, '%')</if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE like CONCAT('%', #{type}, '%')</if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+			<if test="@Ognl@isNotBlank(proIds)"> and t.PRO_ID in
+				<foreach collection="proIds" item="it" open="(" close=")" separator=",">#{it}</foreach>
+			</if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.GenDict">
+        select  <include refid="genDictAliasColumns" />
+		from gen_dict  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(label)">and t.LABEL like CONCAT('%', #{label}, '%')</if>
+			<if test="@Ognl@isNotBlank(value)">and t.VALUE like CONCAT('%', #{value}, '%')</if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE like CONCAT('%', #{type}, '%')</if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.GenDict">
+		select  <include refid="genDictAliasColumns" />
+		from gen_dict  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(label)"> and t.LABEL = #{label} </if>
+			<if test="@Ognl@isNotBlank(value)"> and t.VALUE = #{value} </if>
+			<if test="@Ognl@isNotBlank(type)"> and t.TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="genDictAliasColumns" />, u.name u_name 
+			, table1.PRO_NAME as PRO_ID_TEXT
+		from gen_dict  t
+		left join GEN_PROJECTS table1 on t.PRO_ID = table1.ID
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(label)">and t.LABEL like CONCAT('%', #{label}, '%')</if>
+			<if test="@Ognl@isNotBlank(value)">and t.VALUE like CONCAT('%', #{value}, '%')</if>
+			<if test="@Ognl@isNotBlank(type)">and t.TYPE like CONCAT('%', #{type}, '%')</if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)">and t.SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_dict(<include refid="genDictColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.proId},
+	    	#{item.label},
+	    	#{item.value},
+	    	#{item.type},
+	    	#{item.description},
+	    	#{item.sort},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+	    	#{item.remarks},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_dict
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(label)"> and LABEL = #{label} </if>
+			<if test="@Ognl@isNotBlank(value)"> and VALUE = #{value} </if>
+			<if test="@Ognl@isNotBlank(type)"> and TYPE = #{type} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(sort)"> and SORT = #{sort} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

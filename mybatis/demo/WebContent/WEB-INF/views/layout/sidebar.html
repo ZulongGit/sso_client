@@ -1,0 +1,17 @@
+<div id="categories" class="categories">
+  <ul style="margin: 0;">
+    @for(item in menuCategories){
+      <li class="category-item">
+        <a class="category-menu J_menuItem" 
+          href="${decode(item.url,'','javascript:void(0);',item.url)}" 
+          data-url="${item.url!}" data-id="${item.id!}">
+          <i class="${item.icon!}" style="font-size:14px"></i>${item.name!}</a>
+      </li>
+    @}
+  </ul>
+</div>
+<div id="sidebar" class="sidebar responsive hidden">
+  <div id="menu-category" class="menu-category"></div>
+  <ul class="nav nav-list" id="sidebar-menu">
+  </ul>
+</div>

@@ -1,0 +1,221 @@
+@layout("/layout/container.html", {ztree: true}){
+  @var userOrgan = organ.getUserOrganList(); //用户持有的机构
+  @var userDataScopeList = organ.getUserDataScope(); //用户数据范围
+  <div class="row">
+  	<div class="col-xs-12">
+  		<div class="widget-box">
+  			<div class="widget-header widget-header-flat widget-header-small">
+  				<h5 class="widget-title">角色管理</h5>
+  				<div class="widget-toolbar">
+  					<a href="#" data-action="fullscreen" class="orange2"> <i
+  							class="ace-icon fa fa-expand"></i>
+  					</a>
+  				</div>
+  			</div>
+  			<div class="widget-body">
+  				<div class="widget-main margin-8">
+                    <form method="post" class="form-search" id="search-form">
+                      <div class="form-horizontal" role="form">
+                        <div class="container-fluid">
+                          <div class="row">
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                <label class="col-sm-4 control-label">数据范围：</label>
+                                <div class="col-sm-8">
+                                  <#selects id="userDataScope" name="dataScope" width="80%" class="chosen">
+      								<option value="">全部</option>
+      								@for(item in userDataScopeList){
+      									<option value="${item.value!}">${item.label!}</option>
+      								@}
+        						  </#selects>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xs-4">
+                              <div class="form-group">
+                                <label class="col-sm-4 control-label">角色名称：</label>
+                                <div class="col-sm-8">
+                                  <input type="text" class="width-80" name="name"/>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-inline" role="form"></div>
+                    </form>
+                  </div>
+                  <div class="form-group width-100" style="text-align: center;margin-top: -10px;">
+                      <button id="search-btn" type="button" class="btn btn-primary btn-sm"><i class="ace-icon fa fa-search middle-120"></i>&nbsp;查&nbsp;询</button>
+                      <button id="cancel" type="reset" class="btn btn-danger btn-sm"><i class="ace-icon fa fa-refresh middle-120"></i>&nbsp;重&nbsp;置</button>
+                  </div>
+  			
+  				</div>
+  				<div id="list-page" class="widget-main padding-8" style="margin-top: -30px;">
+  					<table id="table"></table>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+  
+  </div>
+  
+  
+  @if(shiro.hasPermission("role:update")){
+  <div id="toolbar">
+  	<button type="button" class="btn btn-primary btn-sm" id="addRole"><i class="ace-icon fa fa-plus-circle middle-120"></i>添加角色</button>
+  </div>
+  @}
+  
+  
+<script>
+  $("#role-select").chosen({width: "100%",search_contains: true});
+  	$(function(){
+  		window.operateEvents = {
+			'click .bindUser': function (e, value, row, index) {
+				bindUser(row);
+			},
+			'click .updateRole': function (e, value, row, index) {
+				updateRole(row);
+			},
+			'click .opRight': function (e, value, row, index) {
+				opRight(row);
+			},
+			'click .deleteRole': function (e, value, row, index) {
+				deleteRole(row);
+			}
+		};
+  		var $table = $('#table');
+  	    $table.bootstrapTable({
+  	    	iconSize:'sm',
+  			url : '${ctxPath}/role/list?r='+Math.random(),
+  			toolbar:'#toolbar',
+  			cache: false,
+  			singleSelect:false,
+  			clickToSelect:false,
+  			striped : true,
+  			pagination : true,
+  			pageNumber : 1,//首页页码
+  			pageSize : 10,//页面显示条数
+  			pageList : [10, 25, 50, 100 ],
+  			sidePagination : 'server',//服务器端分页
+  			columns : [
+  				{checkbox : true}, 
+  			 	{field:"rowId",title : "序号"},
+  				{field:"name",title : "角色名称",
+  					formatter : function(value, row, index) {
+  						return '<a href="javascript:;"' +
+  							'data-title="<'+row.name+'>详情" data-mode="detail"'+
+  							'data-url="${ctxPath}/role/detail/showlayer"'+
+  							'data-data="{id:\''+row.id+'\'}"'+
+  							'>'+row.name+'</a>';
+  					}
+  				},
+  				/* {field:"organName",title:"归属机构"}, */
+  				{field:"dataScope",title:"数据范围",sortable : false},
+  			@var auth = shiro.hasPermission("role:update") || shiro.hasPermission("role:delete");
+  			@if(auth){
+  				{ field: "", title: "操作", events: operateEvents, formatter: operateFormatter }
+  			@}
+  				],
+  				contentType : "application/x-www-form-urlencoded",
+  				queryParamsType : "limit",
+  				dataType : "json",
+  				method : "post",
+  				queryParams : function(params){
+  					var json = $("#search-form").serializeJson();
+  					$.extend(params,json);
+  					return params;
+  				}
+  		});
+  	    $(table).bootstrapTable('resetView', {height: $(window).height()-$(".bootstrap-table").offset().top-15});
+  	})
+  	
+  	$("#search-btn").click(function(){
+  		var params = jQuery("#search-form").serializeJson();
+  		$('#table').bootstrapTable("refresh", {query: params});
+  	}); 
+  	
+  	
+  	$("#cancel").click(function(){
+  		$(".chosen").val("").trigger("chosen:updated");
+  		$("input").val("");
+  	});
+  	
+  	function query(){
+  		var params = jQuery("#search-form").serializeJson();
+  		$('#table').bootstrapTable("refresh", {query: params});
+  	}
+  	
+  	$("#addRole").click(function(){
+  		$.cuslayer({
+  			mode:"page",
+  			url:"${ctxPath}/role/add/showlayer",
+  			title:'添加角色',
+  			yes:function(index,layero){
+  				if($("#organAdd").val() == 0){
+  					failMsg("请选择归属机构！");
+  					return false;
+  				}
+  				$("#table-form").submit();
+  			}
+  		});
+  	}); 
+  	
+  	function operateFormatter(value, row, index){
+  		var operates = [];
+  		@if(shiro.hasPermission("role:update")){
+  			operates.push('<a class="pink bindUser" href="javascript:void(0);" <i class="ace-icon fa fa-users bigger-130"></i> 分配人员</a>');
+			
+  			operates.push('<a class="green updateRole" href="javascript:void(0);" title="编辑" ><i class="ace-icon fa fa-pencil bigger-130"></i>&nbsp;编辑</a>');
+			
+  			operates.push('<a class="green opRight" href="javascript:void(0);" title="操作权限" ><i class="ace-icon fa fa-pencil bigger-130"></i>&nbsp;操作权限</a>');
+		@}
+  		@if(shiro.hasPermission("role:delete")){
+  			operates.push('<a class="red deleteRole" href="javascript:void(0);" title="删除"> <i class="ace-icon fa fa-trash-o bigger-130"></i>&nbsp;删除</a>');
+		@}
+  		return operates.join('&nbsp;&nbsp;&nbsp;&nbsp;');
+  	}
+  	
+  	function bindUser(row){
+  		$.cuslayer({
+  			mode:"page",
+  			url:"${ctxPath}/role/binduser",
+  			data: {id: row.id},
+  			title: '<' + row.name + '>角色分配',
+  			formId: 'role-user-form'
+  		});
+  	}
+  	
+  	function updateRole(row){
+  		$.cuslayer({
+  			mode:"page",
+  			url:"${ctxPath}/role/edit/showlayer",
+  			data: {id: row.id},
+  			title: '<' + row.name + '>编辑'
+  		});
+  	}
+  	
+  	function deleteRole(row){
+  		$.cuslayer({
+  			mode:"del",
+  			url:"${ctxPath}/role/delete",
+  			data: {id: row.id},
+  			title: '<' + row.name + '>删除',
+  			msg: '你确定删除角色<'+row.name+'>吗?',
+  			callback: function(){
+  				$('#table').bootstrapTable("refresh", {});
+  			}
+  		});
+  	}
+  	
+  	function opRight(row){
+  		$.cuslayer({
+  			mode:"page",
+  			url:"${ctxPath}/role/opRights/showlayer",
+  			data: {id: row.id},
+  			title: '<' + row.name + '>操作权限'
+  		});
+  	}
+  </script>
+@}

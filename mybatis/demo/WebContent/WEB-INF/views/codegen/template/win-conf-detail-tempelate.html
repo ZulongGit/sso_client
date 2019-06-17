@@ -1,0 +1,98 @@
+﻿\@var selectOptions;
+<div class="layer">
+  <div class="profile-user-info profile-user-info-striped wordbreak" >
+@for(item in f){
+  @if(item.isUse == 'Y'){
+	@if(item.formType == '1' || item.formType == '1.1'){ //下拉框
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿${item.remarks!}：</div>
+	@if(stringutil.isNotEmpty(item.dictType!)){
+      <div class="profile-info-value" id="${item.fieldName!}">
+	   <span class="editable editable-click">\${entry.${item.fieldName!}Text!}</span>
+      </div>
+	@}else{
+      <div class="profile-info-value" id="${item.fieldName!}">
+        <span class="editable editable-click">
+			\${entry.${item.fieldName!}!}
+        </span>
+      </div>			
+	@}
+		</div>
+	@}else if(item.formType == '1.2'){ //下拉多选框
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿${item.remarks!}：</div>
+		\@var ${item.fieldName}Arr = [];
+		\@var ${item.fieldName}String = '';
+		\@if(entry.${item.fieldName!}!0 != 0){
+			\@${item.fieldName}Arr = strutil.split(entry.${item.fieldName!}!,",");
+		\@}
+		\@selectOptions = dict.getDictListByType('${item.dictType}');
+          \@if(selectOptions != ""){
+          	\@var ${item.fieldName!}Flag = '0';//0：默认不选中
+          	\@for(op in selectOptions){
+          		\@if(${t.tableName}.${item.fieldName!}!0 != 0){
+          			\@for(var i=0;i<${item.fieldName!}Arr.~size;i++){
+            			\@if(strutil.toString(op.value) == strutil.toString(${item.fieldName!}Arr[i])){
+            				\@${item.fieldName!}Flag = '1'; //1：有值选中
+						\@}
+					\@}
+					\@if(${item.fieldName!}Flag == '1'){
+	            		\@${item.fieldName}String = ${item.fieldName}String + op.label! + '，';
+					\@}
+					\@${item.fieldName!}Flag = '0';
+          		\@}
+          	\@}
+      <div class="profile-info-value" id="${item.fieldName!}">
+        <span class="editable editable-click">
+			\${strutil.subStringTo(${item.fieldName}String!,0,strutil.length(${item.fieldName}String!)-1)} 
+        </span>
+      </div>
+          \@}
+    </div>
+ 	@}else{
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿${item.remarks!}：</div>
+      <div class="profile-info-value" id="${item.fieldName!}">
+        <span class="editable editable-click">
+			\${entry.${item.fieldName!}!}
+        </span>
+      </div>
+    </div>
+ 	@}
+  @}
+@}
+@if(t.isUploadFile == 'Y'){
+    <div class="profile-info-row">
+      <div class="profile-info-name">﻿查看附件：</div>
+      <div class="profile-info-value" id="${item.fieldName!}">
+        <span class="editable editable-click">
+		  <button type="button" class="btn btn-primary btn-sm" id="viewFile"><i class="ace-icon fa fa-cloud-upload middle-120"></i>点击查看</button>
+        </span>
+      </div>
+    </div>
+@}
+	</div>
+</div>
+<script>
+	$(function(){
+@for(item in f){
+	@if(item.formType == '4'){
+		$("#${item.field!}").html(html("\${entry.${item.fieldName!}!}"));
+    @}
+@}
+	@if(t.isUploadFile == 'Y'){
+		$('#viewFile').click(function(){
+			$.cuslayer({
+				mode: "page",
+				url: "\${ctxPath}/file/view/showlayer",
+				formId: 'file-form',
+				data: {
+					relateId: '\${entry.id!}'
+				},
+				title: '查看附件',
+				height: '60%'
+			});
+		})
+	@}
+	})
+</script>

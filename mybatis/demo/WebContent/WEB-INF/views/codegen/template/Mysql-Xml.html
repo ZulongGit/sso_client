@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${p.packageName}.mapper.${p.entityNameU}Mapper">
+
+	<!-- 表字段 -->
+	<sql id="${t.className}Columns">
+@var str = '';
+@for(item in f){
+	@if(!itemLP.last){
+		@str = str + ' ' +  item.dbName + ',';
+	@}else{
+		@str = str + ' ' +  item.dbName;
+	@}
+	@if(itemLP.index % 10 == 0){
+		${str}
+		@str = '';
+	@}
+@}
+		${str}
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="${t.className}AliasColumns">
+@str = '';
+@for(item in f){
+  @if(!itemLP.last){
+     @str = str + ' t.' + item.dbName + ',';
+  @}else{
+     @str = str + ' t.' + item.dbName;
+  @}
+  @if(itemLP.index % 10 == 0){
+        ${str}
+    @str = '';
+  @}
+@}
+		${str}
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="${t.className}AliasColumns" />${decode(stringutil.isNotEmpty(t.userIdFieldBind!),true,', u.name u_name','')} ${decode(stringutil.isNotEmpty(t.organCodeFieldBind!),true,', o.name o_name','')}
+@var i = 1;
+@for(item in f){
+	@if(item.formType == '1' || item.formType == '1.1' ){
+		@//系统字典表关联
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") == -1){
+			${', F_CHANGE_TO_DICT(\''+item.dictType+'\', t.' + item.dbName + ') '+ item.dbName + '_TEXT'}
+		@}
+		@//非固定字典表关联
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") != -1){
+			@if(item.sqlMode == '1'){
+			, table${i}.${item.keyName} as ${item.dbName}_TEXT
+			@}else if(item.sqlMode == '2'){
+			, table${i}.lable as ${item.dbName}_TEXT
+			@}
+			@i = i + 1;
+		@}
+	@}
+@}
+		from ${t.tableName}  t
+@i = 1; 
+@for(item in f){
+	@if(item.formType == '1' || item.formType == '1.1' ){
+		@//只有非固定字典表关联的需要关联语句
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") != -1){
+			@if(item.sqlMode == '1'){
+		left join ${item.unoinTable} table${i} on t.${item.dbName} = table${i}.${item.valueName}
+			@}else if(item.sqlMode == '2'){
+		left join (${item.sqlContent}) table${i} on t.${item.dbName} = table${i}.value
+			@}
+			@i = i + 1;
+		@}
+	@}
+@}
+  @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_user u on t.${stringutil.camelhumpToUnderline(t.userIdFieldBind)} = u.id
+  @}
+  @if(stringutil.isNotEmpty(t.organCodeFieldBind!)){
+		left join sys_organ o on t.${stringutil.camelhumpToUnderline(t.organCodeFieldBind)} = o.code
+  @}else{
+	 @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_organ o on u.organ_id = o.code
+	 @}
+  @}
+		<where>
+			1=1
+	@for(item in f){
+		@if(item.queryMode != '2'){
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} = #{${item.fieldName}} </if>
+		@}else{
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} like CONCAT('%', #{${item.fieldName}}, '%')</if>
+		@}
+	@}
+			<if test="\@Ognl\@isNotBlank(dynamicSQL)"> and \${dynamicSQL} </if>
+		</where>
+		<if test="\@Ognl\@isNotBlank(sortC) and \@Ognl\@isNotBlank(order)"> 
+			ORDER BY t.\${sortC} \${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="${p.packageName}.model.${p.entityNameU}">
+        select  <include refid="${t.className}AliasColumns" />
+		from ${t.tableName}  t
+  @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_user u on t.${stringutil.camelhumpToUnderline(t.userIdFieldBind)} = u.id
+  @}
+  @if(stringutil.isNotEmpty(t.organCodeFieldBind!)){
+		left join sys_organ o on t.${stringutil.camelhumpToUnderline(t.organCodeFieldBind)} = o.code
+  @}else{
+	 @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_organ o on u.organ_id = o.code
+	 @}
+  @}
+		<where>
+			1=1
+	@for(item in f){
+		@if(item.queryMode != '2'){
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} = #{${item.fieldName}} </if>
+		@}else{
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} like CONCAT('%', #{${item.fieldName}}, '%')</if>
+		@}
+	@}
+			<if test="\@Ognl\@isNotBlank(dynamicSQL)"> and \${dynamicSQL} </if>
+		</where>
+		<if test="\@Ognl\@isNotBlank(sortC) and \@Ognl\@isNotBlank(order)"> 
+			ORDER BY t.\${sortC} \${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="${p.packageName}.model.${p.entityNameU}">
+		select  <include refid="${t.className}AliasColumns" />
+		from ${t.tableName}  t 
+		<where>
+			1=1
+		@for(item in f){
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})"> and t.${item.dbName} = #{${item.fieldName}} </if>
+		@}
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="${t.className}AliasColumns" />${decode(stringutil.isNotEmpty(t.userIdFieldBind!),true,', u.name u_name','')} ${decode(stringutil.isNotEmpty(t.organCodeFieldBind!),true,', o.name o_name','')}
+@i = 1;
+@for(item in f){
+	@if(item.formType == '1' || item.formType == '1.1' ){
+		@//系统字典表关联
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") == -1){
+			${', F_CHANGE_TO_DICT(\''+item.dictType+'\', t.' + item.dbName + ') '+ item.dbName + '_TEXT'}
+		@}
+		@//非固定字典表关联
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") != -1){
+			@if(item.sqlMode == '1'){
+			, table${i}.${item.keyName} as ${item.dbName}_TEXT
+			@}else if(item.sqlMode == '2'){
+			, table${i}.lable as ${item.dbName}_TEXT
+			@}
+			@i = i + 1;
+		@}
+	@}
+@}
+		from ${t.tableName}  t
+@i = 1; 
+@for(item in f){
+	@if(item.formType == '1' || item.formType == '1.1' ){
+		@//只有非固定字典表关联的需要关联语句
+		@if(stringutil.isNotEmpty(item.dictType!) && strutil.index(item.dictType,"dynamic") != -1){
+			@if(item.sqlMode == '1'){
+		left join ${item.unoinTable} table${i} on t.${item.dbName} = table${i}.${item.valueName}
+			@}else if(item.sqlMode == '2'){
+		left join (${item.sqlContent}) table${i} on t.${item.dbName} = table${i}.value
+			@}
+			@i = i + 1;
+		@}
+	@}
+@}
+  @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_user u on t.${stringutil.camelhumpToUnderline(t.userIdFieldBind)} = u.id
+  @}
+  @if(stringutil.isNotEmpty(t.organCodeFieldBind!)){
+		left join sys_organ o on t.${stringutil.camelhumpToUnderline(t.organCodeFieldBind)} = o.code
+  @}else{
+	 @if(stringutil.isNotEmpty(t.userIdFieldBind!)){
+		left join sys_organ o on u.organ_id = o.code
+	 @}
+  @}
+		<where>
+			1=1
+	@for(item in f){
+		@if(item.queryMode != '2'){
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} = #{${item.fieldName}} </if>
+		@}else{
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})">and t.${item.dbName} like CONCAT('%', #{${item.fieldName}}, '%')</if>
+		@}
+	@}
+			<if test="\@Ognl\@isNotBlank(dynamicSQL)"> and \${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into ${t.tableName}(<include refid="${t.className}Columns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+   	  @for(item in f){
+		@if(!itemLP.last){
+	    	#{item.${item.fieldName}},
+		@}else{
+			#{item.${item.fieldName}}
+		@}
+	@}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from ${t.tableName}
+		<where>
+			1=1
+		@for(item in f){
+			<if test="\@Ognl\@isNotBlank(${item.fieldName})"> and ${item.dbName} = #{${item.fieldName}} </if>
+		@}
+		</where>
+	</delete>
+</mapper>

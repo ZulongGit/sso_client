@@ -1,0 +1,59 @@
+﻿@var selectOptions;
+<div class="layer">
+	<div class="profile-user-info profile-user-info-striped wordbreak" >
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿表名：</div>
+			<div class="profile-info-value" id="tableName">${createTableHistory.tableName!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿表注释：</div>
+			<div class="profile-info-value" id="tableComments">${createTableHistory.tableComments!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿字段名称：</div>
+			<div class="profile-info-value" id="fieldName">${createTableHistory.fieldName!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿字段注释：</div>
+			<div class="profile-info-value" id="fieldAlias">${createTableHistory.fieldAlias!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿字段类型：</div>
+			@selectOptions = dict.getDictListByType("field_type");
+            @if(selectOptions != ""){
+            	@for(op in selectOptions){
+            		@if(strutil.toString(op.value!0) == strutil.toString(createTableHistory.fieldType!0)){
+            			<div class="profile-info-value">${op.label!}</div>
+            		@}
+            	@}
+            @}
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿长度：</div>
+			<div class="profile-info-value" id="fieldLength">${createTableHistory.fieldLength!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿小数：</div>
+			<div class="profile-info-value" id="fieldDecimal">${createTableHistory.fieldDecimal!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿默认值：</div>
+			<div class="profile-info-value" id="fieldDefaultValue">${createTableHistory.fieldDefaultValue!}</div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">﻿允许空值：</div>
+			@selectOptions = dict.getDictListByType("yes_no");
+            @if(selectOptions != ""){
+            	@for(op in selectOptions){
+            		@if(strutil.toString(op.value!0) == strutil.toString(createTableHistory.fieldIsNull!0)){
+            			<div class="profile-info-value">${op.label!}</div>
+            		@}
+            	@}
+            @}
+		</div>
+	</div>
+</div>
+<script>
+	$(function(){
+	})
+</script>

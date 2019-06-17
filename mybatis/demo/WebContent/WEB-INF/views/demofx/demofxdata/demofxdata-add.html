@@ -1,0 +1,114 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据名称：</label>
+              <div class="col-sm-8">
+                <input id="sname" name="sname" type="text" value="${entry.sname!}" maxlength="100" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">类型：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="stype" id="stype" >
+                  <option value="">--请选择--</option>
+                  @selectOptions = dict.getDictListByType("bgtype_select_dynamic");
+                  @if(selectOptions != ""){
+                    @for(op in selectOptions){
+                      <option value="${op.value! }">${op.label! }</option>
+                    @}
+                  @}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">风险模型：</label>
+              <div class="col-sm-8">
+                <input id="smodel" name="smodel" type="text" value="${entry.smodel!}" maxlength="64" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据日期：</label>
+              <div class="col-sm-8">
+                <input class="Wdate" id="sdate" name="sdate" type="text" value="${entry.sdate!}" maxlength="20" onfocus="WdatePicker()" 
+                      style="background:url(${ctxPath}/static/My97DatePicker/skin/datePicker.gif) no-repeat right;"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据描述：</label>
+              <div class="col-sm-8">
+                <input id="sdes" name="sdes" type="text" value="${entry.sdes!}" maxlength="500" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">数据来源：</label>
+              <div class="col-sm-8">
+                <input id="scome" name="scome" type="text" value="${entry.scome!}" maxlength="100" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入编号！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/demofx/demofxdata/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

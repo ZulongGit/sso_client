@@ -1,0 +1,27 @@
+﻿@var selectOptions;
+<div class="layer">
+	<div class="profile-user-info profile-user-info-striped wordbreak" >
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿年份：</div>
+			<div class="profile-info-value" id="year">${sysUpdateLog.year!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿更新日：</div>
+			<div class="profile-info-value" id="day">${sysUpdateLog.day!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿更新内容：</div>
+			<div class="profile-info-value" id="content">${sysUpdateLog.content!}</div>
+		</div>
+ 		<div class="profile-info-row">
+			<div class="profile-info-name">﻿更多信息：</div>
+			<div class="profile-info-value" id="moreInfo">${sysUpdateLog.moreInfo!}</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(function(){
+		$("#content").html(html("${sysUpdateLog.content!}"));
+		$("#moreInfo").html(html("${sysUpdateLog.moreInfo!}"));
+	})
+</script>

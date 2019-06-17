@@ -1,0 +1,172 @@
+@var selectOptions;
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">温馨提示：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. 红色星号为必填选项
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. 代码生成路径：项目根路径\源码路径\CODE父路径（HTML路径或XML路径或JS路径）\单表所在模块\模板配置路径</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">所属项目：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="proId" id="proId" select="true">
+                  <option value="">--请选择--</option>
+                  @var map = dict.getEmptyMap();
+                  @if(!session.loginUser.isAdmin){
+                    @map.userId = session.loginUser.id;
+                  @}
+  			      @selectOptions = dict.getDictListByType("project_select_dynamic", map);
+  				  @if(selectOptions != ""){
+  				   	@for(op in selectOptions){
+  			   			<option value="${op.value!}" ${decode(strutil.toString(op.value!""),strutil.toString(proParams.proId!""),"selected","")}>${op.label! }</option>
+  			  		@}
+  				 @}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">别名：</label>
+              <div class="col-sm-8">
+                <input id="alias" name="alias" type="text" value="${entry.alias!}" maxlength="100" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">作者：</label>
+              <div class="col-sm-8">
+                <input id="author" name="author" type="text" value="${entry.author!}" maxlength="25" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">项目根路径：</label>
+              <div class="col-sm-8">
+                <input id="proPath" name="proPath" type="text" value="${entry.proPath!}" maxlength="100" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">源码路径：</label>
+              <div class="col-sm-8">
+                <input id="sourceFolder" name="sourceFolder" type="text" value="${entry.sourceFolder!}" maxlength="100" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">CODE父路径：</label>
+              <div class="col-sm-8">
+                <input id="codePath" name="codePath" type="text" value="${entry.codePath!}" maxlength="100" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">HTML路径：</label>
+              <div class="col-sm-8">
+                <input id="htmlPath" name="htmlPath" type="text" value="${entry.htmlPath!}" maxlength="100" required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">XML路径：</label>
+              <div class="col-sm-8">
+                <input id="xmlPath" name="xmlPath" type="text" value="${entry.xmlPath!}" maxlength="100" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">JS路径：</label>
+              <div class="col-sm-8">
+                <input id="jsPath" name="jsPath" type="text" value="${entry.jsPath!}" maxlength="100" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">编码：</label>
+              <div class="col-sm-8">
+                <select class="chosen_select" name="coding" id="coding" select="true">
+                  <option value="">--请选择--</option>
+                  @selectOptions = dict.getDictListByType("coding_type");
+                  @if(selectOptions != ""){
+                    @for(op in selectOptions){
+                      <option value="${op.value! }">${op.label! }</option>
+                    @}
+                  @}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+			messages:{
+				id : {required: "请输入主键！"},
+				proId : {required: "请选择所属项目！"},
+				alias : {required: "请输入别名！"},
+				author : {required: "请输入作者！"},
+				proPath : {required: "请输入项目根路径！"},
+				sourceFolder : {required: "请输入源码路径！"},
+				codePath : {required: "请输入CODE父路径！"},
+				htmlPath : {required: "请输入HTML路径！"},
+				coding : {required: "请选择编码！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/codegen/proParams/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+           		if(element.attr("id") == "proId"){
+					element = $("#proId_chosen");
+				}
+           		if(element.attr("id") == "coding"){
+					element = $("#coding_chosen");
+				}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

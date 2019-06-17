@@ -1,0 +1,195 @@
+<div class="layer">
+  <div style="background-color: #fff;border: 1px dashed #e0e0e0;padding: 5px;"><font style="color:red">提示信息：红色文字为必填选项</font></div>
+  <form class="FormGrid" id="table-form"  method="post" enctype="multipart/form-data" action="">
+    <div class="form-horizontal" role="form" style="margin-top:20px;">
+      <input type="hidden" value="${organ.id!}" name="id"/>
+      <input type="hidden" value="${pOrgan.parentIds!}" name="parentIds" />
+      <input type="hidden" value="${organ.parentIds!}" name="oldParentIds" />
+      <div class="container-fluid">
+        <div class="row" id="form-row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">机构名称：</label>
+              <div class="col-sm-8">
+                <input id="name" name="name" type="text" value="${organ.name!}" maxlength="100"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">机构号：</label>
+              <div class="col-sm-8">
+                <input id="code" name="code" type="text" value="${organ.code!}" maxlength="20"  required/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label red">机构类型：</label>
+              <div class="col-sm-8">
+                @var organList = dict.getDictListByType("sys_organ_type");
+                <#selects  name="type" nullFlag="1" id="type">
+                  <option value="">请选择</option>
+                  @for(item in organList){
+                    <option value="${item.value!}" ${decode(item.value,organ.type!,"selected","")}>
+                    ${item.label!}
+                    </option>
+                  @}
+                </#selects>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">上级机构：</label>
+              <div class="col-sm-8">
+                  <#treeselect url="organ/tree" modelNameValue="${pOrgan.name!}" 
+                  modelIdValue="${pOrgan.code!0}" selectIds="${pOrgan.code!}" idKey="code"
+                  nameId="pOrgan" id="porgan_id" curId="${organ.code!}" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">归属区域：</label>
+              <div class="col-sm-8">
+                  <#treeselect url="area/tree" modelNameValue="${area.name!}" 
+                      modelIdValue="${area.id!''}" selectIds="${area.id!}"
+                      modelId="areaId" nameId="area" id="area_id" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">区域图标：</label>
+              <div class="col-sm-8">
+                  <#iconselect value="${organ.icon!}"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">机构地址：</label>
+              <div class="col-sm-8">
+                <input id="address" name="address" type="text" value="${organ.address!}" maxlength="255"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">邮政编码：</label>
+              <div class="col-sm-8">
+                <input id="zipCode" name="zipCode" type="text" value="${organ.zipCode!}" maxlength="6" zipCode="true" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">负责人：</label>
+              <div class="col-sm-8">
+                <input id="master" name="master" type="text" value="${organ.master!}" maxlength="20"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">电话：</label>
+              <div class="col-sm-8">
+                <input id="phone" name="phone" type="text" value="${organ.phone!}" maxlength="20" mobile="true" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">传值：</label>
+              <div class="col-sm-8">
+                <input id="fax" name="fax" type="text" value="${organ.fax!}" maxlength="200"  />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label ">邮箱：</label>
+              <div class="col-sm-8">
+                <input id="email" name="email" type="text" value="${organ.email!}" maxlength="200" email="true" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-8">
+            <div class="form-group">
+              <label class="col-sm-1 control-label " style="width: 16.6666667%;">机构描述：</label>
+              <div class="col-sm-10">
+                <textarea name="remarks" maxlength="255" style="width:100%;height:50px;"  >${organ.remarks!}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen_select").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		var layerIndex = layer.index;	//当前层参数
+		$('#mySwitch input').bootstrapSwitch('state',false);
+		//金额格式化
+	    $(".money").blur(function(){
+	    	var money=$(this).val();
+	    	var temp_money=accounting.toFixed(money,2);
+	    	$(this).val($.trim(temp_money));
+	    })
+		//表单校验
+		$("#table-form").validate({
+      rules: {
+				code: {
+					remote: {
+					    url: "${ctxPath!}/organ/checkCode",     //后台处理程序
+					    type: "post",               //数据发送方式
+					    dataType: "json",           //接受数据格式   
+					    data: {                     //要传递的数据
+					    	code:  function() {
+					            return $("#code").val();
+					        },
+					    	id: "${organ.id!}"
+					    }
+					},
+					required: true
+				},
+			},
+			messages:{
+				name : {required: "请输入机构名称！"},
+				code : {required: "请输入机构号！"},
+			},
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/organ/save',
+	            	success:function(data){
+	            		layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                    		layer.close(layerIndex);	//关闭层
+	                            query();	//刷新列表数据
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+        if(element.attr("id") == "type"){
+					element = $("#type_chosen");
+				}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

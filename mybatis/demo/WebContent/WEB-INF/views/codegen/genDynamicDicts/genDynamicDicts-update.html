@@ -1,0 +1,243 @@
+@var selectOptions;
+<div class="layer">
+	<div id="" class="tab-pane active clearfix">
+		<div class="alert-success"><font style="color:red">提示信息：红色星号为必填选项</font></div>
+		<form name="FormPost" id="table-form" class="FormGrid"  method="post" enctype="multipart/form-data" action="">
+			<table class="EditTable" width="100%">
+				<tbody>
+	            	<input type="hidden" name="id" value="${entry.id!}"/>
+                    <tr class="FormData">
+                      <td class="CaptionTD">所属项目:</td>
+                      <td class="DataTD width-100">
+                        <select class="chosen" name="proId" id="proId" select="true">
+                                        <option value="">--请选择--</option>
+                                        @selectOptions = dict.getDictListByType("all_project_dynamic");
+                                        @if(selectOptions != ""){
+                                          @for(op in selectOptions){
+                                            <option value="${op.value! }" ${decode(strutil.toString(op.value!''),strutil.toString(entry.proId!''),'selected','')}>${op.label! }</option>
+                                          @}
+                                        @}
+                                      </select>
+                        </td>
+                        <td><font color="red" size="+1">*</font></td>
+                    </tr>
+	            	<tr class="FormData">
+						<td class="CaptionTD">模式:</td>
+						<td class="DataTD width-100">
+							<select class="chosen form-control w110" name="sqlMode" id="sqlMode" select="true">
+		            			<option value="1" ${decode(strutil.toString(entry.sqlMode!),'1',"selected","")}>简单模式</option>
+		            			<option value="2" ${decode(strutil.toString(entry.sqlMode!),'2',"selected","")}>自定义模式</option>
+				        	</select> 
+		    			</td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData" for="single">
+						<td class="CaptionTD">选择表:</td>
+						<td class="DataTD width-100">
+							<select class="chosen form-control w110" name="tableName" id="tableName" select="true" for="single">
+		            			<option value="">--请选择--</option>
+							   	@for(op in tables){
+						   			<option value="${op.tableName!}" 
+						   				 ${decode(strutil.toString(entry.tableName!""),op.tableName!"","selected","")}>
+						   			${op.comments! }</option>
+						  		@}
+				        	</select> 
+		    			</td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData" for="single">
+    					<td class="CaptionTD">文本显示字段:</td>
+    					<td class="DataTD width-100">
+						     <select class="chosen form-control w110" name="keyName" id="keyName" select="true" for="single">
+						     	<option value="">--请先选择表--</option>
+						     </select>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData" for="single">
+    					<td class="CaptionTD">入库字段:</td>
+    					<td class="DataTD width-100">
+    						<select class="chosen form-control w110" name="valueName" id="valueName" select="true" for="single">
+						     	<option value="">--请先选择表--</option>
+						     </select>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData" for="union">
+    					<td class="CaptionTD">文本显示字段:</td>
+    					<td class="DataTD width-100">
+						     <input type="text" name="keyName1" id="keyName1" value="${entry.keyName!}" maxlength="30" 
+						     	required for="union" placeholder="填写字典中代表“标签”的字段"/>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData" for="union">
+    					<td class="CaptionTD">入库字段:</td>
+    					<td class="DataTD width-100">
+						     <input type="text" name="valueName1" id="valueName1" value="${entry.valueName!}" maxlength="30" 
+						     	required for="union" placeholder="填写字典中代表“值”的字段"/>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+            		<tr class="FormData" for="union">
+						<td class="CaptionTD">SQL内容:</td>
+						<td class="DataTD width-100">
+           					<textarea name="sqlContent" maxlength="4000" style="width:100%;height:150px;" required for="union"
+           						placeholder="请填写自定义字典查询SQL，查询两个字段，即上面填写的两个字段：文本显示字段和入库字段，规则：
+1. 文本显示字段必须使用别名“LABLE”，即查询字段后必须带上“as LABLE”,大小写随意;
+2. 入库字段请使用别名“VALUE”，即查询字段后必须带上“as VALE”,大小写随意;
+3. 只需查询这两个字典，其余字段查询无效，请务必保证SQL能正确执行！！！      		
+举个栗子：select name as LABLE，id as VALUE from table，上面的文本显示字段则填写为：name，入库字段则填写为：id" style="width:100%;height:150px;">${entry.sqlContent!}</textarea>
+               			</td>
+					    <td><font color="red" size="+1">*</font></td>
+                	</tr>
+					<tr class="FormData">
+    					<td class="CaptionTD">类型:</td>
+    					<td class="DataTD width-100">
+						     <input type="text" name="type" id="type" value="${entry.type!}" maxlength="30" required/>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData">
+    					<td class="CaptionTD">说明:</td>
+    					<td class="DataTD width-100">
+						     <input type="text" name="remarks" id="remarks" value="${entry.remarks!}" maxlength="100" required/>
+					    </td>
+					    <td><font color="red" size="+1">*</font></td>
+					</tr>
+					<tr class="FormData">
+						<td class="CaptionTD">数据范围:</td>
+						<td class="DataTD width-100">
+							<select class=" chosen form-control w110" name="dataScope" id="dataScope">
+		            			<option value="">--请选择--</option>
+								@selectOptions = dict.getDictListByType("sys_data_scope");
+								@if(selectOptions != ""){
+								   	@for(op in selectOptions){
+							   			<option value="${op.value!}" ${decode(strutil.toString(op.value!""),strutil.toString(entry.dataScope!""),"selected","")}>${op.label! }</option>
+							  		@}
+								@}
+				        	</select> 
+		    			</td>
+					</tr>
+                    <tr class="FormData" for="single">
+                        <td class="CaptionTD">用户字段绑定:</td>
+                        <td class="DataTD width-100">
+                           <select class="chosen form-control w110" name="userIdFieldBind" id="userIdFieldBind" for="single">
+                            <option value="">--请先选择表--</option>
+                           </select>
+                        </td>
+                    </tr>
+                    <tr class="FormData" for="single">
+                        <td class="CaptionTD">机构号字段绑定:</td>
+                        <td class="DataTD width-100">
+                          <select class="chosen form-control w110" name="organCodeFieldBind" id="organCodeFieldBind" for="single">
+                            <option value="">--请先选择表--</option>
+                           </select>
+                        </td>
+                    </tr>
+                    <tr class="FormData" for="union">
+                        <td class="CaptionTD">用户字段绑定:</td>
+                        <td class="DataTD width-100">
+                           <input type="text" name="userIdFieldBind1" id="userIdFieldBind1" value="${entry.userIdFieldBind!}" maxlength="50" for="union"/>
+                        </td>
+                    </tr>
+                    <tr class="FormData" for="union">
+                        <td class="CaptionTD">机构号字段绑定:</td>
+                        <td class="DataTD width-100">
+                          <input type="text" name="organCodeFieldBind1" id="organCodeFieldBind1" value="${entry.organCodeFieldBind!}" maxlength="50" for="union"/>
+                        </td>
+                    </tr>
+	            </tbody>
+			</table>
+		</form>
+    </div>
+</div>
+
+<script type="text/javascript">
+	//初始化所有的下拉框，带搜索
+	$(".chosen").chosen({width: "100%", search_contains: true, disable_search_threshold: 10});
+	//描述框自动扩张高度
+	$('textarea[class*=autosize]').autosize({append: "\n"});
+	
+	$(function(){
+		$("#sqlMode").change(function(){
+			if($("#sqlMode").val() == '1'){
+				$("#tableName").attr("disabled", false);
+				$('#tableName').trigger('chosen:updated');
+				$('tr[for=single]').removeClass("hidden");
+				$('tr[for=union]').addClass("hidden");
+				$('select[for=single]').removeClass("ignore");
+				$('input[for=union],textarea[for=union]').addClass("ignore");
+			}else{
+				$("#tableName").attr("disabled", true);
+				$('#tableName').trigger('chosen:updated');
+				$('tr[for=single]').addClass("hidden");
+				$('tr[for=union]').removeClass("hidden");
+				$('select[for=single]').addClass("ignore");
+				$('input[for=union],textarea[for=union]').removeClass("ignore");
+			}
+		})
+		$("#sqlMode").change();
+		$("#tableName").change(function(){
+			$.ajax({
+	            url: "${ctxPath}/codegen/genDynamicDicts/getTableField",
+	            dataType: "json",
+	            async: true,
+	            method:"post",
+	            data: {"tableName" : $("#tableName").val()},
+	            success: function(result) {
+	            	$("#keyName,#valueName,#userIdFieldBind,#organCodeFieldBind").empty();
+			    	$("#keyName,#valueName,#userIdFieldBind,#organCodeFieldBind").append("<option value=''>请选择</option>");  //为Select追加一个Option(下拉项)
+	            	$.each(result, function(i, obj){
+	            		var flag1 = "${entry.keyName!}" == obj.columnName ? 'selected' : '';
+	            		var flag2 = "${entry.valueName!}" == obj.columnName ? 'selected' : '';
+	            		var flag3 = "${entry.userIdFieldBind!}" == obj.columnName ? 'selected' : '';
+	            		var flag4 = "${entry.organCodeFieldBind!}" == obj.columnName ? 'selected' : '';
+	            		$("#keyName").append("<option value='"+obj.columnName+"' "+flag1+">"+obj.columnName + "【" +obj.remarks+ "】</option>");  //为Select追加一个Option(下拉项)
+					 	$("#valueName").append("<option value='"+obj.columnName+"' "+flag2+">"+obj.columnName + "【" +obj.remarks+ "】</option>");  //为Select追加一个Option(下拉项)
+					 	$("#userIdFieldBind").append("<option value='"+obj.columnName+"' "+flag3+">"+obj.columnName + "【" +obj.remarks+ "】</option>");  //为Select追加一个Option(下拉项)
+					 	$("#organCodeFieldBind").append("<option value='"+obj.columnName+"' "+flag4+">"+obj.columnName + "【" +obj.remarks+ "】</option>");  //为Select追加一个Option(下拉项)
+	            	})
+	            	$(".chosen").trigger('chosen:updated');//更新选项  
+	            }
+	        }); 
+		})
+		$("#tableName").change();
+		//表单校验
+		$("#table-form").validate({
+			submitHandler: function(form){
+				var indexLoad = loading("系统正在提交数据，请稍后......");
+				$("#table-form").ajaxSubmit({
+	            	type:'post',
+	            	url:'${ctxPath}/codegen/genDynamicDicts/save',
+	            	success:function(data){
+	                    layer.close(indexLoad);
+	                    if(data.code == 1) {
+	                    	successMsg(data.msg, function() {
+	                   			layer.closeAll();
+	                            query();
+	                   		}); 
+	                    }else{
+	                    	failMsg(data.msg);
+	                    }
+	                }
+	            });     
+			},
+			errorPlacement: function(error, element) {
+				if(element.attr("id") == "proId"){
+					element = $("#proId_chosen");
+				}
+				if(element.attr("id") == "tableName"){
+					element = $("#tableName_chosen");
+				}
+				if(element.attr("id") == "keyName"){
+					element = $("#keyName_chosen");
+				}
+				if(element.attr("id") == "valueName"){
+					element = $("#valueName_chosen");
+				}
+				tip.errorTip(error.html(),element);
+			}
+		});
+	});
+</script>

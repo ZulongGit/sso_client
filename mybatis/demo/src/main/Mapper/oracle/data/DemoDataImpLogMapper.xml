@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.data.mapper.DemoDataImpLogMapper">
+
+	<!-- 表字段 -->
+	<sql id="demoDataImpLogColumns">
+		 PKID, DT_SOURCE, DT_COLLECTION, DT_MODEL_CODE, DT_MODEL_NAME, CREATE_DATE, CREATE_BY, DT_NUM, DESCRIPTION
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="demoDataImpLogAliasColumns">
+		 t.PKID, t.DT_SOURCE, t.DT_COLLECTION, t.DT_MODEL_CODE, t.DT_MODEL_NAME, t.CREATE_DATE, t.CREATE_BY, t.DT_NUM, t.DESCRIPTION
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select <include refid="demoDataImpLogAliasColumns" />, u.name u_name 
+		from demo_data_imp_log  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)">and t.PKID = #{pkid} </if>
+			<if test="@Ognl@isNotBlank(dtSource)">and t.DT_SOURCE = #{dtSource} </if>
+			<if test="@Ognl@isNotBlank(dtCollection)">and t.DT_COLLECTION = #{dtCollection} </if>
+			<if test="@Ognl@isNotBlank(dtModelCode)">and t.DT_MODEL_CODE = #{dtModelCode} </if>
+			<if test="@Ognl@isNotBlank(dtModelName)">and t.DT_MODEL_NAME = #{dtModelName} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dtNum)">and t.DT_NUM = #{dtNum} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.data.model.DemoDataImpLog">
+        select  <include refid="demoDataImpLogAliasColumns" />
+		from demo_data_imp_log  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)">and t.PKID = #{pkid} </if>
+			<if test="@Ognl@isNotBlank(dtSource)">and t.DT_SOURCE = #{dtSource} </if>
+			<if test="@Ognl@isNotBlank(dtCollection)">and t.DT_COLLECTION = #{dtCollection} </if>
+			<if test="@Ognl@isNotBlank(dtModelCode)">and t.DT_MODEL_CODE = #{dtModelCode} </if>
+			<if test="@Ognl@isNotBlank(dtModelName)">and t.DT_MODEL_NAME = #{dtModelName} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dtNum)">and t.DT_NUM = #{dtNum} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.data.model.DemoDataImpLog">
+		select  <include refid="demoDataImpLogAliasColumns" />
+		from demo_data_imp_log  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)"> and t.PKID = #{pkid} </if>
+			<if test="@Ognl@isNotBlank(dtSource)"> and t.DT_SOURCE = #{dtSource} </if>
+			<if test="@Ognl@isNotBlank(dtCollection)"> and t.DT_COLLECTION = #{dtCollection} </if>
+			<if test="@Ognl@isNotBlank(dtModelCode)"> and t.DT_MODEL_CODE = #{dtModelCode} </if>
+			<if test="@Ognl@isNotBlank(dtModelName)"> and t.DT_MODEL_NAME = #{dtModelName} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dtNum)"> and t.DT_NUM = #{dtNum} </if>
+			<if test="@Ognl@isNotBlank(description)"> and t.DESCRIPTION = #{description} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="demoDataImpLogAliasColumns" />, u.name u_name 
+		from demo_data_imp_log  t
+		left join sys_user u on t.CREATE_BY = u.id
+		left join sys_organ o on u.organ_id = o.code
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)">and t.PKID = #{pkid} </if>
+			<if test="@Ognl@isNotBlank(dtSource)">and t.DT_SOURCE = #{dtSource} </if>
+			<if test="@Ognl@isNotBlank(dtCollection)">and t.DT_COLLECTION = #{dtCollection} </if>
+			<if test="@Ognl@isNotBlank(dtModelCode)">and t.DT_MODEL_CODE = #{dtModelCode} </if>
+			<if test="@Ognl@isNotBlank(dtModelName)">and t.DT_MODEL_NAME = #{dtModelName} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dtNum)">and t.DT_NUM = #{dtNum} </if>
+			<if test="@Ognl@isNotBlank(description)">and t.DESCRIPTION = #{description} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into demo_data_imp_log(<include refid="demoDataImpLogColumns" />)
+		<foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+		    select
+		    	#{item.pkid, jdbcType = VARCHAR},
+		    	#{item.dtSource, jdbcType = VARCHAR},
+		    	#{item.dtCollection, jdbcType = VARCHAR},
+		    	#{item.dtModelCode, jdbcType = VARCHAR},
+		    	#{item.dtModelName, jdbcType = VARCHAR},
+		    	#{item.createDate, jdbcType = DATE},
+		    	#{item.createBy, jdbcType = VARCHAR},
+		    	#{item.dtNum, jdbcType = NUMERIC},
+				#{item.description, jdbcType = NUMERIC}
+		    from dual
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from demo_data_imp_log
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(pkid)"> and PKID = #{pkid} </if>
+			<if test="@Ognl@isNotBlank(dtSource)"> and DT_SOURCE = #{dtSource} </if>
+			<if test="@Ognl@isNotBlank(dtCollection)"> and DT_COLLECTION = #{dtCollection} </if>
+			<if test="@Ognl@isNotBlank(dtModelCode)"> and DT_MODEL_CODE = #{dtModelCode} </if>
+			<if test="@Ognl@isNotBlank(dtModelName)"> and DT_MODEL_NAME = #{dtModelName} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(dtNum)"> and DT_NUM = #{dtNum} </if>
+			<if test="@Ognl@isNotBlank(description)"> and DESCRIPTION = #{description} </if>
+		</where>
+	</delete>
+</mapper>

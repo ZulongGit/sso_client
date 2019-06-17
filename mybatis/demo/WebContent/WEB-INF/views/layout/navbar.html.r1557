@@ -1,0 +1,189 @@
+<style>
+  .ace-nav>li {
+    height: 50px;
+  }
+  .navbar-right .iconify > a > i {
+    font-size: 22px;
+    color: #fff;
+    line-height: 17px;
+}
+  li span.absolute {
+    position: absolute;
+    top: 4px;
+    left: 28px;
+    line-height: 2px !important;
+    font-weight: 400 ! important;
+    border-radius: 15px;
+    padding: 6px 4px;
+    z-index: 4;
+    width: 15px;
+    height: 15px;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    color: #fff;
+    background-color: #545e6c;
+}
+.topbar-profile .topbar-profile-image {
+    width: 35px;
+    position: relative;
+    margin-right: 5px;
+    margin-top: -15px;
+    margin-bottom: -12px;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+.rounded-image {
+    -webkit-border-radius: 100px;
+    border-radius: 100px;
+    overflow: hidden;
+    display: inline-block;
+}
+.navbar-default .navbar-nav>li>a {
+    color: #fff;
+}
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+    color: #fff;
+    background-color: transparent;
+}
+</style>
+<script type="text/javascript">
+  try {
+    ace.settings.check('navbar', 'fixed')
+  } catch (e) {
+  }
+</script>
+<div id="navbar">
+  <div class="navbar-default navbar-container " id="navbar-container">
+    <div class="row">
+      <div class="col-xs-8">
+        <button type="button" class="navbar-toggle menu-toggler pull-left visible-xs-block visible-sm-block" id="menu-toggler">
+          <span class="sr-only">Toggle sidebar</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header">
+          <a href="#" class="navbar-brand">
+            <small>
+              <i class="ace-icon fa  fa-yelp"></i>
+              <span id="logo">电子银行数据管理分析系统</span>
+            </small>
+          </a>
+        </div>
+      </div>
+      <div class="col-xs-4">
+          <ul class="nav navbar-nav navbar-right top-navbar">
+              <li class="dropdown iconify hide-phone">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i><span class="label label-danger absolute">4</span></a>
+                  <ul class="dropdown-menu dropdown-message">
+                      <li class="dropdown-header notif-header"><i class="icon-bell-2"></i> 新通知<a class="pull-right" href="#"><i class="fa fa-cog"></i></a></li>
+                      <li class="unread">
+                          <a href="#">
+                              <p><strong>John Doe</strong> 上传了一张照片 <strong>"DSC000254.jpg"</strong>
+                                  <br><i>2分钟前</i>
+                              </p>
+                          </a>
+                      </li>
+                      <li class="unread">
+                          <a href="#">
+                              <p><strong>John Doe</strong> 创建了一个相册簿 <strong>"Fappening"</strong>
+                                  <br><i>8分钟前</i>
+                              </p>
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#">
+                              <p><strong>John Malkovich</strong> 新增了3款产品
+                                  <br><i>3小时前</i>
+                              </p>
+                          </a>
+                      </li>
+                      <li class="dropdown-footer">
+                          <div class="btn-group btn-group-justified">
+                              <div class="btn-group">
+                                  <a href="#" class="btn btn-sm btn-primary"><i class="fa fa-refresh"></i>刷新</a>
+                              </div>
+                              <div class="btn-group">
+                                  <a href="#" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>清除所有</a>
+                              </div>
+                              <div class="btn-group">
+                                  <a href="#" class="btn btn-sm btn-success" style="border: 0;"<i class="ace-icon fa fa-eye"></i>查看所有</a>
+                              </div>
+                          </div>
+                      </li>
+                  </ul>
+              </li>
+              <li class="dropdown iconify hide-phone">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i><span class="label label-danger absolute">3</span></a>
+                  <ul class="dropdown-menu dropdown-message">
+                      <li class="dropdown-header notif-header"><i class="icon-mail-2"></i> New Messages</li>
+                      <li class="unread">
+                          <a href="#" class="clearfix">
+                              <strong>John Doe</strong><i class="pull-right msg-time">5 minutes ago</i><br>
+                              <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                          </a>
+                      </li>
+                      <li class="unread">
+                          <a href="#" class="clearfix">
+                              <strong>Sandra Kraken</strong><i class="pull-right msg-time">22 minutes ago</i><br>
+                              <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#" class="clearfix">
+                              <strong>Zoey Lombardo</strong><i class="pull-right msg-time">41 minutes ago</i><br>
+                              <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                          </a>
+                      </li>
+                      <li class="dropdown-footer"><div class=""><a href="#" class="btn btn-sm btn-block btn-primary"><i class="fa fa-share"></i> See all messages</a></div></li>
+                  </ul>
+              </li>
+              <li class="dropdown iconify hide-phone"><a href="#" onclick="javascript:toggle_fullscreen()"><i class="icon-resize-full-2"></i></a></li>
+              <li class="dropdown topbar-profile">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="rounded-image topbar-profile-image">
+                    <img src="${ctxPath!}/static/images/user-256.jpg"></span> ${auth.getLoginUser().name} <i class="fa fa-caret-down"></i></a>
+                  <ul class="dropdown-menu">
+                      <li><a id="pwdUpdate" href="#">修改密码</a></li>
+                      <!-- <li class="divider"></li> -->
+                      <li><a id="logout" href="javascript:void()" class="md-trigger" data-modal="logout-modal"><i class="icon-logout-1"></i> 用户退出</a></li>
+                  </ul>
+              </li>
+          </ul>
+        <!-- <div class="row">
+          <div class="col-xs-6 hidden-xs hidden-sm">
+            <div class="user_info">
+              <p align="left">欢迎您，${auth.getLoginUser().name}!</p>
+            </div>
+          </div>
+          <div class="col-xs-4 col-xs-offset-1 col-xs-pull-1">
+            <div class="user_out">
+              <a id="logout" href="javascript:void()">用户退出</a> 
+              <span class="split_line"> &nbsp;|&nbsp;</span> 
+              <a id="pwdUpdate" href="#">修改密码</a>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  try { ace.settings.check('navbar', 'collapsed') } catch (e) { }
+</script>
+<script type="text/javascript">			
+  $(function () {
+    $("#logout").click(function () {
+      location.href = '${ctxPath!}/logout';
+    })
+
+    $("#pwdUpdate").click(function () {
+      $.cuslayer({
+        mode: "page",
+        url: "${ctxPath}/userCenter/toEditPasswd",
+        title: '修改密码',
+        formId: 'userform',
+        width: '50%',
+        height: '0'
+      });
+    })
+  });
+</script>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.krm.web.codegen.mapper.TableConfigMapper">
+
+	<!-- 表字段 -->
+	<sql id="TableConfigColumns">
+		ID,PRO_ID,DB_ID,SCHEMA_NAME,TABLE_NAME,CLASS_NAME,REMARKS,MODULE_NAME,IS_IMPORT,IS_EXPORT,
+		IS_UPLOAD_FILE,USER_ID_FIELD_BIND,ORGAN_CODE_FIELD_BIND,IS_PAGE,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<!-- 表字段（带别名） -->
+	<sql id="TableConfigAliasColumns">
+		t.ID,t.PRO_ID,t.DB_ID,t.SCHEMA_NAME,t.TABLE_NAME,t.CLASS_NAME,t.REMARKS,t.MODULE_NAME,t.IS_IMPORT,t.IS_EXPORT,
+		t.IS_UPLOAD_FILE,t.USER_ID_FIELD_BIND,t.ORGAN_CODE_FIELD_BIND,t.IS_PAGE,t.CREATE_BY,t.CREATE_DATE,t.UPDATE_BY,t.UPDATE_DATE,t.DEL_FLAG
+	</sql>
+
+
+	<!-- 列表查询,返回的是通用实体，不受实体属性限制，相当于map-->
+	<select id="queryPageInfo" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="TableConfigAliasColumns" />
+		from gen_table_config  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(dbId)">and t.DB_ID = #{dbId} </if>
+			<if test="@Ognl@isNotBlank(schemaName)">and t.SCHEMA_NAME = #{schemaName} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(className)">and t.CLASS_NAME = #{className} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(moduleName)">and t.MODULE_NAME = #{moduleName} </if>
+			<if test="@Ognl@isNotBlank(isImport)">and t.IS_IMPORT = #{isImport} </if>
+			<if test="@Ognl@isNotBlank(isExport)">and t.IS_EXPORT = #{isExport} </if>
+			<if test="@Ognl@isNotBlank(isUploadFile)">and t.IS_UPLOAD_FILE = #{isUploadFile} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)">and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)">and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(isPage)">and t.IS_PAGE = #{isPage} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+	
+	
+	<!-- 列表查询,返回的是实体-->
+	<select id="entityList" resultType="com.krm.web.codegen.model.TableConfig">
+		select  <include refid="TableConfigAliasColumns" />  
+		from gen_table_config  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id}</if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId}</if>
+			<if test="@Ognl@isNotBlank(dbId)"> and t.DB_ID = #{dbId}</if>
+			<if test="@Ognl@isNotBlank(schemaName)"> and t.SCHEMA_NAME = #{schemaName}</if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName}</if>
+			<if test="@Ognl@isNotBlank(className)"> and t.CLASS_NAME = #{className}</if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks}</if>
+			<if test="@Ognl@isNotBlank(moduleName)"> and t.MODULE_NAME = #{moduleName}</if>
+			<if test="@Ognl@isNotBlank(isImport)"> and t.IS_IMPORT = #{isImport}</if>
+			<if test="@Ognl@isNotBlank(isExport)"> and t.IS_EXPORT = #{isExport}</if>
+			<if test="@Ognl@isNotBlank(isUploadFile)"> and t.IS_UPLOAD_FILE = #{isUploadFile}</if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)"> and t.USER_ID_FIELD_BIND = #{userIdFieldBind}</if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)"> and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind}</if>
+			<if test="@Ognl@isNotBlank(isPage)"> and t.IS_PAGE = #{isPage}</if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy}</if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate}</if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy}</if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate}</if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag}</if>
+			<if test="@Ognl@isNotBlank(dynamicSQL)"> and ${dynamicSQL} </if>
+		</where>
+		<if test="@Ognl@isNotBlank(sortC) and @Ognl@isNotBlank(order)"> 
+			ORDER BY t.${sortC} ${order}
+		</if>
+	</select>
+
+	<!-- 查询单条数据,返回的是实体 -->
+	<select id="queryOne" resultType="com.krm.web.codegen.model.TableConfig">
+		select  <include refid="TableConfigAliasColumns" />
+		from gen_table_config  t 
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(dbId)"> and t.DB_ID = #{dbId} </if>
+			<if test="@Ognl@isNotBlank(schemaName)"> and t.SCHEMA_NAME = #{schemaName} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(className)"> and t.CLASS_NAME = #{className} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(moduleName)"> and t.MODULE_NAME = #{moduleName} </if>
+			<if test="@Ognl@isNotBlank(isImport)"> and t.IS_IMPORT = #{isImport} </if>
+			<if test="@Ognl@isNotBlank(isExport)"> and t.IS_EXPORT = #{isExport} </if>
+			<if test="@Ognl@isNotBlank(isUploadFile)"> and t.IS_UPLOAD_FILE = #{isUploadFile} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)"> and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)"> and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(isPage)"> and t.IS_PAGE = #{isPage} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 查询单条数据,返回的是通用实体，不受实体属性限制，相当于map -->
+	<select id="queryOneCommon" resultType="com.krm.common.base.CommonEntity">
+		select  <include refid="TableConfigAliasColumns" />
+		from gen_table_config  t
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)">and t.ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)">and t.PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(dbId)">and t.DB_ID = #{dbId} </if>
+			<if test="@Ognl@isNotBlank(schemaName)">and t.SCHEMA_NAME = #{schemaName} </if>
+			<if test="@Ognl@isNotBlank(tableName)">and t.TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(className)">and t.CLASS_NAME = #{className} </if>
+			<if test="@Ognl@isNotBlank(remarks)">and t.REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(moduleName)">and t.MODULE_NAME = #{moduleName} </if>
+			<if test="@Ognl@isNotBlank(isImport)">and t.IS_IMPORT = #{isImport} </if>
+			<if test="@Ognl@isNotBlank(isExport)">and t.IS_EXPORT = #{isExport} </if>
+			<if test="@Ognl@isNotBlank(isUploadFile)">and t.IS_UPLOAD_FILE = #{isUploadFile} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)">and t.USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)">and t.ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(isPage)">and t.IS_PAGE = #{isPage} </if>
+			<if test="@Ognl@isNotBlank(createBy)">and t.CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)">and t.CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)">and t.UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)">and t.UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)">and t.DEL_FLAG = #{delFlag} </if>
+		</where>
+	</select>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch">
+		insert into gen_table_config(<include refid="TableConfigColumns" />) values 
+		<foreach collection="list" item="item" separator="," >
+		(
+	    	#{item.id},
+	    	#{item.proId},
+	    	#{item.dbId},
+	    	#{item.schemaName},
+	    	#{item.tableName},
+	    	#{item.className},
+	    	#{item.remarks},
+	    	#{item.moduleName},
+	    	#{item.isImport},
+	    	#{item.isExport},
+	    	#{item.isUploadFile},
+	    	#{item.userIdFieldBind},
+	    	#{item.organCodeFieldBind},
+	    	#{item.isPage},
+	    	#{item.createBy},
+	    	#{item.createDate},
+	    	#{item.updateBy},
+	    	#{item.updateDate},
+			#{item.delFlag}
+		)
+		</foreach>
+	</insert>
+	
+	<!-- 根据不同条件删除数据，条件可组合 -->
+	<delete id="deleteByParams" parameterType="java.util.Map">
+		delete from gen_table_config
+		<where>
+			1=1
+			<if test="@Ognl@isNotBlank(id)"> and ID = #{id} </if>
+			<if test="@Ognl@isNotBlank(proId)"> and PRO_ID = #{proId} </if>
+			<if test="@Ognl@isNotBlank(dbId)"> and DB_ID = #{dbId} </if>
+			<if test="@Ognl@isNotBlank(schemaName)"> and SCHEMA_NAME = #{schemaName} </if>
+			<if test="@Ognl@isNotBlank(tableName)"> and TABLE_NAME = #{tableName} </if>
+			<if test="@Ognl@isNotBlank(className)"> and CLASS_NAME = #{className} </if>
+			<if test="@Ognl@isNotBlank(remarks)"> and REMARKS = #{remarks} </if>
+			<if test="@Ognl@isNotBlank(moduleName)"> and MODULE_NAME = #{moduleName} </if>
+			<if test="@Ognl@isNotBlank(isImport)"> and IS_IMPORT = #{isImport} </if>
+			<if test="@Ognl@isNotBlank(isExport)"> and IS_EXPORT = #{isExport} </if>
+			<if test="@Ognl@isNotBlank(isUploadFile)"> and IS_UPLOAD_FILE = #{isUploadFile} </if>
+			<if test="@Ognl@isNotBlank(userIdFieldBind)"> and USER_ID_FIELD_BIND = #{userIdFieldBind} </if>
+			<if test="@Ognl@isNotBlank(organCodeFieldBind)"> and ORGAN_CODE_FIELD_BIND = #{organCodeFieldBind} </if>
+			<if test="@Ognl@isNotBlank(isPage)"> and IS_PAGE = #{isPage} </if>
+			<if test="@Ognl@isNotBlank(createBy)"> and CREATE_BY = #{createBy} </if>
+			<if test="@Ognl@isNotBlank(createDate)"> and CREATE_DATE = #{createDate} </if>
+			<if test="@Ognl@isNotBlank(updateBy)"> and UPDATE_BY = #{updateBy} </if>
+			<if test="@Ognl@isNotBlank(updateDate)"> and UPDATE_DATE = #{updateDate} </if>
+			<if test="@Ognl@isNotBlank(delFlag)"> and DEL_FLAG = #{delFlag} </if>
+		</where>
+	</delete>
+</mapper>

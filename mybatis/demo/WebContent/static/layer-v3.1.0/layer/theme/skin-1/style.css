@@ -1,0 +1,39 @@
+.layui-layer-title {
+    padding: 0 80px 0 20px;
+    height: 36px;
+    line-height: 36px;
+    border-bottom: 1px solid #eee;
+	font-size: 14px;
+	font-weight: normal;
+    color: #1890ff;
+    overflow: hidden;
+    background-color: #fafafa;
+    border-radius: 2px 2px 0 0;
+}
+.layui-layer-setwin {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    font-size: 0;
+    line-height: initial;
+}
+.layui-layer-btn a {
+    height: 26px;
+    line-height: 26px;
+    margin: 5px 5px 0;
+    padding: 0 15px;
+    border: 1px solid #dedede;
+    background-color: #fff;
+    color: #333;
+    border-radius: 4px;
+    font-weight: normal;
+    cursor: pointer;
+    text-decoration: none;
+    min-width: 88px;
+}
+.layui-layer-btn .layui-layer-btn0 {
+    background: #1890ff;
+    border: 0;
+    min-width: 88px;
+    color: #fff;
+}
