@@ -60,24 +60,25 @@ public class SystemAuthorizingRealm extends AuthorizingRealm {
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
 		// 判断验证码
 		Session session = SecurityUtils.getSubject().getSession();
-		String code = (String)session.getAttribute("captcha");
-		if (token.getCaptcha() == null || !token.getCaptcha().toUpperCase().equals(code)){
-			throw new CaptchaException("验证码错误!");
-		}
+		/*
+		 * String code = (String)session.getAttribute("captcha"); if (token.getCaptcha()
+		 * == null || !token.getCaptcha().toUpperCase().equals(code)){ throw new
+		 * CaptchaException("验证码错误!"); }
+		 */
 		SysUser user = null;
 		SysUser sysUser = new SysUser();
 		sysUser.setUsername(token.getUsername());
 		List<SysUser> users = sysUserService.select(sysUser);
-		if(users != null && users.size() == 1 && users.get(0) != null) {
-			user = users.get(0);
-			if(user.getStatus().equals(Constant.USER_STATUS_NONACTIVATED)){
-				throw new AccountException();
-			}
-			//当前 Realm 的 name
-			String realmName = this.getName();
-			return new SimpleAuthenticationInfo(user.getName(), user.getPassword(), realmName);
-		}
-		return null;
+		/*
+		 * if(users != null && users.size() == 1 && users.get(0) != null) { user =
+		 * users.get(0); if(user.getStatus().equals(Constant.USER_STATUS_NONACTIVATED)){
+		 * throw new AccountException(); } //当前 Realm 的 name String realmName =
+		 * this.getName(); return new SimpleAuthenticationInfo(user.getName(),
+		 * user.getPassword(), realmName); }
+		 */
+		
+		session.setAttribute(Constant.SESSION_LOGIN_USER, users.get(0));
+		return new SimpleAuthenticationInfo(user.getName(), user.getPassword(), user.getName());
 	}
 
 	

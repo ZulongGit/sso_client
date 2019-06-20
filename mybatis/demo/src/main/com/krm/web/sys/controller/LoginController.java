@@ -115,27 +115,44 @@ public class LoginController extends BaseController{
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public String toLogin(Model model, HttpServletRequest request, HttpServletResponse response){
 		logger.info("跳转到登录页面");
-		try {
-			//强制下线提示语
-			String msg = SysUserUtils.getSession().getAttribute("msg").toString();
-			if(StringUtil.isNotEmpty(msg)){
-				model.addAttribute("msg", msg);
-				Subject subject=SecurityUtils.getSubject();  
-		        ServletContext context= request.getServletContext();  
-		        try {  
-		            subject.logout();  
-		            context.removeAttribute("error");  
-		        }catch (SessionException e){  
-		            e.printStackTrace();  
-		        }  
-			}
-		} catch (Exception e) {
-			SysUserUtils.getSession().removeAttribute("msg");
-		}
-		if( SysUserUtils.getSessionLoginUser() != null && SysUserUtils.getCacheLoginUser() !=null ){
-			return "redirect:/index";
-		}
-		return "login";
+		Subject currentUser = SecurityUtils.getSubject();
+        String userName=request.getUserPrincipal().toString();
+        try {
+            if (!currentUser.isAuthenticated() ) {
+            	SysUser user= new SysUser();
+         		user.setUsername(userName);
+         		user =sysUserService.selectOne(user);
+         		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword().toCharArray(), true, null, null); 
+         		currentUser.login(token);
+         		currentUser.getSession().setAttribute(Constant.SESSION_LOGIN_USER, user);
+         		SysUserUtils.setUserAuth();
+         		return "redirect:/index";
+            }else if(currentUser.isAuthenticated()){
+            	 SecurityUtils.getSubject().checkPermission("index");	
+            }
+            
+            if( SysUserUtils.getSessionLoginUser() != null && SysUserUtils.getCacheLoginUser() !=null ){
+    			return "redirect:/index";
+    		}else{
+    			return "login";
+    		}
+            
+    		/*logger.info("===========================================");
+    		logger.info("|=============欢迎进入系统首页=============|");
+    		logger.info("===========================================");
+    		Map<String, Object> params = Maps.newHashMap();
+    		params.put(Constant.FIELD_DEL_FLAG, Constant.DEL_FLAG_NORMAL);
+    		List<CommonEntity> categories = sysMenuCategoryService.commonList(params);
+    		model.addAttribute("menuCategories", categories);*/
+    			
+            
+ 
+        } catch (Exception e) {
+  //          logger.info(username + "帐号被锁定1小时！", ex);
+        	e.printStackTrace();
+        } 
+        
+        return "login";
 	}
 	
 	/**

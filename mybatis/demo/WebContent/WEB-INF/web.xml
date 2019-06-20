@@ -51,6 +51,59 @@
     <url-pattern>/export/flow</url-pattern>
   </servlet-mapping>
   
+  
+    <!-- 单点登录配置开始 20190619 赵祖龙 -->  
+  <filter>
+		<description> 单点登录,如果使用单点登出，须配置SingleSignOutHttpSessionListener监听器  </description>
+		<filter-name>SSO Filter</filter-name>
+		<filter-class>com.bonc.sso.client.SSOFilter</filter-class>
+		<init-param>
+			<description> 代理服务器入口地址 生产地址F5 32.4.18.64:9080</description>
+			<param-name>serverName</param-name>
+			<param-value>127.0.0.1:8081</param-value>
+		</init-param>
+		<init-param>
+			<description> SSO服务器地址全路径 </description>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>http://127.0.0.1:8081/sso</param-value>
+		</init-param>
+		<init-param>
+			<description> SSO服务器通过代理服务器登录地址 全路径 </description>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>http://127.0.0.1:8081/sso/login</param-value>
+		</init-param>
+
+		<init-param>
+			<description> 是否启用单点登出 </description>
+			<param-name>singleSignOut</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<description> 单点登录忽略校验URL </description>
+			<param-name>skipUrls</param-name>
+			<param-value>/logout.jsp,/index.jsp </param-value>
+		</init-param>
+		<init-param>
+			<description> 登录成功后的的用户信息准备 须实现com.bonc.sso.client.IAuthHandle 接口 </description>
+			<param-name>loginUserHandle</param-name>
+			<param-value>com.krm.sso.AuthHandleImpl</param-value>
+		</init-param>
+		<init-param>
+			<description> 可选参数，客户端应用使用的字符集，如果已经有其他的地方设置过了，则会忽略这个配置。默认将使用UTF-8作为默认字符集 </description>
+			<param-name>characterEncoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<description> 解决读取CAS server端返用户扩展信息中文乱码问题 </description>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SSO Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
   <!-- Shiro Filter -->  
     <filter>  
         <filter-name>shiroFilter</filter-name>  
@@ -162,4 +215,13 @@
     <exception-type>java.lang.Exception</exception-type>
     <location>/ErrorHandler</location>
   </error-page>
+  
+  
+
+	
+
+		
+	
+  
+  
 </web-app>

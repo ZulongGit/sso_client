@@ -39,11 +39,11 @@
     </appender>
     
 	<!-- 下面配置一些第三方包的日志过滤级别 -->
-	<logger name="com.krm" level="DEBUG" additivity="true"/>
-	<logger name="net.sf.ehcache" level="WARN" />
-	<logger name="org.springframework.web" level="WARN" />
-	<logger name="org.mybatis" level="DEBUG" />
-	<logger name="com.github.abel533" level="DEBUG" />
+	<logger name="com.krm.sso" level="INFO" additivity="true"/>
+	<logger name="net.sf.ehcache" level="INFO" />
+	<logger name="org.springframework.web" level="INFO" />
+	<logger name="org.mybatis" level="INFO" />
+	<logger name="com.github.abel533" level="INFO" />
 	
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

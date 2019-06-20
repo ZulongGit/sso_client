@@ -11,6 +11,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestAttributes;
@@ -32,6 +35,7 @@ import com.krm.web.sys.model.SysMenu;
 import com.krm.web.sys.model.SysOrgan;
 import com.krm.web.sys.model.SysRole;
 import com.krm.web.sys.model.SysUser;
+import com.krm.web.sys.security.UsernamePasswordToken;
 import com.krm.web.sys.service.SysDictService;
 import com.krm.web.sys.service.SysMenuCategoryService;
 import com.krm.web.sys.service.SysMenuService;
@@ -54,7 +58,7 @@ public class SysUserUtils {
 	static SysOrganService sysOrganService = SpringContextHolder.getBean("sysOrganService");
 	static SysDictService sysDictService = SpringContextHolder.getBean("sysDictService");
 	static SysMenuCategoryService sysMenuCategoryService = SpringContextHolder.getBean("sysMenuCategoryService");
-
+	static DefaultWebSessionManager  sessionManager = SpringContextHolder.getBean("sessionManager");
 	/**
 	 * 设置用户的认证
 	 */
@@ -516,5 +520,49 @@ public class SysUserUtils {
 		}
 		return null;
 	}
+	
+	
+	public static  boolean  setUserSession(String username,HttpServletRequest request){
+	    
+	    SysUser  sysuser=(SysUser)request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+	    if(null==sysuser){
+	        sysuser=new SysUser();
+	        sysuser.setUsername(username);
+	       List<SysUser> listuser =sysUserService.select(sysuser);
+	       if(listuser.size()>0){
+	           sysuser=listuser.get(0);
+	           UsernamePasswordToken token = new UsernamePasswordToken(username, sysuser.getPassword().toCharArray(), true, null, ""); 
+	           token.setRememberMe(true);  
+	           Subject subject = SecurityUtils.getSubject();  
+//	           Session session=subject.getSession();
+//	         long out_time=   System.currentTimeMillis()  -  subject.getSession().getLastAccessTime().getTime();
+//	           if(out_time>=session.getTimeout()){
+//	        	   ThreadContext.remove(ThreadContext.SUBJECT_KEY);//移除线程里面的subject
+//	                sessionDAO.delete(subject.getSession());//移除失效的session 
+//	                subject = new Subject.Builder().buildSubject(); 
+//	           }
+	           Session session = subject.getSession(false);
+	           if(session != null){
+	        	   System.out.println("准备清楚本次的session信息====="+session.getId());
+	        	SessionDAO sessiond=   sessionManager.getSessionDAO();
+	        	sessiond.delete(session);
+	        	
+	           }
+	        //   subject.login(token); 
+	           request.getSession().setAttribute(Constant.SESSION_LOGIN_USER, sysuser);
+	           //setUserAuth();
+	       }else{
+	           return false;
+	       }
+	    }
+	    
+	    return true;
+
+	}
+	
+	
+	
+	
+	
 
 }

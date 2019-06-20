@@ -5,16 +5,37 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-3.2.xsd"
 	default-lazy-init="true">
+	
+	
+	 <!-- CasFilter为自定义的单点登录Fileter -->
+     <bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
+        <property name="failureUrl" value="/login"/>
+         <property name="successUrl" value="/index"/>
+    </bean>  
 
-	<bean id="systemAuthorizingRealm" class="com.krm.web.sys.security.SystemAuthorizingRealm">
-	</bean>
+       <bean id="logout" class="com.krm.common.filter.SystemLogoutFilter">
+        <property name="redirectUrl" value="http://127.0.0.1:8081/sso/logout?service=http://127.0.0.1:8081/modoufu" />
+    </bean>
+
+	 <bean id="systemAuthorizingRealm" class="com.krm.web.sys.security.SystemAuthorizingRealm">
+	</bean> 
+	 
 
 	<!-- 安全认证过滤器 -->
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
-		<property name="loginUrl" value="/login" />
-		<property name="successUrl" value="/index" />
-		<property name="unauthorizedUrl" value="/" />
+		<!-- 要求登录时的链接(可根据项目的URL进行替换),非必须的属性,默认会自动寻找Web工程根目录下的"/login.jsp"页面 --> 
+         <property name="loginUrl" value="http://127.0.0.1:8081/modoufu/login?service=http://127.0.0.1:8081/modoufu/login"/> 
+        <!-- <property name="successUrl" value="/index"/> -->
+ 		<property name="unauthorizedUrl" value="http://127.0.0.1:8081/sso/login" /> 
+		   <property name="filters">
+		<map>
+		<!--  <entry key="SSO" value-ref="SSOFilter"/> -->
+			<entry key="casFilter" value-ref="casFilter"/> 
+			<entry key="logout" value-ref="logout"/>
+		</map>
+		</property> 
+		 
 		<property name="filterChainDefinitions">
 			<value>
 				/home/** = anon
@@ -25,20 +46,21 @@
 			</value>
 		</property>
 	</bean>
-
-	<!-- 定义 Shiro 主要业务对象 -->
-	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="realm" ref="systemAuthorizingRealm" />
-		<property name="cacheManager" ref="shiroCacheManager"></property>
-		<property name="rememberMeManager" ref="rememberMeManager"></property>
-		<property name="sessionManager" ref="sessionManager" />
-	</bean>
-
+	
+	   <!-- 单点登录下的配置 -->
+      <bean id="caseRealm" class="com.krm.web.sys.security.ShiroCaseRealm">
+        <property name="casServerUrlPrefix" value="http://127.0.0.1:8081/sso/login" />
+        <property name="casService" value="http://127.0.0.1:8081/modoufu/login" /> 
+    </bean>
+  
+    
 	<!-- 配置记住我cookie -->
 	<bean id="rememberCookies" class="org.apache.shiro.web.servlet.SimpleCookie">
 		<constructor-arg value="rememberMe"></constructor-arg>
 		<property name="httpOnly" value="true"></property>
-		<property name="maxAge" value="#{60*60*24}"></property>
+		<!--  <property name="maxAge" value="#{60*60*24}"></property>  -->
+		 <property name="maxAge" value="-1"></property> 
+		
 	</bean>
 
 	<!-- 配置记住我管理器 -->
@@ -50,19 +72,65 @@
 
 	<!-- 缓存管理 -->
 	<bean id="shiroCacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+    <!-- 会话验证调度器 -->
+	    <bean id="sessionValidationScheduler"  class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">  
+	    <property name="sessionValidationInterval" value="1800000"/>  
+	    <property name="sessionManager" ref="sessionManager"/>  
+    </bean>  
 
-	<bean id="sessionManager"
-		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+	<!-- <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager"> -->
+	<bean id="sessionManager" class="com.krm.common.filter.ShiroSessionManager">
 		<!-- session的失效时长，单位毫秒 -->
-		<property name="globalSessionTimeout" value="3600000" />
+		<property name="globalSessionTimeout" value="18000000" />
 		<!-- 删除失效的session -->
 		<property name="deleteInvalidSessions" value="true" />
+		<property name="sessionValidationSchedulerEnabled" value="true"/>
+       <!--  <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>  -->
+		<property name="sessionIdCookie" ref="simpleCookie"/>  
+		<property name="sessionIdCookieEnabled" value="true"/>
+		<property name="sessionDAO" ref="sessionDao" /> 
+	     
+	</bean>
+	
+	<bean id="sessionCache" class="com.krm.common.filter.ShiroSessionCache" />
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+	<bean id="sessionDao" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
+		<property name="activeSessionsCache" ref="sessionCache" />
 	</bean>
 
+<!-- sessionIdCookie的实现,用于重写覆盖容器默认的JSESSIONID -->
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+    <!-- 设置Cookie名字, 默认为: JSESSIONID 问题: 与SERVLET容器名冲突, 如JETTY, TOMCAT 等默认JSESSIONID,  
+                                当跳出SHIRO SERVLET时如ERROR-PAGE容器会为JSESSIONID重新分配值导致登录会话丢失! -->  
+    <constructor-arg  name="name" value="SID" /> 
+    <!-- JSESSIONID的path为/用于多个系统共享JSESSIONID -->
+     <property name="path" value="/" /> 
+    <!-- 浏览器中通过document.cookie可以获取cookie属性，设置了HttpOnly=true,在脚本中就不能的到cookie，可以避免cookie被盗用 -->
+    <property name="httpOnly" value="true" />
+    </bean>
+    
+    
+    <!-- 定义 Shiro 主要业务对象 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="cacheManager" ref="shiroCacheManager"></property>
+		<property name="rememberMeManager" ref="rememberMeManager"></property>
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="realm" ref="caseRealm" />
+	</bean>
+    
 	<!-- 开启Shiro的注解(如@RequiresRoles，@RequiresPermissions)，需借助SpringAOP扫描使用Shiro注解的类， 
 		并在必要时进行安全逻辑验证 -->
 	<bean
 		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
 		<property name="securityManager" ref="securityManager"></property>
 	</bean>
+	
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="org.apache.shiro.SecurityUtils.setSecurityManager"></property>
+		<property name="arguments" ref="securityManager"></property>
+	</bean>
+
 </beans>
